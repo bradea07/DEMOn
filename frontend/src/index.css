@@ -1,0 +1,99 @@
+/* Global Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #000; /* Black background for the body */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #fff; /* White text for contrast */
+}
+
+h2 {
+  font-size: 24px;
+  color: #fff; /* White color for the title */
+  margin-bottom: 20px;
+}
+
+/* Logo Styling (ECOSWAP) */
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: #00FF00; /* Lime green for logo */
+  letter-spacing: 1px;
+  margin-bottom: 40px; /* Adds space between the logo and the form */
+}
+
+/* Login Form Container */
+.login-container {
+  background-color: #111; /* Dark grey background for the form */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px solid #00FF00; /* Lime green border */
+  border-radius: 4px;
+  background-color: #222; /* Dark background for inputs */
+  color: #fff; /* White text in the input fields */
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #4CAF50; /* Bright green on focus */
+  outline: none;
+}
+
+/* Submit Button */
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #00FF00; /* Lime green background */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #4CAF50; /* Darker green on hover */
+}
+
+/* Message Styling */
+.message {
+  font-size: 14px;
+  color: #d9534f;
+  margin-top: 10px;
+}
+
+/* Link Button (Back to Signup) */
+button[onClick] {
+  background-color: #008cba; /* Blue button for sign up */
+}
+
+button[onClick]:hover {
+  background-color: #007b9e;
+}
