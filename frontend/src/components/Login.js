@@ -2,11 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setIsLoggedIn }) => {
-  const [formData, setFormData] = useState({
-    usernameOrEmail: "",
-    password: "",
-  });
-
+  const [formData, setFormData] = useState({ usernameOrEmail: "", password: "" });
   const [message, setMessage] = useState("");
   const navigate = useNavigate(); 
 
@@ -17,39 +13,39 @@ const Login = ({ setIsLoggedIn }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(""); 
-  
+
     const requestData = {
       email: formData.usernameOrEmail.includes("@") ? formData.usernameOrEmail : null,
       username: formData.usernameOrEmail.includes("@") ? null : formData.usernameOrEmail,
       password: formData.password,
     };
-  
+
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://localhost:8080/auth/login", {  // 🔥 Ensure correct URL
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData),
       });
-  
+
       const data = await response.json(); // Parse JSON response
-  
+
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
       }
-  
+
+      // ✅ Store user and token properly
       localStorage.setItem("userToken", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 Store full user data
+      
       setIsLoggedIn(true);
       setMessage("✅ Login successful! Redirecting...");
-  
+
       setTimeout(() => navigate("/"), 1000);
     } catch (error) {
       console.error("❌ Login error:", error);
       setMessage(`❌ ${error.message}`);
     }
   };
-  
 
   return (
     <div className="login-container">

@@ -11,11 +11,12 @@ import java.util.Optional;
 import java.util.List;
 import com.ecoswap.dto.SignupRequest;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth")  // 🔥 Updated to match frontend call
 @CrossOrigin(origins = "http://localhost:3000") // Allow frontend requests
-public class AuthController { // ✅ No nested class
+public class AuthController { 
 
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
@@ -27,26 +28,31 @@ public class AuthController { // ✅ No nested class
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    // ✅ SIGNUP: Registers new user
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody SignupRequest signupRequest) {
         // Check if email already exists
         if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email already in use");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Email already in use"));
         }
     
         // Check if username already exists
         if (userRepository.findByUsername(signupRequest.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username already in use");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Username already in use"));
         }
     
         // Check if passwords match
         if (!signupRequest.getPassword().equals(signupRequest.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body("Passwords do not match.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Passwords do not match."));
         }
     
         // Ensure name is provided
         if (signupRequest.getName() == null || signupRequest.getName().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Name field is required");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Name field is required"));
         }
     
         // Create and save the new user
@@ -58,14 +64,18 @@ public class AuthController { // ✅ No nested class
     
         userRepository.save(user); // Save user
     
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
     
-
-
-    @PostMapping("/login")  // ✅ Ensure this matches the frontend request
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody User loginRequest) {
+    // ✅ LOGIN: Authenticates user & returns token
+    @PostMapping("/login")  
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User loginRequest) {
         System.out.println("Received login request for: " + loginRequest.getEmail());
+
+        if (loginRequest.getEmail() == null && loginRequest.getUsername() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "Email or username is required"));
+        }
 
         // Try to find the user by email first
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
@@ -76,25 +86,35 @@ public class AuthController { // ✅ No nested class
         }
 
         if (user.isEmpty()) {
-            System.out.println("User not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found"));
+            System.out.println("❌ User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "User not found"));
         }
 
-        System.out.println("User found: " + user.get().getEmail());
+        System.out.println("✅ User found: " + user.get().getEmail());
 
         // Validate password
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
-            System.out.println("Invalid password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid password"));
+            System.out.println("❌ Invalid password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Invalid password"));
         }
 
         System.out.println("✅ Login successful for user: " + user.get().getEmail());
 
-        // Generate a fake token (Replace with JWT if needed)
+        // Generate a fake token (Replace with real JWT implementation)
         String fakeToken = "fake-jwt-token-" + user.get().getId();
 
-        return ResponseEntity.ok(Map.of("token", fakeToken));  // ✅ Return JSON instead of plain text
+        // ✅ Return token + user data for frontend storage
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", fakeToken);
+        response.put("user", Map.of(
+            "id", user.get().getId(),
+            "name", user.get().getName(),
+            "email", user.get().getEmail(),
+            "username", user.get().getUsername()
+        ));
+
+        return ResponseEntity.ok(response);
     }
 }
-
-
