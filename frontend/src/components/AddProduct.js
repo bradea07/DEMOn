@@ -45,14 +45,19 @@ const AddProduct = () => {
     }
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Handle image selection
+  // ✅ Handle multiple image selection
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
-    setImages(selectedFiles);
+    setImages([...images, ...selectedFiles]); // Append new images
+  };
+
+  // ✅ Delete an image from the list
+  const handleDeleteImage = (index) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -60,56 +65,59 @@ const AddProduct = () => {
     setMessage("");
 
     if (!user || !user.id) {
-        alert("You must be logged in to add a product.");
-        return;
+      alert("You must be logged in to add a product.");
+      return;
     }
 
     const productData = new FormData();
-    productData.append("title", formData.title);
+    productData.append("title", formData.title.trim());
     productData.append("category", formData.category);
-    productData.append("description", formData.description);
-    productData.append("location", formData.location);
+    productData.append("description", formData.description.trim());
+    productData.append("location", formData.location.trim());
     productData.append("price", formData.price);
-    productData.append("brand", formData.brand);
+    productData.append("brand", formData.brand.trim());
     productData.append("product_condition", formData.product_condition);
     productData.append("user_id", user.id);
 
+    // ✅ Append all selected images to FormData
     images.forEach((image) => {
-        productData.append("images", image);
+      productData.append("images", image);
     });
 
     try {
-        const response = await fetch("http://localhost:8080/api/products/add", {
-            method: "POST",
-            body: productData,
-        });
+      const response = await fetch("http://localhost:8080/api/products/add", {
+        method: "POST",
+        body: productData,
+      });
 
-        if (!response.ok) {
-            throw new Error("Failed to add product.");
-        }
+      if (!response.ok) {
+        throw new Error("Failed to add product.");
+      }
 
-        setMessage("✅ Product added successfully!");
+      setMessage("✅ Product added successfully!");
 
-        // ✅ Reset form fields and images after submission
-        setFormData({
-            title: "",
-            category: "",
-            description: "",
-            location: "",
-            price: "",
-            brand: "",
-            product_condition: "",
-        });
-        setImages([]);  // ✅ Ensure images array is cleared
+      // ✅ Reset form and images
+      setFormData({
+        title: "",
+        category: "",
+        description: "",
+        location: "",
+        price: "",
+        brand: "",
+        product_condition: "",
+      });
+      setImages([]); // ✅ Clear images
 
+      // ✅ Reset file input
+      const fileInput = document.getElementById("fileInput");
+      if (fileInput) {
+        fileInput.value = "";
+      }
     } catch (error) {
-        console.error("❌ Error adding product:", error);
-        alert(`Failed to add product: ${error.message}`);
+      console.error("❌ Error adding product:", error);
+      alert(`Failed to add product: ${error.message}`);
     }
-};
-
-
-
+  };
 
   return (
     <div>
@@ -139,13 +147,16 @@ const AddProduct = () => {
           <option value="Used - Acceptable">Used - Acceptable</option>
         </select>
 
-        {/* File input for images */}
-        <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+        {/* ✅ Multiple Image Upload */}
+        <input id="fileInput" type="file" multiple accept="image/*" onChange={handleImageChange} />
 
-        {/* Show image previews */}
+        {/* ✅ Image Previews with Delete Button */}
         <div>
           {images.map((image, index) => (
-            <img key={index} src={URL.createObjectURL(image)} alt="Preview" width="100" />
+            <div key={index} style={{ display: "inline-block", margin: "10px", textAlign: "center" }}>
+              <img src={URL.createObjectURL(image)} alt="Preview" width="100" />
+              <button type="button" onClick={() => handleDeleteImage(index)}>❌ Delete</button>
+            </div>
           ))}
         </div>
 
