@@ -89,15 +89,24 @@ public class ProductController {
      * Search products by keyword in title
      */
     @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String keyword) {
-        return productService.searchProductsByTitle(keyword);
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> matchingProducts = productService.searchProductsByTitle(keyword);
+        return ResponseEntity.ok(matchingProducts);
     }
+    
+@GetMapping("/{id}")
+public ResponseEntity<?> getProductById(@PathVariable Long id) {
+    try {
+        Optional<Product> product = productService.getProductById(id);
+        if (product.isPresent()) {
+            return ResponseEntity.ok(product.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Product not found"));
+        }
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An error occurred: " + e.getMessage()));
+    }
+}
 
-    /**
-     * Filter products by category
-     */
-    @GetMapping("/filter")
-    public List<Product> filterByCategory(@RequestParam String category) {
-        return productService.filterProductsByCategory(category);
-    }
+
 }

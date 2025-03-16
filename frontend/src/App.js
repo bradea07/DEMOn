@@ -2,7 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useState, useEffect } from "react";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
-import ProductList from "./components/ProductList";
+import SearchPage from "./components/SearchPage";
+import SearchResults from "./components/SearchResults";
+import ProductDetails from "./components/ProductDetails";
 import AddProduct from "./components/AddProduct";
 import MyProfile from "./components/MyProfile";
 import Settings from "./components/Settings";
@@ -10,7 +12,7 @@ import Navbar from "./components/Navbar";
 
 // Function to check if user is authenticated
 const isAuthenticated = () => {
-  return localStorage.getItem("userToken") !== null; 
+  return localStorage.getItem("userToken") !== null;
 };
 
 function App() {
@@ -24,20 +26,24 @@ function App() {
 
   return (
     <Router>
-      {isLoggedIn && <Navbar onLogout={() => {
-        localStorage.removeItem("userToken");
-        setIsLoggedIn(false);
-      }} />}
-      
+      {isLoggedIn && (
+        <Navbar
+          onLogout={() => {
+            localStorage.removeItem("userToken");
+            setIsLoggedIn(false);
+          }}
+        />
+      )}
+
       <Routes>
-        {/* If not logged in, redirect to login */}
         <Route path="/login" element={!isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
         <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
 
-        {/* Protected Routes (Only visible when logged in) */}
         {isLoggedIn ? (
           <>
-            <Route path="/" element={<ProductList />} />
+            <Route path="/" element={<SearchPage />} /> {/* ✅ Homepage is now SearchPage */}
+            <Route path="/search-results" element={<SearchResults />} /> {/* ✅ New search results page */}
+            <Route path="/product/:id" element={<ProductDetails />} /> {/* ✅ Product details page */}
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/settings" element={<Settings />} />
