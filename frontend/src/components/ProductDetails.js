@@ -1,44 +1,59 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 
 const ProductDetails = () => {
-  const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [error, setError] = useState("");
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/products/${id}`)
-      .then((response) => {
-        setProduct(response.data);
-        setError("");
-      })
-      .catch((error) => {
-        console.error("Error fetching product details:", error);
-        setError("❌ Product not found.");
-      });
-  }, [id]);
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/products/${id}`);
+                if (!response.ok) {
+                    throw new Error("Product not found");
+                }
+                const data = await response.json();
+                console.log("✅ Received Product Data:", data);
+                setProduct(data);
+            } catch (err) {
+                console.error("❌ Error fetching product:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!product) return <p>Loading...</p>;
+        fetchProduct();
+    }, [id]);
 
-  return (
-    <div>
-      <h2>{product.title}</h2>
-      <p><strong>Category:</strong> {product.category}</p>
-      <p><strong>Description:</strong> {product.description}</p>
-      <p><strong>Price:</strong> {product.price} USD</p>
-      <p><strong>Brand:</strong> {product.brand}</p>
-      <p><strong>Condition:</strong> {product.productCondition}</p>
-      {/* ✅ Display Image if Available */}
-      {product.image_url ? (
-        <img src={product.image_url} alt={product.title} width="200" />
-      ) : (
-        <p>No image available</p>
-      )}
-    </div>
-  );
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p style={{ color: "red" }}>❌ {error}</p>;
+
+    return (
+        <div>
+            <h2>{product.title}</h2>
+            <p><strong>Category:</strong> {product.category}</p>
+            <p><strong>Description:</strong> {product.description}</p>
+            <p><strong>Price:</strong> {product.price} USD</p>
+            <p><strong>Brand:</strong> {product.brand}</p>
+            <p><strong>Condition:</strong> {product.product_condition}</p>
+
+            {/* ✅ Display Image */}
+           {/* ✅ Load Image */}
+           {product.imageUrls && product.imageUrls.length > 0 ? (
+    product.imageUrls.map((img, index) => (
+        <img key={index} src={`http://localhost:8080${img}`} alt="Product" width="200" />
+    ))
+) : (
+    <p style={{ color: "red" }}>No image available</p>
+)}
+
+
+
+        </div>
+    );
 };
 
 export default ProductDetails;

@@ -65,8 +65,8 @@ const AddProduct = () => {
     setMessage("");
 
     if (!user || !user.id) {
-      alert("You must be logged in to add a product.");
-      return;
+        alert("You must be logged in to add a product.");
+        return;
     }
 
     const productData = new FormData();
@@ -79,45 +79,41 @@ const AddProduct = () => {
     productData.append("product_condition", formData.product_condition);
     productData.append("user_id", user.id);
 
-    // ✅ Append all selected images to FormData
-    images.forEach((image) => {
-      productData.append("images", image);
-    });
+    // ✅ Append all selected images
+    if (images.length > 0) {
+        images.forEach((image) => {
+            productData.append("images", image);
+        });
+    } else {
+        console.warn("⚠️ No images selected.");
+    }
+
+    // ✅ Debugging: Log form data before sending
+    console.log("📤 Sending product data:", [...productData.entries()]);
 
     try {
-      const response = await fetch("http://localhost:8080/api/products/add", {
-        method: "POST",
-        body: productData,
-      });
+        const response = await fetch("http://localhost:8080/api/products/add", {
+            method: "POST",
+            body: productData, // ✅ `Content-Type` is auto-set for `FormData`
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to add product.");
-      }
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to add product.");
+        }
 
-      setMessage("✅ Product added successfully!");
-
-      // ✅ Reset form and images
-      setFormData({
-        title: "",
-        category: "",
-        description: "",
-        location: "",
-        price: "",
-        brand: "",
-        product_condition: "",
-      });
-      setImages([]); // ✅ Clear images
-
-      // ✅ Reset file input
-      const fileInput = document.getElementById("fileInput");
-      if (fileInput) {
-        fileInput.value = "";
-      }
+        console.log("✅ Product added:", data);
+        setMessage("✅ Product added successfully!");
+        setImages([]); // ✅ Clear images after success
     } catch (error) {
-      console.error("❌ Error adding product:", error);
-      alert(`Failed to add product: ${error.message}`);
+        console.error("❌ Error adding product:", error);
+        alert(`Failed to add product: ${error.message}`);
     }
-  };
+};
+
+
+  
 
   return (
     <div>
