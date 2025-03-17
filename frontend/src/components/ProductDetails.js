@@ -38,19 +38,18 @@ const ProductDetails = () => {
             <p><strong>Description:</strong> {product.description}</p>
             <p><strong>Price:</strong> {product.price} USD</p>
             <p><strong>Brand:</strong> {product.brand}</p>
-            <p><strong>Condition:</strong> {product.product_condition}</p>
+            <p><strong>Condition:</strong> {product?.condition || product?.productCondition || "Not Available"}</p>
+
+
 
             {/* ✅ Display Image */}
-           {/* ✅ Load Image */}
-           {product.imageUrls && product.imageUrls.length > 0 ? (
+            {product?.imageUrls?.length > 0 ? (
     product.imageUrls.map((img, index) => (
         <img key={index} src={`http://localhost:8080${img}`} alt="Product" width="200" />
     ))
 ) : (
     <p style={{ color: "red" }}>No image available</p>
 )}
-
-
 
         </div>
     );
