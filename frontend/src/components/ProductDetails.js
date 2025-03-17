@@ -33,8 +33,9 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
+    // ✅ Fetch only messages where the current user is sender or receiver
     const fetchMessages = async () => {
-        if (!product || !product.id) return;
+        if (!product || !product.id || !currentUser) return;
         try {
             const response = await fetch(`http://localhost:8080/messages/product/${product.id}`);
             if (!response.ok) {
@@ -42,13 +43,22 @@ const ProductDetails = () => {
                 return;
             }
             const data = await response.json();
-            console.log("📩 Received Messages:", data);
-            setMessages(Array.isArray(data) ? data : []);
+            console.log("📩 All Messages:", data);
+
+            // ✅ Filter only messages related to the current user and the product seller
+            const filteredMessages = data.filter(msg =>
+                (msg.sender.id === currentUser || msg.receiver.id === currentUser) &&
+                (msg.sender.id === product.user.id || msg.receiver.id === product.user.id)
+            );
+
+            console.log("📩 Filtered Private Messages:", filteredMessages);
+            setMessages(filteredMessages);
         } catch (error) {
             console.error("Error fetching messages:", error);
         }
     };
 
+    // ✅ Ensure correct sender & receiver when sending a message
     const sendMessage = async () => {
         if (!newMessage.trim() || !product || !product.user || !product.user.id) {
             console.error("❌ Missing product or seller information", product);
@@ -124,7 +134,7 @@ const ProductDetails = () => {
                                     <div 
                                         key={index} 
                                         style={{
-                                            textAlign: msg.sender.id === currentUser ? "left" : "right", // ✅ Ensure current user (sapte) is LEFT
+                                            textAlign: msg.sender.id === currentUser ? "left" : "right", // ✅ Ensure current user is LEFT
                                             backgroundColor: msg.sender.id === currentUser ? "#DCF8C6" : "#FFFFFF", // ✅ Different colors for sender & receiver
                                             color: "black", // ✅ Ensure text color is black
                                             padding: "8px",
