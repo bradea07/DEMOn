@@ -19,37 +19,38 @@
 }
 
 .ecoswap-title {
-  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to EcoSwap title */
-  font-size: 3rem; /* Make the text larger */
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 3rem;
   font-weight: 700;
-  text-align: center; /* Center the title */
-  color: #333; /* Choose an appropriate color */
-  margin-bottom: 30px; /* Add space between title and login box */
-  width: 450px; /* Ensure the title spans the width of the login box */
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  width: 450px;
 }
 
 .login-box {
-  background: rgba(255, 255, 255, 0.15); /* Transparent white */
+  background: rgba(255, 255, 255, 0.15);
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 450px; /* Ensure the login box is consistent with the EcoSwap title */
+  width: 450px;
   height: auto;
   text-align: left;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to all text inside the login box */
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 .login-box h2 {
-  text-align: center; /* Center the text horizontally */
-  margin-bottom: 20px; /* Optional: Adjust space between title and form */
-  font-size: 2.5rem; /* Make the text larger */
-  font-weight: 700; /* Make it bold */
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  font-weight: 700;
 }
 
+/* Input Fields */
 .input-group {
-  margin-bottom: 10px; /* Adds space between inputs */
+  margin-bottom: 10px;
 }
 
 .input-group input {
@@ -59,17 +60,17 @@
   border: none;
   outline: none;
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
+  background: rgba(255, 255, 255, 0.3); /* Transparent with blur */
+  color: black !important; /* Set text inside input fields to black */
   backdrop-filter: blur(5px);
-  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to input fields */
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to placeholders */
+  color: rgba(0, 0, 0, 0.7) !important; /* Darker placeholder color */
 }
 
+/* Button Styling */
 .login-btn {
   width: 100%;
   padding: 12px;
@@ -81,19 +82,19 @@
   color: white;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  font-family: 'Josefin Sans', sans-serif; /* Ensure buttons also use Josefin Sans */
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 .login-btn:hover {
-  background: #435e04; /* Darker green on hover */
-  transform: scale(1.05); /* Slight zoom effect */
+  background: #435e04;
+  transform: scale(1.05);
 }
 
 .login-box p {
-  text-align: center; /* Center the "Don't have an account?" text */
+  text-align: center;
   font-size: 1.1rem;
 }
 
 .login-box button {
-  font-family: 'Josefin Sans', sans-serif; /* Ensure buttons also use Josefin Sans */
+  font-family: 'Josefin Sans', sans-serif;
 }

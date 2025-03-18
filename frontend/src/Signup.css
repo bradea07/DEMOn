@@ -13,12 +13,7 @@
   transform: translate(-50%, -50%); /* Ensure the container is centered */
   width: 100vw;
   height: 100vh;
-
   background-image: url("../public/background.jpg");
-
-
-
-  
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -31,7 +26,7 @@
   font-size: 3rem;
   font-weight: 700;
   text-align: center;
-  color: #333;
+  color: hsl(0, 0%, 0%);
   margin-bottom: 30px;
   width: 450px;
 }
@@ -64,21 +59,20 @@
 }
 
 .input-group input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background: rgba(255, 255, 255, 0.3) !important; /* Aplică transparent, cu background blurat */
-    color: white !important;
-    backdrop-filter: blur(5px) !important; /* Apply blur */
-    font-family: 'Josefin Sans', sans-serif !important; /* Force the font */
-  }
-  
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.3); /* Transparent with blur effect */
+  color: black !important; /* Set text inside input fields to black */
+  backdrop-filter: blur(5px); /* Apply blur */
+  font-family: 'Josefin Sans', sans-serif;
+}
 
 .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.7); /* Lighter color for placeholders */
+  color: rgba(0, 0, 0, 0.7) !important; /* Make placeholder text darker */
 }
 
 /* Button Styling */

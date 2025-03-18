@@ -1,0 +1,200 @@
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+/* Full-page container */
+.add-product-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/searchpage.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+  padding-top: 60px; /* ✅ Prevents overlapping with navbar */
+}
+
+/* Title styling */
+.add-product-title {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 2.3rem; /* ✅ Slightly smaller title */
+  font-weight: 700;
+  text-align: center;
+  color: black;
+  margin-bottom: 15px;
+}
+
+/* ✅ Two-column form layout */
+.add-product-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 550px; /* ✅ Slightly smaller width */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+/* ✅ Columns container */
+.columns-container {
+  display: flex;
+  gap: 12px; /* ✅ Increased space */
+  justify-content: space-between;
+  margin-bottom: 10px; /* ✅ Reduced margin */
+}
+
+/* ✅ Left Column */
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* ✅ Reduced space between fields */
+}
+
+/* ✅ Right Column */
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* ✅ Reduced space between fields */
+}
+
+/* ✅ Smaller Input & Select fields */
+.add-product-input,
+.add-product-select {
+  width: 92%;
+  padding: 10px; /* ✅ Smaller padding */
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 0.85rem; /* ✅ Slightly smaller font */
+  background: rgba(255, 255, 255, 0.3);
+  color: black !important;
+  backdrop-filter: blur(5px);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+/* ✅ Dynamic Description Field */
+.add-product-textarea {
+  width: 100%;
+  min-height: 0px; /* ✅ Slightly smaller */
+  max-height: 180px;
+  resize: vertical;
+  padding: 7px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.3);
+  color: black !important;
+  backdrop-filter: blur(5px);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+/* ✅ Fix Choose File Button */
+.file-input-container {
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ✅ Hide Default File Input */
+.add-product-file-input {
+  display: none;
+}
+
+/* ✅ Custom File Button (Smaller) */
+.custom-file-label {
+  width: 80%; /* ✅ Smaller width */
+  padding: 9px; /* ✅ Smaller padding */
+  border-radius: 6px;
+  font-size: 0.85rem; /* ✅ Smaller font */
+  font-weight: bold;
+  background: #7bac08;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-file-label:hover {
+  background: #435e04;
+  transform: scale(1.05);
+}
+
+/* ✅ Match "Choose Files" Button to "Add Product" */
+.file-input-container label,
+.add-product-button {
+  width: 85%; /* ✅ Slightly smaller */
+  padding: 9px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  background: #7bac08;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+}
+
+.file-input-container label:hover,
+.add-product-button:hover {
+  background: #435e04;
+  transform: scale(1.05);
+}
+
+/* ✅ Image Preview */
+.image-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+/* ✅ Smaller Image Previews */
+.image-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50px; /* ✅ Smaller size */
+  height: 70px;
+  overflow: hidden;
+}
+
+.image-preview img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Black Delete Button */
+.image-preview button {
+  margin-top: 3px;
+  background: black;
+  color: white;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 8px; /* ✅ Smaller font */
+  font-weight: bold;
+}
+
+.image-preview button:hover {
+  background: #333;
+}

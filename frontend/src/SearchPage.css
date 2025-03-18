@@ -1,0 +1,84 @@
+/* Add the font to match Login.css */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+/* Full-page container */
+.search-page-container {
+  display: flex;
+  flex-direction: column; /* Ensure title appears above the search box */
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/searchpage.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* EcoSwap title at the top, moved 2cm lower */
+.ecoswap-title {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    color: black;
+    margin-bottom: 20px;
+    position: absolute;
+    top: calc(5% + 75px); /* Moves it 2 cm lower */
+  }
+  
+
+/* Search box container */
+.search-box {
+  background: rgba(255, 255, 255, 0.15); /* Transparent effect */
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 450px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+/* Search input styling */
+.search-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.3); /* Transparent input */
+  color: black !important;
+  backdrop-filter: blur(5px);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.search-input::placeholder {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Search button styling */
+.search-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #7bac08;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.search-button:hover {
+  background: #435e04;
+  transform: scale(1.05);
+}
