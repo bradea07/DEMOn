@@ -1,0 +1,111 @@
+/* Add this to ensure the font is loaded */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+/* The main container for the signup page */
+.signup-container {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center the elements horizontally */
+  justify-content: center;
+  position: fixed;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Ensure the container is centered */
+  width: 100vw;
+  height: 100vh;
+
+  background-image: url("../public/background.jpg");
+
+
+
+  
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* EcoSwap Title Styling */
+.ecoswap-title {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  width: 450px;
+}
+
+/* Styling for the signup box */
+.signup-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 3rem; /* Increased padding for more height */
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 450px; /* Ensuring the signup box has consistent width */
+  height: auto; /* Allowing the height to adjust based on content */
+  min-height: 500px; /* Minimum height to make the box taller */
+  text-align: left;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.signup-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+/* Input Fields */
+.input-group {
+  margin-bottom: 15px; /* Add some space between inputs */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.3) !important; /* Aplică transparent, cu background blurat */
+    color: white !important;
+    backdrop-filter: blur(5px) !important; /* Apply blur */
+    font-family: 'Josefin Sans', sans-serif !important; /* Force the font */
+  }
+  
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Lighter color for placeholders */
+}
+
+/* Button Styling */
+.signup-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #7bac08; /* Green button */
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.signup-btn:hover {
+  background: #435e04; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.signup-box p {
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.signup-box button {
+  font-family: 'Josefin Sans', sans-serif;
+}

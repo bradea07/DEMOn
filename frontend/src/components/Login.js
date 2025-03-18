@@ -21,21 +21,20 @@ const Login = ({ setIsLoggedIn }) => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {  // 🔥 Ensure correct URL
+      const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData),
       });
 
-      const data = await response.json(); // Parse JSON response
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
       }
 
-      // ✅ Store user and token properly
       localStorage.setItem("userToken", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user)); // 🔥 Store full user data
+      localStorage.setItem("user", JSON.stringify(data.user));
       
       setIsLoggedIn(true);
       setMessage("✅ Login successful! Redirecting...");
@@ -49,15 +48,36 @@ const Login = ({ setIsLoggedIn }) => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="usernameOrEmail" placeholder="Username or Email" value={formData.usernameOrEmail} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
-      <p>Don't have an account?</p>
-      <button onClick={() => navigate("/signup")}>Sign Up</button>
+      <div className="ecoswap-title">EcoSwap</div> {/* EcoSwap Title */}
+      <div className="login-box">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <input
+              type="text"
+              name="usernameOrEmail"
+              placeholder="Username or Email"
+              value={formData.usernameOrEmail}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit" className="login-btn">Login</button>
+        </form>
+        {message && <p>{message}</p>}
+        <p>Don't have an account?</p>
+        <button className="login-btn" onClick={() => navigate("/signup")}>Sign Up</button>
+      </div>
     </div>
   );
 };

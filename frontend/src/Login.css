@@ -1,0 +1,99 @@
+/* Add this to ensure the font is loaded */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+.login-container {
+  display: flex;
+  flex-direction: column; /* Ensure the title is above the login box */
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.ecoswap-title {
+  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to EcoSwap title */
+  font-size: 3rem; /* Make the text larger */
+  font-weight: 700;
+  text-align: center; /* Center the title */
+  color: #333; /* Choose an appropriate color */
+  margin-bottom: 30px; /* Add space between title and login box */
+  width: 450px; /* Ensure the title spans the width of the login box */
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.15); /* Transparent white */
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 450px; /* Ensure the login box is consistent with the EcoSwap title */
+  height: auto;
+  text-align: left;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to all text inside the login box */
+}
+
+.login-box h2 {
+  text-align: center; /* Center the text horizontally */
+  margin-bottom: 20px; /* Optional: Adjust space between title and form */
+  font-size: 2.5rem; /* Make the text larger */
+  font-weight: 700; /* Make it bold */
+}
+
+.input-group {
+  margin-bottom: 10px; /* Adds space between inputs */
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(5px);
+  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to input fields */
+}
+
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Josefin Sans', sans-serif; /* Apply Josefin Sans to placeholders */
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #7bac08; /* Green button */
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  font-family: 'Josefin Sans', sans-serif; /* Ensure buttons also use Josefin Sans */
+}
+
+.login-btn:hover {
+  background: #435e04; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.login-box p {
+  text-align: center; /* Center the "Don't have an account?" text */
+  font-size: 1.1rem;
+}
+
+.login-box button {
+  font-family: 'Josefin Sans', sans-serif; /* Ensure buttons also use Josefin Sans */
+}

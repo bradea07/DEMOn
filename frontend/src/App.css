@@ -1,38 +1,88 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-\\ labis
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.login-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  position: fixed; /* Prevents scrolling */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+
+
+
+
+
+
+/* Optional: Add an Overlay for Better Readability */
+.login-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2); /* Light overlay */
+}
+
+.login-box {
+  position: absolute;
+  top: 40px; /* Moves it down a little for spacing */
+  left: 40px; /* Moves it right for spacing */
+  background: rgba(255, 255, 255, 0.15); /* Transparent white */
+  padding: 2rem;
+  border-radius: 8px; /* Less rounded for a rectangular look */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 450px; /* Wider for a more rectangular look */
+  height: auto; /* Adjusts based on content */
+  text-align: left; /* Align text to the left */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.input-group input {
+  width: 90%;
+  margin: 5px auto; /* Adds spacing */
+}
+
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.3);
   color: white;
+  backdrop-filter: blur(5px);
 }
 
-.App-link {
-  color: #61dafb;
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #7bac08; /* Green button */
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
+
+.login-btn:hover {
+  background: #435e04; /* Darker green on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
