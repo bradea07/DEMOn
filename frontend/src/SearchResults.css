@@ -1,0 +1,149 @@
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+/* Full-page container */
+.search-results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("../public/searchpage.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+  padding-top: 50px;
+}
+
+/* Title styling */
+.search-results-title {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: black;
+  margin-bottom: 20px;
+}
+
+/* ✅ Full-Width Search Results Box */
+.search-results-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 95vw; /* ✅ Full width */
+  max-height: 80vh; /* ✅ Prevents overflow */
+  overflow-y: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ✅ Product Cards (Including First One) */
+.product-card {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  width: 80%;
+  max-width: 600px; /* ✅ Prevents them from stretching too much */
+  margin-bottom: 10px;
+}
+
+/* ✅ Ensure the First Product Has the Same Size */
+.featured-product {
+  width: 80%;
+  max-width: 600px;
+  margin-bottom: 15px;
+}
+
+/* ✅ Product Images (Fix First Product Image Display) */
+.product-image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto; /* ✅ Centering */
+}
+
+/* ✅ Scrollable List of Products */
+.products-list-container {
+  max-height: 400px; /* ✅ Adds vertical scrolling */
+  overflow-y: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ✅ Product Title & Price */
+.product-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.product-price {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+/* ✅ View Button */
+.view-product-btn {
+  display: inline-block;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: #7bac08;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.view-product-btn:hover {
+  background: #435e04;
+  transform: scale(1.05);
+}
+
+/* ✅ Pagination Controls */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.pagination button {
+  background: #7bac08;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination button:hover {
+  background: #435e04;
+}
+
+.pagination button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
