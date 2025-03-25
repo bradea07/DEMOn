@@ -1,0 +1,168 @@
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+ /* Navbar container */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    background: rgba(255, 255, 255, 0.2); /* ✅ Transparent effect */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 15px;
+    backdrop-filter: blur(10px); /* ✅ Blurred background effect */
+  }
+  
+  /* Navigation links */
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Individual nav items */
+  .nav-item {
+    text-decoration: none;
+    font-size: 1.3rem; /* Slightly larger for visibility */
+    font-weight: bold;
+    font-family: 'Josefin Sans', sans-serif; /* ✅ Match font */
+    color: black; /* ✅ Black for contrast */
+    transition: color 0.3s;
+  }
+  
+  .nav-item:hover {
+    color: #7bac08; /* ✅ Green hover effect */
+  }
+  
+  /* Remove the menu toggle (3 lines button) */
+  .menu-toggle {
+    display: none !important;
+  }
+  
+  /* Logout button */
+  .logout-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: #7bac08;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-left: 20px;
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  
+  .logout-btn:hover {
+    background: #435e04;
+    transform: scale(1.05);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .navbar {
+      width: 90%;
+    }
+  
+    .nav-links {
+      gap: 15px;
+    }
+  
+    .logout-btn {
+      min-width: auto;
+    }
+  }
+  
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: auto;
+  padding-top: 60px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.profile-box {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-box h2 {
+  text-align: center;
+  font-size: 2.3rem;
+  color: black;
+  margin-bottom: 1rem;
+}
+
+.profile-box label {
+  font-weight: bold;
+  color: black;
+}
+
+.profile-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  color: black;
+}
+
+.profile-box input[type="file"] {
+  padding: 0;
+}
+
+.profile-box img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 10px auto;
+  display: block;
+}
+
+.profile-box button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  background: #7bac08;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.profile-box button:hover {
+  background: #435e04;
+  transform: scale(1.05);
+}

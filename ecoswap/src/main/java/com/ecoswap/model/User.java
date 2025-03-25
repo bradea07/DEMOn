@@ -14,8 +14,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)  
-    private String username;  
+    @Column(unique = true, nullable = false)
+    private String username;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -25,4 +25,9 @@ public class User {
 
     @Column(nullable = false)
     private String name;
+
+    // ✅ NEW FIELDS
+    private String phone;
+    private String city;
+    private String profilePic;
 }

@@ -35,25 +35,29 @@ const ChatWindow = () => {
     
     
 
-    // ✅ Fetch messages in real-time
-    const fetchMessages = useCallback(async () => {
-        if (!selectedUser) return;
+    const fetchMessages = async () => {
+        if (!loggedInUser || !selectedUser || !selectedProductId) return;
         try {
-            const response = await fetch(`http://localhost:8080/messages/user/${loggedInUser.id}`);
-            const data = await response.json();
-            
-            // ✅ Filter messages properly to include both sent & received
-            const filteredMessages = data.filter(
-                (msg) =>
-                    (msg.sender.username === loggedInUser.username && msg.receiver.username === selectedUser.username) ||
-                    (msg.sender.username === selectedUser.username && msg.receiver.username === loggedInUser.username)
-            );
+            const response = await fetch(`http://localhost:8080/messages/conversation/${loggedInUser.id}/${selectedUser.id}/${selectedProductId}`);
     
-            setMessages(filteredMessages);
+            if (!response.ok) {
+                console.warn("❌ Failed to fetch messages!");
+                setMessages([]);
+                return;
+            }
+    
+            const data = await response.json();
+            setMessages(data);
         } catch (error) {
-            console.error("Error fetching messages:", error);
+            console.error("❌ Error fetching messages:", error);
         }
-    }, [loggedInUser, selectedUser]);
+    };
+    
+    
+    
+    
+    
+    
     
 
     // ✅ Fetch users once on mount
@@ -82,14 +86,14 @@ const ChatWindow = () => {
         }
     }, [messages]);
 
-    // ✅ Send a message
     const sendMessage = async () => {
         if (!newMessage.trim() || !selectedUser) return;
     
         const messageData = {
-            sender: { id: loggedInUser.id, username: loggedInUser.username },
-            receiver: { id: selectedUser.id, username: selectedUser.username }, 
+            sender: { id: loggedInUser.id },
+            receiver: { id: selectedUser.id },
             content: newMessage,
+            product: { id: selectedProductId }, // Ensure this is included
         };
     
         try {
@@ -103,12 +107,16 @@ const ChatWindow = () => {
                 setNewMessage("");
                 fetchMessages();
             } else {
-                console.error("❌ Failed to send message", response.status);
+                const errorText = await response.text();
+                console.error("❌ Failed to send message:", errorText);
             }
         } catch (error) {
             console.error("Error sending message:", error);
         }
     };
+    
+    
+    
     
 
     return (
