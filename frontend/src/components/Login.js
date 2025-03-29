@@ -4,15 +4,34 @@ import { useNavigate } from "react-router-dom";
 const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({ usernameOrEmail: "", password: "" });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); 
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.usernameOrEmail.trim()) {
+      newErrors.usernameOrEmail = "Username or Email is required";
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    }
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(""); 
+    setMessage("");
+
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     const requestData = {
       email: formData.usernameOrEmail.includes("@") ? formData.usernameOrEmail : null,
@@ -35,10 +54,9 @@ const Login = ({ setIsLoggedIn }) => {
 
       localStorage.setItem("userToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      
+
       setIsLoggedIn(true);
       setMessage("✅ Login successful! Redirecting...");
-
       setTimeout(() => navigate("/"), 1000);
     } catch (error) {
       console.error("❌ Login error:", error);
@@ -48,7 +66,7 @@ const Login = ({ setIsLoggedIn }) => {
 
   return (
     <div className="login-container">
-      <div className="ecoswap-title">EcoSwap</div> {/* EcoSwap Title */}
+      <div className="ecoswap-title">EcoSwap</div>
       <div className="login-box">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
@@ -59,8 +77,8 @@ const Login = ({ setIsLoggedIn }) => {
               placeholder="Username or Email"
               value={formData.usernameOrEmail}
               onChange={handleChange}
-              required
             />
+            {errors.usernameOrEmail && <span className="error-text">{errors.usernameOrEmail}</span>}
           </div>
           <div className="input-group">
             <input
@@ -69,9 +87,21 @@ const Login = ({ setIsLoggedIn }) => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              required
             />
+            {errors.password && <span className="error-text">{errors.password}</span>}
           </div>
+
+          {/* ✅ Forgot Password link */}
+          <div className="input-group">
+            <span
+              className="forgot-password-link"
+              onClick={() => navigate("/forgot-password")}
+              style={{ fontSize: "0.9rem", color: "#7bac08", cursor: "pointer", marginBottom: "10px", display: "inline-block" }}
+            >
+              Forgot password?
+            </span>
+          </div>
+
           <button type="submit" className="login-btn">Login</button>
         </form>
         {message && <p>{message}</p>}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";  // ✅ Import useState here
 
 const AccountInfo = () => {
   const [editing, setEditing] = useState(false);
@@ -18,14 +18,12 @@ const AccountInfo = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Optional: send to backend
       const imageUrl = URL.createObjectURL(file);
       setUser((prevUser) => ({ ...prevUser, profilePic: imageUrl }));
     }
   };
 
   const handleSave = () => {
-    // TODO: send user data to backend
     setEditing(false);
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../AddProduct.css"; // ✅ Import the CSS file
+import "../AddProduct.css";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -56,6 +56,12 @@ const AddProduct = () => {
       return;
     }
 
+    // ✅ Validare pentru preț
+    if (isNaN(formData.price) || Number(formData.price) <= 0) {
+      alert("Please enter a valid price greater than 0.");
+      return;
+    }
+
     const productData = new FormData();
     productData.append("title", formData.title.trim());
     productData.append("category", formData.category);
@@ -108,7 +114,18 @@ const AddProduct = () => {
             </div>
 
             <div className="right-column">
-              <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleChange} className="add-product-input" required />
+              {/* ✅ Preț validat și limitat din input */}
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleChange}
+                className="add-product-input"
+                min="1.00"
+                step="1.00"
+                required
+              />
               <input type="text" name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} className="add-product-input" required />
               <select name="product_condition" value={formData.product_condition} onChange={handleChange} className="add-product-select" required>
                 <option value="">Select Condition</option>
