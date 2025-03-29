@@ -6,6 +6,7 @@ public class SignupRequest {
     private String email;
     private String password;
     private String confirmPassword;
+    private String captcha; // ✅ Required for Google reCAPTCHA
 
     // Getters and Setters
     public String getName() { return name; }
@@ -22,4 +23,7 @@ public class SignupRequest {
 
     public String getConfirmPassword() { return confirmPassword; }
     public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+
+    public String getCaptcha() { return captcha; }
+    public void setCaptcha(String captcha) { this.captcha = captcha; }
 }
