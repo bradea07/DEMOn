@@ -9,6 +9,8 @@ import AddProduct from "./components/AddProduct";
 import MyProfile from "./components/MyProfile";
 import Settings from "./components/Settings";
 import Navbar from "./components/Navbar";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword"; // ✅ import nou
 
 // Function to check if user is authenticated
 const isAuthenticated = () => {
@@ -38,12 +40,14 @@ function App() {
       <Routes>
         <Route path="/login" element={!isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
         <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} /> {/* ✅ ruta adăugată */}
 
         {isLoggedIn ? (
           <>
-            <Route path="/" element={<SearchPage />} /> {/* ✅ Homepage is now SearchPage */}
-            <Route path="/search-results" element={<SearchResults />} /> {/* ✅ New search results page */}
-            <Route path="/product/:id" element={<ProductDetails />} /> {/* ✅ Product details page */}
+            <Route path="/" element={<SearchPage />} />
+            <Route path="/search-results" element={<SearchResults />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/settings" element={<Settings />} />

@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = ({ setIsLoggedIn }) => {
-  const [formData, setFormData] = useState({ usernameOrEmail: "", password: "" });
+  const [formData, setFormData] = useState({
+    usernameOrEmail: "",
+    password: "",
+  });
+
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -34,8 +38,12 @@ const Login = ({ setIsLoggedIn }) => {
     }
 
     const requestData = {
-      email: formData.usernameOrEmail.includes("@") ? formData.usernameOrEmail : null,
-      username: formData.usernameOrEmail.includes("@") ? null : formData.usernameOrEmail,
+      email: formData.usernameOrEmail.includes("@")
+        ? formData.usernameOrEmail
+        : null,
+      username: formData.usernameOrEmail.includes("@")
+        ? null
+        : formData.usernameOrEmail,
       password: formData.password,
     };
 
@@ -78,8 +86,11 @@ const Login = ({ setIsLoggedIn }) => {
               value={formData.usernameOrEmail}
               onChange={handleChange}
             />
-            {errors.usernameOrEmail && <span className="error-text">{errors.usernameOrEmail}</span>}
+            {errors.usernameOrEmail && (
+              <span className="error-text">{errors.usernameOrEmail}</span>
+            )}
           </div>
+
           <div className="input-group">
             <input
               type="password"
@@ -88,7 +99,9 @@ const Login = ({ setIsLoggedIn }) => {
               value={formData.password}
               onChange={handleChange}
             />
-            {errors.password && <span className="error-text">{errors.password}</span>}
+            {errors.password && (
+              <span className="error-text">{errors.password}</span>
+            )}
           </div>
 
           {/* ✅ Forgot Password link */}
@@ -96,17 +109,30 @@ const Login = ({ setIsLoggedIn }) => {
             <span
               className="forgot-password-link"
               onClick={() => navigate("/forgot-password")}
-              style={{ fontSize: "0.9rem", color: "#7bac08", cursor: "pointer", marginBottom: "10px", display: "inline-block" }}
+              style={{
+                fontSize: "0.9rem",
+                color: "#7bac08",
+                cursor: "pointer",
+                marginBottom: "10px",
+                display: "inline-block",
+                fontWeight: "bold",
+              }}
             >
               Forgot password?
             </span>
           </div>
 
-          <button type="submit" className="login-btn">Login</button>
+          <button type="submit" className="login-btn">
+            Login
+          </button>
         </form>
+
         {message && <p>{message}</p>}
+
         <p>Don't have an account?</p>
-        <button className="login-btn" onClick={() => navigate("/signup")}>Sign Up</button>
+        <button className="login-btn" onClick={() => navigate("/signup")}>
+          Sign Up
+        </button>
       </div>
     </div>
   );

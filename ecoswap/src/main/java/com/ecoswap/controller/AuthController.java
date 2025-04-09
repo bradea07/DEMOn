@@ -1,20 +1,22 @@
 package com.ecoswap.controller;
 
 import com.ecoswap.model.User;
-import com.ecoswap.service.AuthenticationService;
 import com.ecoswap.repository.UserRepository;
+import com.ecoswap.service.AuthenticationService;
+import com.ecoswap.service.MailService;
 import com.ecoswap.dto.SignupRequest;
-import com.ecoswap.utils.CaptchaValidator; // ✅ Import
+import com.ecoswap.dto.ForgotPasswordRequest;
+import com.ecoswap.dto.ResetPasswordRequest;
+import com.ecoswap.utils.CaptchaValidator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.HttpStatus;
 
-import java.util.Optional;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -23,19 +25,24 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final AuthenticationService authenticationService;
+    private final CaptchaValidator captchaValidator;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final CaptchaValidator captchaValidator; // ✅ Inject validator
 
-    public AuthController(UserRepository userRepository, AuthenticationService authenticationService, CaptchaValidator captchaValidator) {
+    @Autowired
+    private MailService mailService;
+
+    public AuthController(UserRepository userRepository,
+                          AuthenticationService authenticationService,
+                          CaptchaValidator captchaValidator) {
         this.userRepository = userRepository;
         this.authenticationService = authenticationService;
         this.captchaValidator = captchaValidator;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    // ✅ SIGNUP
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody SignupRequest signupRequest) {
-
         if (!captchaValidator.isCaptchaValid(signupRequest.getCaptcha())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Invalid CAPTCHA. Please try again."));
@@ -68,12 +75,10 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
         userRepository.save(user);
-
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
-
-    // ✅ LOGIN (unchanged)
+    // ✅ LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User loginRequest) {
         System.out.println("Received login request for: " + loginRequest.getEmail());
@@ -113,5 +118,55 @@ public class AuthController {
         ));
 
         return ResponseEntity.ok(response);
+    }
+
+    // ✅ FORGOT PASSWORD (email link)
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.ok(Map.of("message", "If an account with that email exists, you will receive reset instructions."));
+        }
+
+        User user = userOpt.get();
+        String resetToken = "reset-token-" + user.getId(); // simplu, fără DB (pentru test/demo)
+
+        String resetLink = "http://localhost:3000/reset-password?token=" + resetToken;
+        String subject = "EcoSwap - Reset Your Password";
+        String body = "Hello " + user.getName() + ",\n\nTo reset your password, click the link below:\n"
+                + resetLink + "\n\nIf you did not request this, just ignore this email.";
+
+        mailService.sendEmail(user.getEmail(), subject, body);
+        System.out.println("✅ Email sent to: " + user.getEmail());
+
+        return ResponseEntity.ok(Map.of("message", "If an account with that email exists, you will receive reset instructions."));
+    }
+
+    // ✅ RESET PASSWORD
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest request) {
+        String token = request.getToken();
+
+        if (token == null || !token.startsWith("reset-token-")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid reset token"));
+        }
+
+        try {
+            Long userId = Long.parseLong(token.replace("reset-token-", ""));
+            Optional<User> userOpt = userRepository.findById(userId);
+
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+            }
+
+            User user = userOpt.get();
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+
+            return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
+        }
     }
 }
