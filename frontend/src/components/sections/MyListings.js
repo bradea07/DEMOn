@@ -2,17 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const MyListings = () => {
-  const userId = 1; // TODO: replace with actual logged-in user ID
+const MyListings = ({ userId }) => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!userId) return;
+
     axios
       .get(`http://localhost:8080/api/products/user/${userId}`)
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Failed to fetch products", err));
-  }, []);
+  }, [userId]);
 
   const handleDelete = (id) => {
     axios

@@ -134,8 +134,8 @@ const MyProfile = () => {
             )}
           </div>
         );
-      case "MyListings":
-        return <MyListings />;
+        case "MyListings":
+          return <MyListings userId={userId} />;        
       case "Notifications":
         return <Notifications />;
       case "Favorites":
