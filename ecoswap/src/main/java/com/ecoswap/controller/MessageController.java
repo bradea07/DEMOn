@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,5 +57,30 @@ public ResponseEntity<List<Message>> getMessagesByProduct(@PathVariable Long pro
     }
     return ResponseEntity.ok(messages);
 }
+
+@GetMapping("/conversations/{userId}")
+public ResponseEntity<?> getConversationsForUser(@PathVariable Long userId) {
+    List<Message> messages = messageRepository.findBySender_IdOrReceiver_Id(userId, userId);
+
+    Map<String, Message> latestMessages = new HashMap<>();
+    for (Message msg : messages) {
+        if (msg.getSender() == null || msg.getReceiver() == null || msg.getProduct() == null) {
+            continue; // ignorăm mesajele incomplete
+        }
+
+        Long otherUserId = msg.getSender().getId().equals(userId)
+                ? msg.getReceiver().getId()
+                : msg.getSender().getId();
+        String key = otherUserId + "-" + msg.getProduct().getId();
+
+        if (!latestMessages.containsKey(key) || msg.getTimestamp().isAfter(latestMessages.get(key).getTimestamp())) {
+            latestMessages.put(key, msg);
+        }
+    }
+
+    return ResponseEntity.ok(latestMessages.values());
+}
+
+
 
 }

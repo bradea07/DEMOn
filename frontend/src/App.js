@@ -7,7 +7,8 @@ import SearchResults from "./components/SearchResults";
 import ProductDetails from "./components/ProductDetails";
 import AddProduct from "./components/AddProduct";
 import MyProfile from "./components/MyProfile";
-import Settings from "./components/Settings";
+import Chats from "./components/Chats";
+
 import Navbar from "./components/Navbar";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
@@ -51,7 +52,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/chats" element={<Chats />} />
+
             <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
           </>
         ) : (

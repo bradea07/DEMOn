@@ -14,7 +14,7 @@ const Navbar = ({ onLogout }) => {
         <li><Link to="/" className="nav-item">Home</Link></li>
         <li><Link to="/add-product" className="nav-item">Add Product</Link></li>
         <li><Link to="/my-profile" className="nav-item">My Profile</Link></li>
-        <li><Link to="/settings" className="nav-item">Settings</Link></li>
+        <li><Link to="/chats" className="nav-item">Chats</Link></li> {/* ✅ ruta corectă */}
       </ul>
       <button className="logout-btn" onClick={onLogout}>Logout</button>
     </nav>
