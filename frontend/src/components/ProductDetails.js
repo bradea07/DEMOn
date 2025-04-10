@@ -9,58 +9,75 @@ const ProductDetails = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  const currentUser = loggedInUser ? loggedInUser.id : null;
-  const loggedInUsername = loggedInUser ? loggedInUser.username : "Unknown";
+  const currentUser = loggedInUser?.id;
+  const username = loggedInUser?.username;
 
-  // ✅ Verifici dacă utilizatorul logat e și ownerul produsului
   const isOwner = product?.user?.id === currentUser;
+
+  const userFavoritesKey = `favorites_${currentUser}`;
 
   useEffect(() => {
     const fetchProduct = async () => {
+      const userFavoritesKey = `favorites_${currentUser}`;
       try {
         const response = await fetch(`http://localhost:8080/api/products/${id}`);
-        if (!response.ok) {
-          throw new Error("Product not found");
-        }
+        if (!response.ok) throw new Error("Product not found");
         const data = await response.json();
         setProduct(data);
+  
+        const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+        setIsFavorited(storedFavorites.some((fav) => fav.id === data.id));
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProduct();
-  }, [id]);
+  }, [id, currentUser]); // ✅ fără warning
+  
+
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+
+    if (isFavorited) {
+      const updated = favorites.filter((item) => item.id !== product.id);
+      localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
+      setIsFavorited(false);
+    } else {
+      const updated = [...favorites, product];
+      localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
+      setIsFavorited(true);
+    }
+  };
 
   const fetchMessages = async () => {
-    if (!product || !product.id || !currentUser) return;
+    if (!product || !currentUser) return;
     try {
       const response = await fetch(`http://localhost:8080/messages/product/${product.id}`);
       if (!response.ok) return;
 
       const data = await response.json();
-
-      const filteredMessages = data.filter(
+      const filtered = data.filter(
         msg =>
           (msg.sender.id === currentUser || msg.receiver.id === currentUser) &&
           (msg.sender.id === product.user.id || msg.receiver.id === product.user.id)
       );
-
-      setMessages(filteredMessages);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
+      setMessages(filtered);
+    } catch (err) {
+      console.error("Error fetching messages:", err);
     }
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !product?.user?.id) return;
+    if (!newMessage.trim()) return;
 
     const messageData = {
-      sender: { id: currentUser, username: loggedInUsername },
+      sender: { id: currentUser, username },
       receiver: { id: product.user.id, username: product.user.username },
       product: { id: product.id },
       content: newMessage,
@@ -87,29 +104,33 @@ const ProductDetails = () => {
 
   return (
     <div>
-      <h2>{product?.title}</h2>
-      <p><strong>Category:</strong> {product?.category}</p>
-      <p><strong>Description:</strong> {product?.description}</p>
-      <p><strong>Price:</strong> {product?.price} USD</p>
-      <p><strong>Brand:</strong> {product?.brand}</p>
-      <p><strong>Condition:</strong> {product?.condition || "Not Available"}</p>
+      <h2>{product.title}</h2>
+      <p><strong>Category:</strong> {product.category}</p>
+      <p><strong>Description:</strong> {product.description}</p>
+      <p><strong>Price:</strong> {product.price} USD</p>
+      <p><strong>Brand:</strong> {product.brand}</p>
+      <p><strong>Condition:</strong> {product.condition || "Not Available"}</p>
 
-      {product?.imageUrls?.length > 0 ? (
-        product.imageUrls.map((img, index) => (
-          <img key={index} src={`http://localhost:8080${img}`} alt="Product" width="200" />
+      {product.imageUrls?.length > 0 ? (
+        product.imageUrls.map((img, i) => (
+          <img key={i} src={`http://localhost:8080${img}`} alt="Product" width="200" />
         ))
       ) : (
         <p style={{ color: "red" }}>No image available</p>
       )}
 
-      {/* ✅ Afișează doar dacă NU e produsul tău */}
+      {!isOwner && (
+        <button onClick={toggleFavorite} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>
+          {isFavorited ? "❤️" : "🤍"}
+        </button>
+      )}
+
       {!isOwner && (
         <button onClick={() => { setChatOpen(!chatOpen); fetchMessages(); }}>
           {chatOpen ? "Close Chat" : "Send Message"}
         </button>
       )}
 
-      {/* ✅ Mesaj informativ dacă e produsul tău */}
       {isOwner && <p style={{ color: "gray" }}>🛠️ This is your product.</p>}
 
       {chatOpen && (
@@ -124,33 +145,25 @@ const ProductDetails = () => {
           borderRadius: "10px"
         }}>
           <h4>Chat with Seller</h4>
-          {product?.user ? (
-            <div style={{ maxHeight: "200px", overflowY: "auto", padding: "10px" }}>
-              {messages.length > 0 ? (
-                messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      textAlign: msg.sender.id === currentUser ? "left" : "right",
-                      backgroundColor: msg.sender.id === currentUser ? "#DCF8C6" : "#FFFFFF",
-                      color: "black",
-                      padding: "8px",
-                      borderRadius: "10px",
-                      margin: "5px",
-                      maxWidth: "75%",
-                      alignSelf: msg.sender.id === currentUser ? "flex-start" : "flex-end",
-                    }}
-                  >
-                    <strong>{msg.sender.username}:</strong> {msg.content}
-                  </div>
-                ))
-              ) : (
-                <p>No messages yet.</p>
-              )}
-            </div>
-          ) : (
-            <p style={{ color: "red" }}>⚠️ Seller information unavailable</p>
-          )}
+          <div style={{ maxHeight: "200px", overflowY: "auto", padding: "10px" }}>
+            {messages.length > 0 ? (
+              messages.map((msg, i) => (
+                <div key={i} style={{
+                  textAlign: msg.sender.id === currentUser ? "left" : "right",
+                  backgroundColor: msg.sender.id === currentUser ? "#DCF8C6" : "#FFFFFF",
+                  color: "black",
+                  padding: "8px",
+                  borderRadius: "10px",
+                  margin: "5px",
+                  maxWidth: "75%"
+                }}>
+                  <strong>{msg.sender.username}:</strong> {msg.content}
+                </div>
+              ))
+            ) : (
+              <p>No messages yet.</p>
+            )}
+          </div>
           <input
             type="text"
             value={newMessage}
