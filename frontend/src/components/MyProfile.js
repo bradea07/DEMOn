@@ -13,7 +13,9 @@ import Settings from "./sections/Settings";
 import SecurityPrivacy from "./sections/SecurityPrivacy";
 
 const MyProfile = () => {
-  const userId = 1;
+  const loggedInUser = JSON.parse(localStorage.getItem("user"));
+  const userId = loggedInUser?.id;
+
 
   const [user, setUser] = useState({
     username: "",
