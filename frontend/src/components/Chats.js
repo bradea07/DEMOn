@@ -26,11 +26,10 @@ const Chats = () => {
         })
         .catch((err) => {
           console.error("Error loading conversations:", err);
-          setConversations([]); // fallback
+          setConversations([]);
         });
     }
   }, [userId]);
-  
 
   const loadMessages = (chat) => {
     setSelectedChat(chat);
@@ -79,9 +78,24 @@ const Chats = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const getProfilePic = (user) => {
+    if (!user || !user.profilePic || user.profilePic.trim() === "") {
+      return "/default-avatar.jpg"; // ✅ fallback absolut
+    }
+    return user.profilePic;
+  };
+  
+
   return (
     <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
-      {/* Sidebar with conversation previews */}
+      {/* Sidebar */}
       <div style={{ width: "30%", borderRight: "1px solid #ccc" }}>
         <h3>Your Conversations</h3>
         {conversations.map((conv, idx) => {
@@ -102,71 +116,127 @@ const Chats = () => {
                     conv.receiver.id === selectedChat.receiver.id)
                     ? "#f0f0f0"
                     : "transparent",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              <strong>@{otherUser.username}</strong> about{" "}
-              <em>{conv.product.title}</em>
-              <br />
-              <small>{conv.content.slice(0, 30)}...</small>
+              <img
+                src={getProfilePic(otherUser)}
+                alt="avatar"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                  objectFit: "cover",
+                }}
+              />
+              <div style={{ lineHeight: "1.3" }}>
+                <strong>@{otherUser.username}</strong> <br />
+                <strong>{conv.product.title}</strong>
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Chat panel */}
+      {/* Chat Panel */}
       <div style={{ width: "70%" }}>
         {selectedChat ? (
           <>
-            <h4>
-              Chat with{" "}
-              {
-                (selectedChat.sender.id === userId
-                  ? selectedChat.receiver.username
-                  : selectedChat.sender.username)
-              }{" "}
-              about <em>{selectedChat.product.title}</em>
-            </h4>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h4>
+                Chat with{" "}
+                {
+                  selectedChat.sender.id === userId
+                    ? selectedChat.receiver.username
+                    : selectedChat.sender.username
+                }{" "}
+                about <strong>{selectedChat.product.title}</strong>
+              </h4>
+              <button
+                onClick={() => setSelectedChat(null)}
+                style={{
+                  backgroundColor: "#f44336",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  padding: "5px 10px",
+                  cursor: "pointer",
+                }}
+              >
+                Close Chat
+              </button>
+            </div>
+
             <div
               style={{
-                height: "300px",
+                height: "400px",
                 overflowY: "auto",
                 border: "1px solid #ccc",
                 padding: "10px",
                 marginBottom: "10px",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               {chatMessages.map((msg, idx) => {
-  const isSentByMe = msg.sender?.id === userId;
-  return (
-    <div
-      key={idx}
-      style={{
-        display: "flex",
-        justifyContent: isSentByMe ? "flex-end" : "flex-start",
-        marginBottom: "8px",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: isSentByMe ? "#DCF8C6" : "#f1f0f0",
-          padding: "10px",
-          borderRadius: "10px",
-          maxWidth: "60%",
-        }}
-      >
-        <strong>{msg.sender?.username || "?"}</strong>: {msg.content}
-      </div>
-    </div>
-  );
-})}
-
+                const isOwn = msg.sender.id === userId;
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      display: "flex",
+                      flexDirection: isOwn ? "row-reverse" : "row",
+                      alignItems: "flex-end",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <img
+                      src={getProfilePic(msg.sender)}
+                      alt="avatar"
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        margin: isOwn ? "0 0 0 10px" : "0 10px 0 0",
+                      }}
+                    />
+                    <div
+                      style={{
+                        backgroundColor: isOwn ? "#DCF8C6" : "#ffffff",
+                        padding: "10px",
+                        borderRadius: "15px",
+                        maxWidth: "60%",
+                        textAlign: "left",
+                      }}
+                    >
+                      {msg.sender.id === userId ? (
+                        <span>{msg.content}</span>
+                      ) : (
+                        <span>
+                          <strong>{msg.sender.username}:</strong> {msg.content}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <input
-              type="text"
+
+            <textarea
               placeholder="Type a message"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              style={{ width: "100%", padding: "8px", marginBottom: "5px" }}
+              onKeyDown={handleKeyDown}
+              rows={2}
+              style={{
+                width: "100%",
+                padding: "8px",
+                marginBottom: "5px",
+                resize: "none",
+              }}
             />
             <button
               onClick={sendMessage}

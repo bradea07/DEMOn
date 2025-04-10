@@ -1,14 +1,29 @@
-import React, { useState } from "react";  // ✅ Import useState here
+import React, { useState, useEffect } from "react";
 
 const AccountInfo = () => {
   const [editing, setEditing] = useState(false);
   const [user, setUser] = useState({
-    username: 'EcoUser123',
-    email: 'eco123@example.com',
-    phone: '0751234567',
-    city: 'Timișoara',
-    profilePic: 'https://i.pravatar.cc/100?img=13',
+    username: "",
+    email: "",
+    phone: "",
+    city: "",
+    profilePic: "",
   });
+
+  // Acest useEffect se va executa de fiecare dată când user-ul se schimbă
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser((prevUser) => ({
+        ...prevUser,
+        username: storedUser.username || "",
+        email: storedUser.email || "",
+        phone: storedUser.phone || "",
+        city: storedUser.city || "",
+        profilePic: storedUser.profilePic || "",
+      }));
+    }
+  }, [localStorage.getItem("user")]); // <- Problema ta era că [] rulează doar o dată
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +39,7 @@ const AccountInfo = () => {
   };
 
   const handleSave = () => {
+    localStorage.setItem("user", JSON.stringify(user));
     setEditing(false);
   };
 
@@ -31,11 +47,12 @@ const AccountInfo = () => {
     <div className="account-info">
       <h3>Account Information</h3>
       <img
-        src={user.profilePic}
+        src={user.profilePic || "/default-avatar.png"}
         alt="Profile"
         className="profile-pic"
-        style={{ borderRadius: '50%', width: 100, height: 100 }}
+        style={{ borderRadius: "50%", width: 100, height: 100 }}
       />
+
       {editing ? (
         <div>
           <input type="file" onChange={handleImageChange} />
