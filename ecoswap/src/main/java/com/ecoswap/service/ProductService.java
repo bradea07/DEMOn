@@ -32,4 +32,20 @@ public class ProductService {
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
+
+    // ✅ Get all products for a specific user
+public List<Product> getProductsByUserId(Long userId) {
+    return productRepository.findByUserId(userId);
+}
+
+public void deleteProductById(Long id) {
+    Optional<Product> product = productRepository.findById(id);
+    if (product.isPresent()) {
+        productRepository.delete(product.get());
+    } else {
+        throw new RuntimeException("Product with ID " + id + " does not exist.");
+    }
+}
+
+
 }

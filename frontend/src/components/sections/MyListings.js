@@ -1,25 +1,64 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyListings = () => {
-  const [products, setProducts] = useState([
-    { id: 1, title: "Old Chair", status: "Available" },
-    { id: 2, title: "Lamp", status: "Donated" },
-  ]);
+  const userId = 1; // TODO: replace with actual logged-in user ID
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/products/user/${userId}`)
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Failed to fetch products", err));
+  }, []);
 
   const handleDelete = (id) => {
-    setProducts(products.filter(product => product.id !== id));
+    axios
+      .delete(`http://localhost:8080/api/products/${id}`)
+      .then(() => {
+        setProducts(products.filter((product) => product.id !== id));
+      })
+      .catch((err) => console.error("Failed to delete product", err));
   };
 
   return (
     <div>
-      <h3>My Listings</h3>
-      <button>Add New Product</button>
+      <h3>{products.length > 0 ? "Your Listings" : "No listings yet."}</h3>
       <ul>
-        {products.map(product => (
-          <li key={product.id}>
-            {product.title} - {product.status}
-            <button>Edit</button>
-            <button onClick={() => handleDelete(product.id)}>Delete</button>
+        {products.map((product) => (
+          <li key={product.id} style={{ marginBottom: "10px" }}>
+            <strong>{product.title}</strong>
+            <div style={{ marginTop: "5px" }}>
+              <button
+                onClick={() => navigate(`/edit-product/${product.id}`)}
+                style={{
+                  marginRight: "8px",
+                  backgroundColor: "#7bac08",
+                  color: "white",
+                  padding: "5px 10px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                ✏️ Edit
+              </button>
+              <button
+                onClick={() => handleDelete(product.id)}
+                style={{
+                  backgroundColor: "#d9534f",
+                  color: "white",
+                  padding: "5px 10px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                🗑️ Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>

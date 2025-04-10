@@ -102,7 +102,7 @@ const ProductDetails = () => {
             <p><strong>Price:</strong> {product?.price} USD</p>
             <p><strong>Brand:</strong> {product?.brand}</p>
             <p><strong>Condition:</strong> {product?.condition || "Not Available"}</p>
-
+        
             {product?.imageUrls?.length > 0 ? (
                 product.imageUrls.map((img, index) => (
                     <img key={index} src={`http://localhost:8080${img}`} alt="Product" width="200" />

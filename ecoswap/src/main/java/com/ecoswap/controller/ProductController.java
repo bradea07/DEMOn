@@ -146,4 +146,86 @@ public ResponseEntity<?> addProduct(
                     .body(Map.of("error", "An error occurred: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getProductsByUser(@PathVariable Long userId) {
+        try {
+            List<Product> userProducts = productService.getProductsByUserId(userId);
+            return ResponseEntity.ok(userProducts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to get products for user: " + e.getMessage()));
+        }
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProductById(id);
+            return ResponseEntity.ok(Map.of("message", "Product deleted successfully."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to delete product: " + e.getMessage()));
+        }
+    }
+    
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+public ResponseEntity<?> updateProduct(
+        @PathVariable Long id,
+        @RequestParam("title") String title,
+        @RequestParam("category") String category,
+        @RequestParam("description") String description,
+        @RequestParam("location") String location,
+        @RequestParam("price") Double price,
+        @RequestParam("brand") String brand,
+        @RequestParam("product_condition") String productCondition,
+        @RequestParam(value = "images", required = false) List<MultipartFile> images
+) {
+    Optional<Product> optionalProduct = productService.getProductById(id);
+    if (optionalProduct.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Product not found"));
+    }
+
+    Product product = optionalProduct.get();
+
+    // actualizează câmpurile
+    product.setTitle(title);
+    product.setCategory(category);
+    product.setDescription(description);
+    product.setLocation(location);
+    product.setPrice(price);
+    product.setBrand(brand);
+    product.setProductCondition(productCondition);
+
+    // dacă trimiți noi imagini, le înlocuim
+    if (images != null && !images.isEmpty()) {
+        String uploadDirPath = System.getProperty("user.dir") + "/uploads/";
+        File uploadDir = new File(uploadDirPath);
+        if (!uploadDir.exists()) uploadDir.mkdirs();
+
+        List<String> imagePaths = new ArrayList<>();
+        for (MultipartFile image : images) {
+            try {
+                String fileName = UUID.randomUUID() + "-" + image.getOriginalFilename();
+                File file = new File(uploadDirPath + fileName);
+                image.transferTo(file);
+                imagePaths.add("/uploads/" + fileName);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Failed to save image: " + e.getMessage()));
+            }
+        }
+        product.setImageUrls(imagePaths);
+    }
+
+    Product updated = productService.addProduct(product);
+    return ResponseEntity.ok(Map.of("message", "Product updated", "product", updated));
+}
+
+    
+
 }

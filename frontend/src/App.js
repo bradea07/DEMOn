@@ -10,7 +10,8 @@ import MyProfile from "./components/MyProfile";
 import Settings from "./components/Settings";
 import Navbar from "./components/Navbar";
 import ForgotPassword from "./components/ForgotPassword";
-import ResetPassword from "./components/ResetPassword"; // ✅ import nou
+import ResetPassword from "./components/ResetPassword";
+import EditProduct from "./components/EditProduct"; // ✅ importat
 
 // Function to check if user is authenticated
 const isAuthenticated = () => {
@@ -41,7 +42,7 @@ function App() {
         <Route path="/login" element={!isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
         <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} /> {/* ✅ ruta adăugată */}
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {isLoggedIn ? (
           <>
@@ -51,6 +52,7 @@ function App() {
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
           </>
         ) : (
           <Route path="*" element={<Navigate to="/login" />} />
