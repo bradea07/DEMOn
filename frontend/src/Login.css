@@ -1,100 +1,186 @@
-/* Add this to ensure the font is loaded */
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
 
 .login-container {
+  position: relative; /* ✅ foarte important pentru poziționare absolută */
   display: flex;
-  flex-direction: column; /* Ensure the title is above the login box */
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("../public/background.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
+  background-image: url("../public/background3.png");
   background-size: cover;
-  overflow: hidden;
+  background-position: center;
+  font-family: 'Josefin Sans', sans-serif;
 }
 
-.ecoswap-title {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 3rem;
-  font-weight: 700;
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  width: 450px;
-}
+
 
 .login-box {
-  background: rgba(255, 255, 255, 0.15);
+  width: 350px !important;
+  height: 474px;
+  background: white; /* 🔁 înlocuiește transparența cu alb complet */
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 450px;
-  height: auto;
-  text-align: left;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  font-family: 'Josefin Sans', sans-serif;
+  margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+
 }
+
+
+.illustration-side {
+  width: 350px !important;
+  height: 500px;
+  background-color: #5e5bfc;
+  background-image: url("../public/ilustration.jpg");/* Replace with your custom vector */
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .login-box h2 {
+  font-size: 2.5rem;
   text-align: center;
   margin-bottom: 20px;
-  font-size: 2.5rem;
-  font-weight: 700;
+  color: #000;
 }
 
-/* Input Fields */
 .input-group {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .input-group input {
   width: 100%;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   outline: none;
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.3); /* Transparent with blur */
-  color: black !important; /* Set text inside input fields to black */
+  background: rgba(255, 255, 255, 0.3);
+  color: #000;
   backdrop-filter: blur(5px);
-  font-family: 'Josefin Sans', sans-serif;
 }
 
 .input-group input::placeholder {
-  color: rgba(0, 0, 0, 0.7) !important; /* Darker placeholder color */
+  color: rgba(0, 0, 0, 0.7);
 }
 
-/* Button Styling */
 .login-btn {
   width: 100%;
   padding: 12px;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  background: #7bac08; /* Green button */
+  border-radius: 10px;
+  background: #040e29;
   color: white;
+  font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  font-family: 'Josefin Sans', sans-serif;
+  transition: all 0.3s ease;
 }
 
 .login-btn:hover {
-  background: #435e04;
+  background: #010320;
   transform: scale(1.05);
 }
 
-.login-box p {
+/* Extra: Side Illustration */
+.illustration-side {
+  width: 400px;
+  height: 500px;
+  background-color: #5e5bfc;
+  border-radius: 20px;
+  background-image: url("../public/background.jpg"); /* Add your custom vector here */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 20px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  font-size: 1.1rem;
 }
 
-.login-box button {
-  font-family: 'Josefin Sans', sans-serif;
+.illustration-side h3 {
+  font-size: 1.5rem;
+  margin-top: 20px;
 }
+
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #040e29;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #1b113f;
+  text-decoration: underline;
+}
+
+.forgot-password-link:active {
+  color: #0b0325;
+}
+
+.ecoswap-title {
+  font-family: 'Josefin Sans', sans-serif !important;
+  font-size: 3rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  position: absolute !important;
+  top: 40px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 2 !important;
+  margin: 0 !important;
+
+
+
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .login-box,
+  .illustration-side {
+    width: 100%;
+    margin: 0 0 20px 0;
+  }
+
+  .illustration-side {
+    height: 250px;
+  }
+
+  
+  
+  
+}
+

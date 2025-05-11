@@ -82,3 +82,14 @@
   background: #435e04;
   transform: scale(1.05);
 }
+/* 🛠️ Disable text selection & text cursor for non-editable elements */
+h1, h2, h3, p, button, .ecoswap-title {
+  user-select: none;
+  cursor: default;
+}
+
+/* ✅ Allow text selection and caret only for input fields */
+input, textarea {
+  user-select: text;
+  cursor: text;
+}

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -73,9 +72,12 @@ const Login = ({ setIsLoggedIn }) => {
   };
 
   return (
+    
     <div className="login-container">
-      <div className="ecoswap-title">EcoSwap</div>
+    <h1 className="ecoswap-title">EcoSwap</h1>
+
       <div className="login-box">
+
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
@@ -104,22 +106,15 @@ const Login = ({ setIsLoggedIn }) => {
             )}
           </div>
 
-          {/* ✅ Forgot Password link */}
           <div className="input-group">
-            <span
-              className="forgot-password-link"
-              onClick={() => navigate("/forgot-password")}
-              style={{
-                fontSize: "0.9rem",
-                color: "#7bac08",
-                cursor: "pointer",
-                marginBottom: "10px",
-                display: "inline-block",
-                fontWeight: "bold",
-              }}
-            >
-              Forgot password?
-            </span>
+          <span
+  className="forgot-password-link"
+  onClick={() => navigate("/forgot-password")}
+>
+  Forgot password?
+</span>
+
+
           </div>
 
           <button type="submit" className="login-btn">
@@ -133,6 +128,26 @@ const Login = ({ setIsLoggedIn }) => {
         <button className="login-btn" onClick={() => navigate("/signup")}>
           Sign Up
         </button>
+      </div>
+
+      {/* ✅ Right-side illustration with inline background style */}
+      <div
+        className="illustration-side"
+        style={{
+          backgroundImage: `url(${process.env.PUBLIC_URL + '/ilustration.jpg'})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          borderRadius: '20px',
+          width: '400px',
+          height: '500px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          textAlign: 'center',
+        }}
+      >
+        
       </div>
     </div>
   );
