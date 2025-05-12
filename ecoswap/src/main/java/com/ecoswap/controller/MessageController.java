@@ -83,8 +83,13 @@ public ResponseEntity<?> getConversationsForUser(@PathVariable Long userId) {
             latestMessages.put(key, msg);
         }
     }
+    
+    // Sortează conversațiile după timestamp, cele mai recente primele
+    List<Message> sortedConversations = latestMessages.values().stream()
+        .sorted((m1, m2) -> m2.getTimestamp().compareTo(m1.getTimestamp()))
+        .toList();
 
-    return ResponseEntity.ok(latestMessages.values());
+    return ResponseEntity.ok(sortedConversations);
 }
 
 // Get count of all unread messages for a user
@@ -145,15 +150,9 @@ public ResponseEntity<?> markMessagesAsRead(
             return ResponseEntity.badRequest().body("Invalid users or product");
         }
         
-        List<Message> messages = messageRepository.findByProductId(productId);
-        for (Message msg : messages) {
-            if (msg.getReceiver().getId().equals(userId) && 
-                msg.getSender().getId().equals(otherUserId) && 
-                !msg.isRead()) {
-                msg.setRead(true);
-                messageRepository.save(msg);
-            }
-        }
+        // Folosim direct metoda din repository pentru a marca mesajele ca citite
+        messageRepository.markMessagesAsRead(userId, otherUserId, productId);
+        
         return ResponseEntity.ok("Messages marked as read");
     } catch (Exception e) {
         e.printStackTrace();

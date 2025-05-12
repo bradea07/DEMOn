@@ -1,0 +1,39 @@
+/* Reguli globale pentru a preveni selectarea textului și apariția cursorului text */
+
+/* Regula generală - previne selectarea textului pe majoritatea elementelor */
+body, div, h1, h2, h3, h4, h5, h6, p, span, button, a, 
+.nav-item, .ecoswap-title, .conversation-item, .message-bubble, 
+.section-buttons button, .profile-box h2, .chat-header, 
+.sidebar-header, .product-card, .search-results-title {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  cursor: default !important;
+}
+
+/* Permite selectarea textului doar în elementele care necesită editare */
+input, textarea, .message-textarea, [contenteditable="true"], 
+.filter-input, .filter-select, .add-product-input, 
+.add-product-textarea, .add-product-select, .message-content {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* Asigură că butoanele și link-urile au cursor pointer */
+button, .nav-item, a, .conversation-item, .section-buttons button,
+.close-chat-btn, .send-button, .view-product-btn, .filter-toggle-btn,
+.custom-file-label {
+  cursor: pointer !important;
+}
+
+/* Reguli specifice pentru conținutul de mesaje */
+.message-content {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}

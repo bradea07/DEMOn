@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Chats.css";
 
 const Chats = () => {
@@ -7,6 +7,9 @@ const Chats = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [unreadMessages, setUnreadMessages] = useState({});
+  const [isSending, setIsSending] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const messagesEndRef = useRef(null); // Referință pentru scrollul automat
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const userId = loggedInUser?.id;
@@ -58,7 +61,7 @@ const Chats = () => {
       getConversations();
       
       // Update unread messages periodically
-      const interval = setInterval(getConversations, 30000); // Every 30 seconds
+      const interval = setInterval(getConversations, 10000); // Every 10 seconds pentru o experiență mai reactivă
       
       return () => clearInterval(interval);
     }
@@ -68,6 +71,7 @@ const Chats = () => {
     setSelectedChat(chat);
     
     try {
+      setIsLoadingMessages(true);
       // Get messages
       const res = await fetch(`http://localhost:8080/messages/product/${chat.product.id}`);
       const data = await res.json();
@@ -78,7 +82,11 @@ const Chats = () => {
           (msg.sender.id === userId || msg.receiver.id === userId) &&
           (msg.sender.id === chat.sender.id || msg.receiver.id === chat.sender.id)
       );
-      setChatMessages(filtered);
+      // Sortare cronologică a mesajelor - cele mai vechi primele
+      const sortedMessages = filtered.sort((a, b) => 
+        new Date(a.timestamp) - new Date(b.timestamp)
+      );
+      setChatMessages(sortedMessages);
       
       // Mark messages as read
       const key = `${otherUserId}-${chat.product.id}`;
@@ -100,11 +108,15 @@ const Chats = () => {
       }
     } catch (err) {
       console.error("Error loading messages:", err);
+    } finally {
+      setIsLoadingMessages(false);
     }
   };
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedChat) return;
+
+    setIsSending(true);
 
     const otherUser =
       selectedChat.sender.id === userId
@@ -126,11 +138,45 @@ const Chats = () => {
       });
 
       if (response.ok) {
+        // Încorporăm mesajul nou direct în chatMessages pentru a evita reîncărcarea
+        const sentMessage = {
+          ...msg,
+          id: Date.now(), // ID temporar
+          timestamp: new Date().toISOString(),
+          sender: {
+            ...loggedInUser,
+            id: userId
+          },
+          receiver: otherUser,
+          product: selectedChat.product
+        };
+        
+        // Adăugăm direct mesajul în lista locală pentru afișare instantă
+        setChatMessages(prevMessages => [...prevMessages, sentMessage]);
+        
+        // Resetăm câmpul de mesaj
         setNewMessage("");
-        loadMessages(selectedChat);
+        
+        // Actualizăm și lista de conversații pentru a reflecta noua ordine
+        const getConversations = async () => {
+          try {
+            const res = await fetch(`http://localhost:8080/messages/conversations/${userId}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data)) {
+                setConversations(data);
+              }
+            }
+          } catch (err) {
+            console.error("Error updating conversations after send:", err);
+          }
+        };
+        getConversations();
       }
     } catch (err) {
       console.error("Error sending message:", err);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -148,6 +194,37 @@ const Chats = () => {
     return user.profilePic;
   };
   
+  // Adăugăm efectul pentru actualizarea automată a mesajelor din conversația curentă
+  useEffect(() => {
+    if (selectedChat) {
+      // Prima încărcare a mesajelor
+      loadMessages(selectedChat);
+      
+      // Actualizare automată la fiecare 5 secunde
+      const messageInterval = setInterval(() => {
+        loadMessages(selectedChat);
+      }, 5000);
+      
+      return () => clearInterval(messageInterval);
+    }
+  }, [selectedChat?.product?.id, selectedChat?.sender?.id, selectedChat?.receiver?.id]);
+
+  // Funcție pentru a face scroll automat la cel mai nou mesaj
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  };
+  
+  // Apelăm scroll automat când se modifică lista de mesaje
+  useEffect(() => {
+    // Folosim un timeout scurt pentru a ne asigura că scrollul se face după renderizare
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [chatMessages]);
 
   return (
     <div className="chat-container">
@@ -247,6 +324,8 @@ const Chats = () => {
                   </div>
                 );
               })}
+              {/* Referință pentru scrollul automat */}
+              <div ref={messagesEndRef} />
             </div>
 
             <div className="message-input-container">
@@ -258,8 +337,12 @@ const Chats = () => {
                 onKeyDown={handleKeyDown}
                 rows={1}
               />
-              <button className="send-button" onClick={sendMessage}>
-                <i className="fa fa-paper-plane">→</i>
+              <button className="send-button" onClick={sendMessage} disabled={isSending}>
+                {isSending ? (
+                  <i className="fa fa-spinner fa-spin"></i>
+                ) : (
+                  <i className="fa fa-paper-plane">→</i>
+                )}
               </button>
             </div>
           </>
@@ -269,6 +352,7 @@ const Chats = () => {
             <p>Select a conversation to start chatting</p>
           </div>
         )}
+        {isLoadingMessages && <div className="loading-messages">Loading messages...</div>}
       </div>
     </div>
   );
