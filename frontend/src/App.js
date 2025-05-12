@@ -16,16 +16,38 @@ import EditProduct from "./components/EditProduct"; // ✅ importat
 
 // Function to check if user is authenticated
 const isAuthenticated = () => {
-  return localStorage.getItem("userToken") !== null;
+  const token = localStorage.getItem("userToken");
+  const user = localStorage.getItem("user");
+  // Require both token and user data to be present
+  return token !== null && user !== null;
 };
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
 
   useEffect(() => {
-    const checkAuth = () => setIsLoggedIn(isAuthenticated());
+    // Function to check authentication status
+    const checkAuth = () => {
+      const authenticated = isAuthenticated();
+      console.log("Authentication check:", authenticated ? "Authenticated" : "Not authenticated");
+      setIsLoggedIn(authenticated);
+    };
+    
+    // Check authentication initially
+    checkAuth();
+    
+    // Listen for storage events (when localStorage changes)
     window.addEventListener("storage", checkAuth);
-    return () => window.removeEventListener("storage", checkAuth);
+    
+    // Set up an interval to periodically check authentication status
+    // This helps ensure consistent state across the application
+    const interval = setInterval(checkAuth, 1000);
+    
+    // Clean up listeners on component unmount
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -33,7 +55,9 @@ function App() {
       {isLoggedIn && (
         <Navbar
           onLogout={() => {
+            // Clear all authentication-related data
             localStorage.removeItem("userToken");
+            localStorage.removeItem("user");
             setIsLoggedIn(false);
           }}
         />

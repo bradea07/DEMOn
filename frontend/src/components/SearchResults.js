@@ -12,21 +12,37 @@ const SearchResults = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchTerm = queryParams.get("query");
+  const category = queryParams.get("category");
+  const condition = queryParams.get("condition");
+  const location_param = queryParams.get("location");
+  const brand = queryParams.get("brand");
+  const minPrice = queryParams.get("minPrice");
+  const maxPrice = queryParams.get("maxPrice");
 
   useEffect(() => {
-    if (searchTerm) {
-      axios
-        .get(`http://localhost:8080/api/products/search?keyword=${searchTerm}`)
-        .then((response) => {
-          setResults(response.data);
-          setError("");
-        })
-        .catch((error) => {
-          console.error("Error fetching search results:", error);
-          setError("❌ No products found.");
-        });
-    }
-  }, [searchTerm]);
+    // Build the URL with query parameters
+    let url = 'http://localhost:8080/api/products/search-with-filters?';
+    let params = new URLSearchParams();
+    
+    if (searchTerm) params.append('query', searchTerm);
+    if (category) params.append('category', category);
+    if (condition) params.append('condition', condition);
+    if (location_param) params.append('location', location_param);
+    if (brand) params.append('brand', brand);
+    if (minPrice) params.append('minPrice', minPrice);
+    if (maxPrice) params.append('maxPrice', maxPrice);
+    
+    axios
+      .get(`http://localhost:8080/api/products/search-with-filters?${params.toString()}`)
+      .then((response) => {
+        setResults(response.data);
+        setError(response.data.length === 0 ? "❌ No products found." : "");
+      })
+      .catch((error) => {
+        console.error("Error fetching search results:", error);
+        setError("❌ Error fetching search results.");
+      });
+  }, [searchTerm, category, condition, location_param, brand, minPrice, maxPrice]);
 
   // ✅ Pagination Logic
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -44,22 +60,43 @@ const SearchResults = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  // Function to generate a title based on filters applied
+  const generateSearchTitle = () => {
+    let title = "Search Results";
+    
+    if (searchTerm) {
+      title += ` for "${searchTerm}"`;
+    }
+    
+    let appliedFilters = [];
+    if (category) appliedFilters.push(`Category: ${category}`);
+    if (condition) appliedFilters.push(`Condition: ${condition}`);
+    if (location_param) appliedFilters.push(`Location: ${location_param}`);
+    if (brand) appliedFilters.push(`Brand: ${brand}`);
+    if (minPrice) appliedFilters.push(`Min Price: ${minPrice}`);
+    if (maxPrice) appliedFilters.push(`Max Price: ${maxPrice}`);
+    
+    if (appliedFilters.length > 0) {
+      title += ` with ${appliedFilters.join(', ')}`;
+    }
+    
+    return title;
+  };
 
   return (
     <div className="search-results-container">
-      <h2 className="search-results-title">Search Results for "{searchTerm}"</h2>
+      <h2 className="search-results-title">{generateSearchTitle()}</h2>
 
-      {error && <p className="search-error">{error}</p>}
-
-      {results.length > 0 && (
-        <div className="search-results-box">
-          {/* ✅ First Product (Now Properly Positioned Like Other Products) */}
+      {results.length === 0 ? (
+        <p className="search-error">No products match your search criteria. Try adjusting your filters.</p>
+      ) : (
+        <div className="search-results-box">          {/* ✅ First Product (Now Properly Positioned Like Other Products) */}
           {results[0] && (
             <div className="product-card">
               {/* ✅ Extract First Image Correctly */}
-              {results[0]?.images && results[0]?.images.length > 0 ? (
+              {results[0]?.imageUrls && results[0]?.imageUrls.length > 0 ? (
                 <img
-                  src={`http://localhost:8080/uploads/${results[0].images[0]}`} // Fixing URL
+                  src={`http://localhost:8080${results[0].imageUrls[0]}`} // Correct URL format
                   alt={results[0].title}
                   className="product-image"
                 />
@@ -78,9 +115,9 @@ const SearchResults = () => {
           <div className="products-list-container">
             {currentProducts.slice(1).map((product) => (
               <div key={product.id} className="product-card">
-                {product.images && product.images.length > 0 ? (
+                {product.imageUrls && product.imageUrls.length > 0 ? (
                   <img
-                    src={`http://localhost:8080/uploads/${product.images[0]}`} // Fixing URL
+                    src={`http://localhost:8080${product.imageUrls[0]}`} // Correct URL format
                     alt={product.title}
                     className="product-image"
                   />
@@ -93,8 +130,7 @@ const SearchResults = () => {
                   View
                 </Link>
               </div>
-            ))}
-          </div>
+            ))}          </div>
 
           {/* ✅ Pagination Controls */}
           {results.length > productsPerPage && (

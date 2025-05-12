@@ -128,6 +128,25 @@ public ResponseEntity<?> addProduct(
         List<Product> matchingProducts = productService.searchProductsByTitle(keyword);
         return ResponseEntity.ok(matchingProducts);
     }
+    
+    /**
+     * Advanced search with filters
+     */
+    @GetMapping("/search-with-filters")
+    public ResponseEntity<List<Product>> searchProductsWithFilters(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String condition,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        
+        List<Product> filteredProducts = productService.searchProductsWithFilters(
+                query, category, condition, location, brand, minPrice, maxPrice);
+        
+        return ResponseEntity.ok(filteredProducts);
+    }
 
     /**
      * Get a product by ID (for detailed product view)

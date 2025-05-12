@@ -27,6 +27,20 @@ public class ProductService {
     public List<Product> searchProductsByTitle(String keyword) {
         return productRepository.findByTitleContainingIgnoreCase(keyword);
     }
+    
+    // ✅ Advanced search with filters
+    public List<Product> searchProductsWithFilters(
+            String query,
+            String category,
+            String condition,
+            String location,
+            String brand,
+            Double minPrice,
+            Double maxPrice) {
+        
+        return productRepository.searchProducts(
+                query, category, condition, location, brand, minPrice, maxPrice);
+    }
 
     // ✅ Get product by ID (for product details page)
     public Optional<Product> getProductById(Long id) {

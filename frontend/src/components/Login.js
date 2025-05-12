@@ -59,9 +59,28 @@ const Login = ({ setIsLoggedIn }) => {
         throw new Error(data.error || "Login failed");
       }
 
+      // Make sure we have the token and user data before setting them
+      if (!data.token || !data.user) {
+        throw new Error("Invalid response from server. Missing authentication data.");
+      }
+      
+      // Clear any existing data first
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("user");
+      
+      // Set the new authentication data
       localStorage.setItem("userToken", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
+      // Verify that data was saved correctly
+      const savedToken = localStorage.getItem("userToken");
+      const savedUser = localStorage.getItem("user");
+      
+      if (!savedToken || !savedUser) {
+        throw new Error("Failed to save authentication data.");
+      }
+      
+      console.log("Login successful. Auth data saved.");
       setIsLoggedIn(true);
       setMessage("✅ Login successful! Redirecting...");
       setTimeout(() => navigate("/"), 1000);

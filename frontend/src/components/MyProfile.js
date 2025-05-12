@@ -7,9 +7,6 @@ import AccountInfo from "./sections/AccountInfo";
 import MyListings from "./sections/MyListings";
 import Notifications from "./sections/Notifications";
 import Favorites from "./sections/Favorites";
-import TransactionHistory from "./sections/TransactionHistory";
-import ActivityInsights from "./sections/ActivityInsights";
-import Settings from "./sections/Settings";
 import SecurityPrivacy from "./sections/SecurityPrivacy";
 
 const MyProfile = () => {
@@ -80,58 +77,100 @@ const MyProfile = () => {
     switch (activeSection) {
       case "AccountInfo":
         return (
-          <div>
-            <label>Username:</label>
-            <input value={user.username} disabled />
+          <div className="account-info-section">
+            <div className="profile-header">
+              {user.profilePic && (
+                <img
+                  src={user.profilePic}
+                  alt="Profile"
+                  className="profile-img"
+                />
+              )}
+              {!user.profilePic && (
+                <div className="profile-placeholder">
+                  {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                </div>
+              )}
+              <h3>{user.name || "User Profile"}</h3>
+            </div>
 
-            <label>Email:</label>
-            <input value={user.email} disabled />
+            <div className="profile-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Username:</label>
+                  <input value={user.username} disabled />
+                </div>
 
-            <label>Name:</label>
-            <input
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-              disabled={!editing}
-            />
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input value={user.email} disabled />
+                </div>
+              </div>
 
-            <label>Phone:</label>
-            <input
-              name="phone"
-              value={user.phone || ""}
-              onChange={handleChange}
-              disabled={!editing}
-            />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Full Name:</label>
+                  <input
+                    name="name"
+                    value={user.name || ""}
+                    onChange={handleChange}
+                    disabled={!editing}
+                    placeholder="Enter your full name"
+                  />
+                </div>
 
-            <label>City:</label>
-            <input
-              name="city"
-              value={user.city || ""}
-              onChange={handleChange}
-              disabled={!editing}
-            />
+                <div className="form-group">
+                  <label>Phone Number:</label>
+                  <input
+                    name="phone"
+                    value={user.phone || ""}
+                    onChange={handleChange}
+                    disabled={!editing}
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+              </div>
 
-            <label>Upload Profile Picture:</label>
-            <input
-              type="file"
-              accept="image/*"
-              disabled={!editing}
-              onChange={handleImageUpload}
-            />
+              <div className="form-group">
+                <label>City:</label>
+                <input
+                  name="city"
+                  value={user.city || ""}
+                  onChange={handleChange}
+                  disabled={!editing}
+                  placeholder="Enter your city"
+                />
+              </div>
 
-            {user.profilePic && (
-              <img
-                src={user.profilePic}
-                alt="Profile"
-                className="profile-img"
-              />
-            )}
+              {editing && (
+                <div className="form-group file-upload">
+                  <label>Profile Picture:</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                  <p className="input-help">Upload an image (JPG, PNG, etc)</p>
+                </div>
+              )}
 
-            {!editing ? (
-              <button onClick={() => setEditing(true)}>Edit Profile</button>
-            ) : (
-              <button onClick={handleSave}>Save Changes</button>
-            )}
+              <div className="profile-actions">
+                {!editing ? (
+                  <button className="edit-button" onClick={() => setEditing(true)}>
+                    ✏️ Edit Profile
+                  </button>
+                ) : (
+                  <div className="edit-actions">
+                    <button className="cancel-button" onClick={() => setEditing(false)}>
+                      Cancel
+                    </button>
+                    <button className="save-button" onClick={handleSave}>
+                      💾 Save Changes
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         );
         case "MyListings":
@@ -140,12 +179,6 @@ const MyProfile = () => {
         return <Notifications />;
       case "Favorites":
         return <Favorites />;
-      case "TransactionHistory":
-        return <TransactionHistory />;
-      case "ActivityInsights":
-        return <ActivityInsights />;
-      case "Settings":
-        return <Settings />;
       case "SecurityPrivacy":
         return <SecurityPrivacy />;
       default:
@@ -159,28 +192,34 @@ const MyProfile = () => {
         <h2>My Profile</h2>
 
         <div className="section-buttons">
-          <button onClick={() => setActiveSection("AccountInfo")}>
+          <button 
+            className={`${activeSection === "AccountInfo" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("AccountInfo")}
+          >
             👤 Account Info
           </button>
-          <button onClick={() => setActiveSection("MyListings")}>
+          <button 
+            className={`${activeSection === "MyListings" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("MyListings")}
+          >
             🛍 My Listings
           </button>
-          <button onClick={() => setActiveSection("Notifications")}>
+          <button 
+            className={`${activeSection === "Notifications" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("Notifications")}
+          >
             🔔 Notifications
           </button>
-          <button onClick={() => setActiveSection("Favorites")}>
+          <button 
+            className={`${activeSection === "Favorites" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("Favorites")}
+          >
             💚 Favorites
           </button>
-          <button onClick={() => setActiveSection("TransactionHistory")}>
-            🔁 Transaction History
-          </button>
-          <button onClick={() => setActiveSection("ActivityInsights")}>
-            📊 Activity Insights
-          </button>
-          <button onClick={() => setActiveSection("Settings")}>
-            ⚙️ Settings
-          </button>
-          <button onClick={() => setActiveSection("SecurityPrivacy")}>
+          <button 
+            className={`${activeSection === "SecurityPrivacy" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("SecurityPrivacy")}
+          >
             🛡️ Security & Privacy
           </button>
         </div>

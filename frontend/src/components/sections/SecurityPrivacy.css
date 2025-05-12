@@ -1,0 +1,237 @@
+/* Security & Privacy Styles */
+.security-privacy-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+}
+
+.security-privacy-container h3 {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #040e29;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 10px;
+}
+
+.security-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.security-option:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.security-option-info h4 {
+  font-size: 1.2rem;
+  margin: 0 0 5px 0;
+  color: #040e29;
+}
+
+.security-option-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.change-password-btn {
+  padding: 8px 16px;
+  background-color: #040e29;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.change-password-btn:hover {
+  background-color: #0a1c40;
+  transform: scale(1.05);
+}
+
+.danger-zone {
+  border: 1px dashed #ff4d4d;
+  background-color: rgba(255, 77, 77, 0.05);
+}
+
+.delete-account-btn {
+  padding: 8px 16px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.delete-account-btn:hover {
+  background-color: #ff3333;
+  transform: scale(1.05);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 15px;
+  color: #040e29;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #040e29;
+  font-size: 1.1rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.modal-buttons button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  width: 48%;
+  font-size: 1rem;
+}
+
+.modal-buttons button:first-child {
+  background-color: #eaeaea;
+  color: #333;
+}
+
+.modal-buttons button:last-child, .update-password-btn {
+  background-color: #040e29;
+  color: white;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-2px);
+}
+
+/* Delete modal specific styles */
+.delete-modal .warning {
+  color: #ff4d4d;
+  font-weight: 600;
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.delete-confirmation {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.delete-btn {
+  background-color: #ff4d4d !important;
+}
+
+.delete-btn:hover {
+  background-color: #ff3333 !important;
+}
+
+.delete-btn:disabled {
+  background-color: #ffb3b3 !important;
+  cursor: not-allowed;
+}
+
+/* Message styles */
+.message {
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.error {
+  background-color: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
+  text-align: center;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 4px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.success {
+  background-color: rgba(60, 185, 100, 0.1);
+  color: #3cb964;
+}

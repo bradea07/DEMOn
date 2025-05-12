@@ -7,6 +7,7 @@ import com.ecoswap.service.MailService;
 import com.ecoswap.dto.SignupRequest;
 import com.ecoswap.dto.ForgotPasswordRequest;
 import com.ecoswap.dto.ResetPasswordRequest;
+import com.ecoswap.dto.ChangePasswordRequest;
 import com.ecoswap.utils.CaptchaValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +168,83 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid token format"));
+        }
+    }
+    
+    // ✅ CHANGE PASSWORD
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request,
+                                                             @RequestHeader("Authorization") String authHeader) {
+        // Extract token from Authorization header
+        String token = authHeader.replace("Bearer ", "");
+        
+        // Extract user ID from the token
+        // Note: In a real app with JWT, you would decode the token properly
+        if (token == null || !token.startsWith("fake-jwt-token-")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid or missing authentication"));
+        }
+        
+        try {
+            Long userId = Long.parseLong(token.replace("fake-jwt-token-", ""));
+            Optional<User> userOpt = userRepository.findById(userId);
+
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "User not found"));
+            }
+            
+            User user = userOpt.get();
+            
+            // Verify current password
+            if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "Current password is incorrect"));
+            }
+            
+            // Update with new password
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+            
+            return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+        } catch (Exception e) {
+            System.out.println("Error changing password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to update password"));
+        }
+    }
+    
+    // ✅ DELETE ACCOUNT
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<Map<String, String>> deleteAccount(@RequestHeader("Authorization") String authHeader) {
+        // Extract token from Authorization header
+        String token = authHeader.replace("Bearer ", "");
+        
+        // Extract user ID from the token
+        if (token == null || !token.startsWith("fake-jwt-token-")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid or missing authentication"));
+        }
+        
+        try {
+            Long userId = Long.parseLong(token.replace("fake-jwt-token-", ""));
+            Optional<User> userOpt = userRepository.findById(userId);
+
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "User not found"));
+            }
+            
+            User user = userOpt.get();
+            
+            // Delete the user
+            userRepository.delete(user);
+            
+            return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
+        } catch (Exception e) {
+            System.out.println("Error deleting account: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to delete account"));
         }
     }
 }

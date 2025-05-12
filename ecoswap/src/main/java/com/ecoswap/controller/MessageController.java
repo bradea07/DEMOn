@@ -32,20 +32,26 @@ public class MessageController {
     // ✅ Send a message
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody Message message) {
-        Optional<User> sender = userRepository.findById(message.getSender().getId());
-        Optional<User> receiver = userRepository.findById(message.getReceiver().getId());
-        Optional<Product> product = productRepository.findById(message.getProduct().getId());
+        try {
+            Optional<User> sender = userRepository.findById(message.getSender().getId());
+            Optional<User> receiver = userRepository.findById(message.getReceiver().getId());
+            Optional<Product> product = productRepository.findById(message.getProduct().getId());
 
-        if (sender.isEmpty() || receiver.isEmpty() || product.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid sender, receiver, or product.");
+            if (sender.isEmpty() || receiver.isEmpty() || product.isEmpty()) {
+                return ResponseEntity.badRequest().body("Invalid sender, receiver, or product.");
+            }
+
+            message.setSender(sender.get());
+            message.setReceiver(receiver.get());
+            message.setProduct(product.get());
+            message.setRead(false); // Explicitly set as unread
+            messageRepository.save(message);
+
+            return ResponseEntity.ok("Message sent successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending message: " + e.getMessage());
         }
-
-        message.setSender(sender.get());
-        message.setReceiver(receiver.get());
-        message.setProduct(product.get());
-        messageRepository.save(message);
-
-        return ResponseEntity.ok("Message sent successfully.");
     }
 
     // ✅ Get messages for a product
@@ -81,6 +87,78 @@ public ResponseEntity<?> getConversationsForUser(@PathVariable Long userId) {
     return ResponseEntity.ok(latestMessages.values());
 }
 
+// Get count of all unread messages for a user
+@GetMapping("/unread/{userId}")
+public ResponseEntity<Integer> countUnreadMessages(@PathVariable Long userId) {
+    try {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body(0);
+        }
+        
+        List<Message> unreadMessages = messageRepository.findByReceiver_IdAndIsReadFalse(userId);
+        return ResponseEntity.ok(unreadMessages.size());
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+    }
+}
 
+// Get count of unread messages between two users about a specific product
+@GetMapping("/unread/{userId}/{otherUserId}/{productId}")
+public ResponseEntity<Integer> countUnreadMessagesForConversation(
+    @PathVariable Long userId, 
+    @PathVariable Long otherUserId,
+    @PathVariable Long productId
+) {
+    try {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> otherUser = userRepository.findById(otherUserId);
+        Optional<Product> product = productRepository.findById(productId);
+        
+        if (user.isEmpty() || otherUser.isEmpty() || product.isEmpty()) {
+            return ResponseEntity.badRequest().body(0);
+        }
+        
+        List<Message> unreadMessages = messageRepository.findByReceiver_IdAndSender_IdAndProduct_IdAndIsReadFalse(
+            userId, otherUserId, productId);
+        return ResponseEntity.ok(unreadMessages.size());
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+    }
+}
+
+// Mark messages as read
+@PostMapping("/markRead/{userId}/{otherUserId}/{productId}")
+public ResponseEntity<?> markMessagesAsRead(
+    @PathVariable Long userId,
+    @PathVariable Long otherUserId,
+    @PathVariable Long productId
+) {
+    try {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> otherUser = userRepository.findById(otherUserId);
+        Optional<Product> product = productRepository.findById(productId);
+        
+        if (user.isEmpty() || otherUser.isEmpty() || product.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid users or product");
+        }
+        
+        List<Message> messages = messageRepository.findByProductId(productId);
+        for (Message msg : messages) {
+            if (msg.getReceiver().getId().equals(userId) && 
+                msg.getSender().getId().equals(otherUserId) && 
+                !msg.isRead()) {
+                msg.setRead(true);
+                messageRepository.save(msg);
+            }
+        }
+        return ResponseEntity.ok("Messages marked as read");
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error marking messages as read");
+    }
+}
 
 }

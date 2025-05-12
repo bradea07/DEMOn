@@ -30,9 +30,7 @@ const SecurityPrivacy = () => {
   const handlePasswordChange = (e) => {
     setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
   };
-
-  // Submit password change
-  const submitPasswordChange = async (e) => {
+    // Submit password change  const submitPasswordChange = async (e) => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
     
@@ -47,26 +45,25 @@ const SecurityPrivacy = () => {
       return;
     }
     
-    console.log('Attempting to update password for user ID:', userId);
-    
-    try {
-      console.log('Sending password change request...');
+    console.log('Attempting to update password for user ID:', userId);try {
+      console.log('Sending request with payload:', {
+        oldPassword: '***', // Not logging actual password
+        newPassword: '***' // Not logging actual password
+      });        // Get the token from localStorage (same as used for login)
+        const userToken = localStorage.getItem("userToken");
+        
+        // Update the API endpoint to match the backend's actual endpoint
+        const response = await axios.post(`http://localhost:8080/auth/change-password`, {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        }, {
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
       
-      if (!userToken) {
-        throw new Error("Authentication token not found. Please log in again.");
-      }
-      
-      const response = await axios.post('http://localhost:8080/auth/change-password', {
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword
-      }, {
-        headers: {
-          'Authorization': `Bearer ${userToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('Password update response:', response.data);
+      console.log('Password update successful:', response.data);
       setMessage({ text: 'Password updated successfully!', type: 'success' });
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setTimeout(() => {
@@ -80,7 +77,7 @@ const SecurityPrivacy = () => {
       if (error.response) {
         console.error('Error response data:', error.response.data);
         console.error('Error response status:', error.response.status);
-        errorMessage = error.response?.data?.message || 'Failed to update password';
+        errorMessage = error.response.data?.message || 'Failed to update password';
       }
       
       setMessage({ text: errorMessage, type: 'error' });
@@ -93,8 +90,7 @@ const SecurityPrivacy = () => {
       setMessage({ text: 'Please type DELETE to confirm account deletion', type: 'error' });
       return;
     }
-    
-    try {
+      try {
       const userToken = localStorage.getItem("userToken");
       
       await axios.delete(`http://localhost:8080/auth/delete-account`, {
@@ -154,9 +150,7 @@ const SecurityPrivacy = () => {
         >
           Delete Account
         </button>
-      </div>
-      
-      {/* Password Change Modal */}
+      </div>      {/* Password Change Modal */}
       {showPasswordModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -243,8 +237,7 @@ const SecurityPrivacy = () => {
               </button>
             </div>
           </div>
-        </div>
-      )}
+        </div>      )}
     </div>
   );
 };

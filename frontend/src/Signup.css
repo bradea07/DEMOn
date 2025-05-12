@@ -3,103 +3,195 @@
 
 /* The main container for the signup page */
 .signup-container {
+  position: relative;
   display: flex;
-  flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center the elements horizontally */
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  position: fixed;
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Ensure the container is centered */
   width: 100vw;
   height: 100vh;
-  background-image: url("../public/background.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
+  background-image: url("../public/background3.png");
   background-size: cover;
+  background-position: center;
+  font-family: 'Josefin Sans', sans-serif;
   overflow: hidden;
 }
 
 /* EcoSwap Title Styling */
 .ecoswap-title {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 3rem;
-  font-weight: 700;
-  text-align: center;
-  color: hsl(0, 0%, 0%);
-  margin-bottom: 30px;
-  width: 450px;
+  font-family: 'Josefin Sans', sans-serif !important;
+  font-size: 3rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  color: #ffffff !important;
+  position: absolute !important;
+  top: 2% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 9999 !important;
+  margin: 0 !important;
 }
 
 /* Styling for the signup box */
 .signup-box {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 3rem; /* Increased padding for more height */
-  border-radius: 8px;
+  width: 350px !important;
+  height: 474px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 450px; /* Ensuring the signup box has consistent width */
-  height: auto; /* Allowing the height to adjust based on content */
-  min-height: 500px; /* Minimum height to make the box taller */
-  text-align: left;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  font-family: 'Josefin Sans', sans-serif;
+  margin-right: 40px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .signup-box h2 {
+  font-size: 2rem;
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 2.5rem;
-  font-weight: 700;
+  margin-bottom: 12px;
+  color: #000;
 }
 
-/* Input Fields */
+.signup-box form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-height: calc(100% - 50px);
+  justify-content: space-between;
+}
+
+.input-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .input-group {
-  margin-bottom: 15px; /* Add some space between inputs */
+  margin-bottom: 0;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px;
+  padding: 6px 8px;
   border-radius: 8px;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   outline: none;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.3); /* Transparent with blur effect */
-  color: black !important; /* Set text inside input fields to black */
-  backdrop-filter: blur(5px); /* Apply blur */
-  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.9rem;
+  background: white;
+  color: #000;
+  height: 30px;
 }
 
-.input-group input::placeholder {
-  color: rgba(0, 0, 0, 0.7) !important; /* Make placeholder text darker */
+/* ReCAPTCHA container */
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0.85);
+  transform-origin: center;
+  height: 6 5px;
+  margin: 5px 0;
+  padding: 0;
 }
 
 /* Button Styling */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
 .signup-btn {
   width: 100%;
-  padding: 12px;
+  padding: 6px;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  background: #7bac08; /* Green button */
+  background: #040e29;
   color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  font-family: 'Josefin Sans', sans-serif;
+  transition: all 0.3s ease;
+  height: 28px;
+  line-height: 1;
+  margin: 0;
 }
 
 .signup-btn:hover {
-  background: #435e04; /* Darker green on hover */
-  transform: scale(1.05); /* Slight zoom effect */
+  background: #010320;
+  transform: scale(1.02);
 }
 
-.signup-box p {
+/* Illustration Side */
+.illustration-side {
+  width: 350px !important;
+  height: 474px !important;
+  background-color: #5e5bfc;
+  border-radius: 20px;
+  background-image: url("../public/ilustration.jpg");
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Message and Link Styling */
+.message {
   text-align: center;
-  font-size: 1.1rem;
+  padding: 2px 0;
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.2;
+  margin: 0;
 }
 
-.signup-box button {
-  font-family: 'Josefin Sans', sans-serif;
+.login-link {
+  text-align: center;
+  color: #666;
+  padding: 2px 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .signup-container {
+    padding: 1rem;
+  }
+
+  .ecoswap-title {
+    font-size: 2rem !important;
+    top: 1% !important;
+  }
+
+  .signup-box {
+    width: 90% !important;
+    max-width: 320px;
+    margin: 0 0 1rem 0;
+    padding: 1.5rem;
+  }
+
+  .illustration-side {
+    display: none;
+  }
 }
