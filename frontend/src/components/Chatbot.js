@@ -126,8 +126,7 @@ const generateResponse = (input) => {
   if (input.includes("how to buy") || input.includes("purchase") || input.includes("buying") || input.includes("get item")) {
     return "To acquire a product, browse through categories or use the search bar. When you find an interesting item, click on it and use the 'Contact Seller' button to start a conversation.";
   }
-  
-  if (input.includes("payment") || input.includes("pay") || input.includes("money") || input.includes("transaction")) {
+    if (input.includes("payment") || input.includes("pay") || input.includes("money") || input.includes("transaction")) {
     return "EcoSwap is a listing platform, and payments are made directly between users, outside of the platform. We always recommend checking the product before making payment!";
   }
   
@@ -137,6 +136,18 @@ const generateResponse = (input) => {
   
   if (input.includes("issue") || input.includes("problem") || input.includes("help") || input.includes("support")) {
     return "I'm sorry you're experiencing problems! For specific assistance, please contact us at support@ecoswap.com or use the contact form in the 'Help' section.";
+  }
+  
+  if (input.includes("forgot") || input.includes("reset") || input.includes("password")) {
+    return "If you've forgotten your password, click on the 'Login' button and then select 'Forgot Password'. You'll receive an email with a link to reset your password. For security reasons, the link is valid for only 30 minutes.";
+  }
+  
+  if (input.includes("scam") || input.includes("fraud") || input.includes("fake") || input.includes("suspicious")) {
+    return "At EcoSwap, we take safety seriously. Always check seller ratings and reviews, meet in safe public places for item exchanges, and avoid wire transfers or gift cards as payment. If you encounter suspicious activity, report it immediately through the 'Report' button on the listing or user profile.";
+  }
+  
+  if (input.includes("safety") || input.includes("safe") || input.includes("secure") || input.includes("protection")) {
+    return "For your safety, we recommend: 1) Communicating through our platform, 2) Meeting in public places for exchanges, 3) Checking items thoroughly before payment, 4) Being wary of deals that seem too good to be true, and 5) Never sharing personal financial information with other users.";
   }
   
   if (input.includes("about") || input.includes("what is") || input.includes("ecoswap") || input.includes("purpose")) {
@@ -158,8 +169,7 @@ const generateResponse = (input) => {
   if (input.includes("exchange") || input.includes("swap") || input.includes("trade") || input.includes("barter")) {
     return "EcoSwap facilitates item exchanges! You can list items you're willing to trade and specify what you're looking for in return. This is a sustainable way to acquire what you need without spending money.";
   }
-  
-  if (input.includes("notification") || input.includes("alert") || input.includes("inform") || input.includes("update")) {
+    if (input.includes("notification") || input.includes("alert") || input.includes("inform") || input.includes("update")) {
     return "EcoSwap sends notifications when new items matching your interests are posted. You can customize your notification preferences in the 'Settings' section of your profile.";
   }
   
@@ -171,12 +181,39 @@ const generateResponse = (input) => {
     return "By using EcoSwap, you're helping reduce waste, conserving resources, saving money, and connecting with like-minded individuals in your community who value sustainability. It's a win for you and for the planet!";
   }
   
+  if (input.includes("report") || input.includes("inappropriate") || input.includes("violation") || input.includes("against rules")) {
+    return "If you come across content that violates our community guidelines, please use the 'Report' button on the item listing or user profile. Our moderation team reviews all reports and takes appropriate action to maintain a safe environment for all users.";
+  }
+  
+  if (input.includes("privacy") || input.includes("data") || input.includes("information") || input.includes("personal data")) {
+    return "We value your privacy. EcoSwap only collects the information necessary to provide our services. Your personal data is protected and never shared with third parties without consent. You can read our complete Privacy Policy in the footer of our website.";
+  }
+  
+  if (input.includes("delete account") || input.includes("remove account") || input.includes("cancel account")) {
+    return "If you wish to delete your EcoSwap account, please go to 'My Profile', select 'Security & Privacy', and use the 'Delete Account' option. Please note that this action is permanent and will remove all your listings and history.";
+  }
+    if (input.includes("prohibited") || input.includes("not allowed") || input.includes("forbidden") || input.includes("banned")) {
+    return "Items that are prohibited on EcoSwap include: illegal goods, weapons, controlled substances, counterfeit items, adult content, recalled products, hazardous materials, and animals. Please refer to our Terms of Service for a complete list of prohibited items.";
+  }
+  
+  if (input.includes("rating") || input.includes("feedback") || input.includes("review") || input.includes("reputation")) {
+    return "After completing a transaction, you can rate your experience with the other user. High ratings and positive feedback help build trust in the community. Be honest but fair in your reviews, as they impact other users' decisions.";
+  }
+  
+  if (input.includes("dispute") || input.includes("conflict") || input.includes("disagreement") || input.includes("resolution")) {
+    return "If you have a dispute with another user, we encourage you to first try resolving it through direct communication. If that doesn't work, you can contact our support team who will help mediate the issue according to our dispute resolution policy.";
+  }
+  
+  if (input.includes("verify") || input.includes("verification") || input.includes("authentic") || input.includes("legitimate")) {
+    return "To help ensure authenticity, always check user reviews and ratings before committing to a transaction. For higher-value items, we recommend verifying the product in person before payment. EcoSwap also has a verification badge for trusted users who have completed our identity verification process.";
+  }
+  
   if (input.includes("thank")) {
     return "You're welcome! Is there anything else I can help you with regarding EcoSwap?";
   }
   
   // Default response
-  return "I'm not sure I understand your question. You can ask about creating an account, adding products, buying or exchanging items, recycling information, sustainability, or any other features of the EcoSwap platform.";
+  return "I'm not sure I understand your question. You can ask about creating an account, adding products, buying or exchanging items, recycling information, sustainability, safety tips, or any other features of the EcoSwap platform.";
 };
 
 export default Chatbot;
