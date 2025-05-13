@@ -3,12 +3,11 @@ import "../Styles/Chatbot.css";
 
 const Chatbot = ({ isOpen, toggleChatbot }) => {
   const [messages, setMessages] = useState([
-    { text: "Salut! Sunt EcoBot, asistentul EcoSwap. Cu ce te pot ajuta?", isBot: true }
+    { text: "Hello! I'm EcoBot, your EcoSwap assistant. How can I help you today?", isBot: true }
   ]);
   const [input, setInput] = useState("");
-  const messagesEndRef = useRef(null);
-  
-  // Scroll automat la mesajele noi
+  const messagesEndRef = useRef(null);  
+  // Auto-scroll to new messages
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -16,32 +15,46 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
   }, [messages]);
   
   const handleInputChange = (e) => setInput(e.target.value);
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
     
-    // Adaugă mesajul utilizatorului
+    // Add user message
     setMessages([...messages, { text: input, isBot: false }]);
     
-    // Procesează întrebarea și generează răspunsul
+    // Process the question and generate response
     const response = generateResponse(input.toLowerCase());
     
-    // Simulează un delay pentru un efect mai natural
+    // Show typing indicator
+    setMessages(prevMessages => [...prevMessages, { text: "...", isBot: true, isTyping: true }]);
+    
+    // Simulate a delay for a more natural effect
     setTimeout(() => {
-      setMessages(prevMessages => [...prevMessages, { text: response, isBot: true }]);
-    }, 600);
+      setMessages(prevMessages => {
+        // Remove typing indicator and add actual response
+        const filteredMessages = prevMessages.filter(msg => !msg.isTyping);
+        return [...filteredMessages, { text: response, isBot: true }];
+      });
+    }, 1000);
     
     setInput("");
   };
-  
-  return (
+    return (
     <div className="chatbot-container">
       {isOpen && (
         <div className="chatbot-window">
           <div className="chatbot-header">
             <div className="chatbot-title">EcoBot</div>
-            <p className="chatbot-subtitle">Asistentul tău pentru EcoSwap</p>
+            <p className="chatbot-subtitle">Your EcoSwap Assistant</p>
             <button 
               className="chatbot-close" 
               onClick={toggleChatbot}
@@ -55,21 +68,35 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
               <div 
                 key={index} 
                 className={`message ${message.isBot ? 'bot' : 'user'}`}
-              >
-                {message.isBot && <div className="bot-avatar"><i className="fas fa-robot"></i></div>}
-                <div className="message-bubble">{message.text}</div>
-                <div ref={index === messages.length - 1 ? messagesEndRef : null} />
+              >            {message.isBot && (
+                <div className="bot-avatar">
+                  <i className="fas fa-robot"></i>
+                </div>
+              )}
+              <div className={`message-bubble ${message.isTyping ? 'typing' : ''}`}>
+                {message.isTyping ? (
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                ) : (
+                  message.text
+                )}
+              </div>
+              <div ref={index === messages.length - 1 ? messagesEndRef : null} />
               </div>
             ))}
           </div>
-          
-          <form className="chatbot-input-form" onSubmit={handleSubmit}>
+            <form className="chatbot-input-form" onSubmit={handleSubmit}>
             <input
               type="text"
               value={input}
               onChange={handleInputChange}
-              placeholder="Scrie un mesaj..."
+              onKeyPress={handleKeyPress}
+              placeholder="Type a message..."
               className="chatbot-input"
+              autoFocus
             />
             <button type="submit" className="chatbot-send">
               <i className="fas fa-paper-plane"></i>
@@ -83,37 +110,73 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
 
 // Funcție pentru generarea răspunsurilor
 const generateResponse = (input) => {
-  // Reguli simple pentru chatbot
-  if (input.includes("salut") || input.includes("buna") || input.includes("hey") || input.includes("hello") || input.includes("hi")) {
-    return "Salut! Cu ce te pot ajuta astăzi pe EcoSwap?";
+  // Simple rules for chatbot responses
+  if (input.includes("hello") || input.includes("hi") || input.includes("hey") || input.includes("greetings")) {
+    return "Hello there! How can I help you with EcoSwap today?";
   }
   
-  if (input.includes("cont") || input.includes("profil") || input.includes("inregistrare")) {
-    return "Pentru a-ți crea un cont, apasă pe butonul 'Înregistrare' din colțul din dreapta sus. Completează informațiile cerute și vei putea începe să folosești toate funcționalitățile EcoSwap!";
+  if (input.includes("account") || input.includes("profile") || input.includes("register") || input.includes("sign up")) {
+    return "To create an account, click the 'Sign Up' button in the top-right corner. Fill in your information and you'll be able to start using all EcoSwap features!";
   }
   
-  if (input.includes("adauga") || input.includes("produs nou") || input.includes("vinde") || input.includes("add product")) {
-    return "Pentru a adăuga un produs nou, accesează secțiunea 'Adaugă Produs' din meniul principal. Asigură-te că ai imagini de calitate și o descriere detaliată pentru a atrage mai mulți cumpărători!";
+  if (input.includes("add product") || input.includes("sell") || input.includes("listing") || input.includes("post item")) {
+    return "To add a new product, go to the 'Add Product' section in the main menu. Make sure to include high-quality images and detailed descriptions to attract more potential buyers or exchange partners!";
   }
   
-  if (input.includes("cum cumpăr") || input.includes("cumpărare") || input.includes("achiziție") || input.includes("buy")) {
-    return "Pentru a cumpăra un produs, navighează prin categorii sau folosește bara de căutare. Când găsești un produs interesant, apasă pe el și folosește butonul 'Contactează vânzătorul' pentru a iniția o conversație.";
+  if (input.includes("how to buy") || input.includes("purchase") || input.includes("buying") || input.includes("get item")) {
+    return "To acquire a product, browse through categories or use the search bar. When you find an interesting item, click on it and use the 'Contact Seller' button to start a conversation.";
   }
   
-  if (input.includes("plata") || input.includes("plăti") || input.includes("bani") || input.includes("payment")) {
-    return "EcoSwap este o platformă de anunțuri, iar plățile se fac direct între utilizatori, în afara platformei. Recomandăm întotdeauna să verifici produsul înainte de a face plata!";
+  if (input.includes("payment") || input.includes("pay") || input.includes("money") || input.includes("transaction")) {
+    return "EcoSwap is a listing platform, and payments are made directly between users, outside of the platform. We always recommend checking the product before making payment!";
   }
   
-  if (input.includes("livrare") || input.includes("transport") || input.includes("primire") || input.includes("delivery")) {
-    return "Modalitatea de livrare se stabilește direct între vânzător și cumpărător. Poți opta pentru întâlnire personală sau pentru servicii de curierat.";
+  if (input.includes("delivery") || input.includes("shipping") || input.includes("transport") || input.includes("receive")) {
+    return "Delivery methods are arranged directly between the seller and buyer. You can opt for in-person meetings or courier services.";
   }
   
-  if (input.includes("problema") || input.includes("ajutor") || input.includes("asistenta") || input.includes("help")) {
-    return "Îmi pare rău că întâmpini probleme! Pentru asistență specifică, te rugăm să ne contactezi la support@ecoswap.ro sau să folosești formularul de contact din secțiunea 'Ajutor'.";
+  if (input.includes("issue") || input.includes("problem") || input.includes("help") || input.includes("support")) {
+    return "I'm sorry you're experiencing problems! For specific assistance, please contact us at support@ecoswap.com or use the contact form in the 'Help' section.";
   }
   
-  // Răspuns default
-  return "Îmi pare rău, nu am înțeles întrebarea. Poți să reformulezi sau să întrebi despre: crearea unui cont, adăugarea unui produs, cum să cumperi, plăți, livrare sau probleme pe platformă.";
+  if (input.includes("about") || input.includes("what is") || input.includes("ecoswap") || input.includes("purpose")) {
+    return "EcoSwap is a platform for reusable exchange and smart recycling, where users can exchange, sell, and donate reusable items. Our goal is to reduce waste and support sustainability by extending the life of items like electronics, furniture, and clothing.";
+  }
+  
+  if (input.includes("recycling") || input.includes("recycle") || input.includes("dispose") || input.includes("waste")) {
+    return "EcoSwap provides tips on proper recycling to help users make environmentally friendly choices. You can find information about nearby recycling locations and guidance on how to recycle different products in our 'Recycling Info' section.";
+  }
+  
+  if (input.includes("sustainability") || input.includes("environment") || input.includes("eco-friendly") || input.includes("green")) {
+    return "Sustainability is at the core of EcoSwap's mission. By facilitating the reuse of items, we aim to reduce waste, conserve resources, and minimize environmental impact. Every item exchanged or sold on our platform is one less item in a landfill!";
+  }
+  
+  if (input.includes("donate") || input.includes("donation") || input.includes("give away") || input.includes("charity")) {
+    return "EcoSwap allows you to donate items you no longer need. Simply list your item and mark it as 'For Donation' in the price section. This is a great way to help others and reduce waste at the same time!";
+  }
+  
+  if (input.includes("exchange") || input.includes("swap") || input.includes("trade") || input.includes("barter")) {
+    return "EcoSwap facilitates item exchanges! You can list items you're willing to trade and specify what you're looking for in return. This is a sustainable way to acquire what you need without spending money.";
+  }
+  
+  if (input.includes("notification") || input.includes("alert") || input.includes("inform") || input.includes("update")) {
+    return "EcoSwap sends notifications when new items matching your interests are posted. You can customize your notification preferences in the 'Settings' section of your profile.";
+  }
+  
+  if (input.includes("search") || input.includes("find") || input.includes("looking for") || input.includes("discover")) {
+    return "To find specific items, use the search bar at the top of the home page. You can filter results by category, price range, condition, and location to narrow down your options.";
+  }
+  
+  if (input.includes("benefits") || input.includes("advantage") || input.includes("why use") || input.includes("value")) {
+    return "By using EcoSwap, you're helping reduce waste, conserving resources, saving money, and connecting with like-minded individuals in your community who value sustainability. It's a win for you and for the planet!";
+  }
+  
+  if (input.includes("thank")) {
+    return "You're welcome! Is there anything else I can help you with regarding EcoSwap?";
+  }
+  
+  // Default response
+  return "I'm not sure I understand your question. You can ask about creating an account, adding products, buying or exchanging items, recycling information, sustainability, or any other features of the EcoSwap platform.";
 };
 
 export default Chatbot;

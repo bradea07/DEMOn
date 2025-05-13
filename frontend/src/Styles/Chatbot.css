@@ -61,6 +61,7 @@
   color: white;
   text-align: center;
   position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .chatbot-title {
@@ -143,18 +144,86 @@
   max-width: 75%;
   word-wrap: break-word;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Typing indicator */
+.message-bubble.typing {
+  padding: 12px;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: #888;
+  display: inline-block;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: typingBubble 1.4s infinite both;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBubble {
+  0%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .message.bot .message-bubble {
   background-color: #f0f2f5;
   color: #333;
   border-top-left-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  animation: fadeInLeft 0.3s forwards;
 }
 
 .message.user .message-bubble {
   background: linear-gradient(135deg, #040e29 0%, #0d2456 100%);
   color: white;
   border-top-right-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  animation: fadeInRight 0.3s forwards;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .chatbot-input-form {
