@@ -10,9 +10,11 @@ import MyProfile from "./components/MyProfile";
 import Chats from "./components/Chats";
 
 import Navbar from "./components/Navbar";
+import Chatbot from "./components/Chatbot";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import EditProduct from "./components/EditProduct"; // ✅ importat
+import "./Styles/Chatbot.css";
 
 // Function to check if user is authenticated
 const isAuthenticated = () => {
@@ -24,6 +26,11 @@ const isAuthenticated = () => {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
 
   useEffect(() => {
     // Function to check authentication status
@@ -53,14 +60,18 @@ function App() {
   return (
     <Router>
       {isLoggedIn && (
-        <Navbar
-          onLogout={() => {
-            // Clear all authentication-related data
-            localStorage.removeItem("userToken");
-            localStorage.removeItem("user");
-            setIsLoggedIn(false);
-          }}
-        />
+        <>
+          <Navbar
+            onLogout={() => {
+              // Clear all authentication-related data
+              localStorage.removeItem("userToken");
+              localStorage.removeItem("user");
+              setIsLoggedIn(false);
+            }}
+            toggleChatbot={toggleChatbot}
+          />
+          <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
+        </>
       )}
 
       <Routes>

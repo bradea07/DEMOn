@@ -524,6 +524,47 @@
   color: #ff9800;
 }
 
+/* Stil pentru lista de butoane din profil */
+ul.profile-buttons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+ul.profile-buttons-list li {
+  display: flex;
+}
+
+ul.profile-buttons-list button {
+  background: #040e29;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  opacity: 1;
+}
+
+ul.profile-buttons-list button:hover,
+ul.profile-buttons-list button.active {
+  background: #0a214d;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(4,14,41,0.15);
+}
+
+/* Asigură-te că nu există transparență accidentală */
+ul.profile-buttons-list button {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
   .profile-box {
@@ -566,4 +607,18 @@
   .edit-button {
     width: 100% !important;
   }
+}
+
+/* Fix for invisible/flickering profile section buttons */
+.section-buttons button,
+.staggered-item {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Optionally, if you want to keep the staggered animation, only set opacity:1 after animation ends */
+.section-buttons button {
+  will-change: background, color, box-shadow;
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css"; // Import CSS file
 
-const Navbar = ({ onLogout }) => {
+const Navbar = ({ onLogout, toggleChatbot }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -60,6 +60,14 @@ const Navbar = ({ onLogout }) => {
         </ul>
       </div>
       <div className="right-section">
+        <div 
+          className="nav-chat-icon" 
+          onClick={toggleChatbot}
+          title="Chat with EcoBot"
+        >
+          <i className="fas fa-robot"></i>
+          <span>Help</span>
+        </div>
         <button 
           className="logout-btn" 
           onClick={(e) => {

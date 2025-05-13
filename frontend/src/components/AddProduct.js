@@ -11,6 +11,7 @@ const AddProduct = () => {
     brand: "",
     product_condition: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [images, setImages] = useState([]);
   const [message, setMessage] = useState("");
@@ -50,15 +51,18 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setIsSubmitting(true);
 
     if (!user || !user.id) {
-      alert("You must be logged in to add a product.");
+      setMessage("You must be logged in to add a product.");
+      setIsSubmitting(false);
       return;
     }
 
-    // ✅ Validare pentru preț
+    // Validate price input
     if (isNaN(formData.price) || Number(formData.price) <= 0) {
-      alert("Please enter a valid price greater than 0.");
+      setMessage("Please enter a valid price greater than 0.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -88,37 +92,101 @@ const AddProduct = () => {
         throw new Error(data.error || "Failed to add product.");
       }
 
-      setMessage("✅ Product added successfully!");
+      // Reset form on success
+      setFormData({
+        title: "",
+        category: "",
+        description: "",
+        location: "",
+        price: "",
+        brand: "",
+        product_condition: "",
+      });
       setImages([]);
+      setMessage("✅ Product added successfully!");
     } catch (error) {
-      alert(`Failed to add product: ${error.message}`);
+      setMessage(`❌ Failed to add product: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+      // Scroll to top to show message
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
     <div className="add-product-container">
-      <h2 className="add-product-title">Add Product</h2>
+      <h2 className="add-product-title">
+        Add Product
+      </h2>
+      
+      {message && (
+        <div className={`add-product-message ${message.includes("✅") ? "success" : "error"}`}>
+          {message}
+        </div>
+      )}
+      
       <div className="add-product-box">
         <form onSubmit={handleSubmit} className="add-product-form">
           <div className="columns-container">
             <div className="left-column">
-              <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleChange} className="add-product-input" required />
-              <select name="category" value={formData.category} onChange={handleChange} className="add-product-select" required>
+              <label htmlFor="title">Title</label>
+              <input 
+                type="text" 
+                id="title"
+                name="title" 
+                placeholder="Enter product title" 
+                value={formData.title} 
+                onChange={handleChange} 
+                className="add-product-input" 
+                required 
+              />
+              
+              <label htmlFor="category">Category</label>
+              <select 
+                id="category"
+                name="category" 
+                value={formData.category} 
+                onChange={handleChange} 
+                className="add-product-select" 
+                required
+              >
                 <option value="">Select a category</option>
                 {categories.map((category, index) => (
                   <option key={index} value={category}>{category}</option>
                 ))}
               </select>
-              <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="add-product-textarea" required />
-              <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} className="add-product-input" required />
+              
+              <label htmlFor="description">Description</label>
+              <textarea 
+                id="description"
+                name="description" 
+                placeholder="Describe your product" 
+                value={formData.description} 
+                onChange={handleChange} 
+                className="add-product-textarea" 
+                required 
+              />
+              
+              <label htmlFor="location">Location</label>
+              <input 
+                type="text" 
+                id="location"
+                name="location" 
+                placeholder="Your location" 
+                value={formData.location} 
+                onChange={handleChange} 
+                className="add-product-input" 
+                required 
+              />
             </div>
 
             <div className="right-column">
-              {/* ✅ Preț validat și limitat din input */}
+              <label htmlFor="price">Price</label>
               <input
                 type="number"
+                id="price"
                 name="price"
-                placeholder="Price"
+                placeholder="Price in RON"
                 value={formData.price}
                 onChange={handleChange}
                 className="add-product-input"
@@ -126,34 +194,72 @@ const AddProduct = () => {
                 step="1.00"
                 required
               />
-              <input type="text" name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} className="add-product-input" required />
-              <select name="product_condition" value={formData.product_condition} onChange={handleChange} className="add-product-select" required>
+              
+              <label htmlFor="brand">Brand</label>
+              <input 
+                type="text" 
+                id="brand"
+                name="brand" 
+                placeholder="Product brand" 
+                value={formData.brand} 
+                onChange={handleChange} 
+                className="add-product-input" 
+                required 
+              />
+              
+              <label htmlFor="product_condition">Condition</label>
+              <select 
+                id="product_condition"
+                name="product_condition" 
+                value={formData.product_condition} 
+                onChange={handleChange} 
+                className="add-product-select" 
+                required
+              >
                 <option value="">Select Condition</option>
                 <option value="New">New</option>
                 <option value="Used - Like New">Used - Like New</option>
                 <option value="Used - Good">Used - Good</option>
                 <option value="Used - Acceptable">Used - Acceptable</option>
               </select>
+              
               <div className="file-input-container">
-                <label className="custom-file-label" htmlFor="fileInput">Choose Files</label>
-                <input id="fileInput" type="file" multiple accept="image/*" onChange={handleImageChange} className="add-product-file-input" />
+                <label className="custom-file-label" htmlFor="fileInput">
+                  Choose Files
+                </label>
+                <input 
+                  id="fileInput" 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  onChange={handleImageChange} 
+                  className="add-product-file-input" 
+                />
               </div>
             </div>
           </div>
 
           <div className="image-preview-container">
             {images.map((image, index) => (
-              <div key={index} className="image-preview">
+              <div 
+                key={index} 
+                className="image-preview"
+              >
                 <img src={URL.createObjectURL(image)} alt="Preview" />
-                <button type="button" onClick={() => handleDeleteImage(index)}>❌</button>
+                <button type="button" onClick={() => handleDeleteImage(index)}>Remove</button>
               </div>
             ))}
           </div>
 
-          <button type="submit" className="add-product-button">Add Product</button>
+          <button 
+            type="submit" 
+            className="add-product-button" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Adding Product..." : "Add Product"}
+          </button>
         </form>
       </div>
-      {message && <p>{message}</p>}
     </div>
   );
 };
