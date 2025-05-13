@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import "./Chats.css";
 
 const Chats = () => {
@@ -260,7 +261,9 @@ const Chats = () => {
                   />
                   <div className="conversation-details">
                     <div className="conversation-username">
-                      <span>@{otherUser.username}</span>
+                      <Link to={`/user/${otherUser.id}`} className="user-profile-link">
+                        @{otherUser.username}
+                      </Link>
                       {/* Show timestamp or status if needed */}
                     </div>
                     <div className="conversation-product">
@@ -286,12 +289,15 @@ const Chats = () => {
             <div className="chat-header">
               <h4>
                 Chat with{" "}
-                <span>
+                <Link to={`/user/${selectedChat.sender.id === userId 
+                  ? selectedChat.receiver.id 
+                  : selectedChat.sender.id}`} 
+                  className="user-profile-link">
                   @{selectedChat.sender.id === userId
                     ? selectedChat.receiver.username
                     : selectedChat.sender.username
                   }
-                </span>{" "}
+                </Link>{" "}
                 about <strong>{selectedChat.product.title}</strong>
               </h4>
               <button

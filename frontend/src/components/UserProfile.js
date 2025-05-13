@@ -1,0 +1,207 @@
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
+import "../Styles/UserProfile.css";
+
+const UserProfile = () => {
+  const { userId } = useParams();
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [ratings, setRatings] = useState([]);
+  const [activeTab, setActiveTab] = useState("products");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log("UserProfile component mounted with userId:", userId);
+    
+    const fetchUserData = async () => {
+      try {
+        // First try to fetch user data
+        try {
+          const userResponse = await axios.get(`http://localhost:8080/api/profile/${userId}`);
+          console.log("User data fetched successfully:", userResponse.data);
+          setUser(userResponse.data);
+        } catch (userErr) {
+          console.error("Error fetching user profile:", userErr);
+          setError("User profile could not be loaded. The user may not exist.");
+          setLoading(false);
+          return; // Exit early if we can't get basic user data
+        }
+        
+        // Fetch user's products
+        try {
+          const productsResponse = await axios.get(`http://localhost:8080/api/products/user/${userId}`);
+          console.log("Products fetched successfully:", productsResponse.data);
+          setProducts(productsResponse.data);
+        } catch (productErr) {
+          console.error("Error fetching user products:", productErr);
+          setProducts([]); // Use empty array if endpoint fails
+        }
+        
+        // Fetch user ratings - handle gracefully if endpoint doesn't exist
+        try {
+          const ratingsResponse = await axios.get(`http://localhost:8080/api/ratings/user/${userId}`);
+          console.log("Ratings fetched successfully:", ratingsResponse.data);
+          setRatings(ratingsResponse.data);
+        } catch (ratingErr) {
+          console.log("Rating endpoint not available, using empty ratings");
+          setRatings([]); // Use empty array if endpoint doesn't exist
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error in fetchUserData:", err);
+        setError("Failed to load user profile data. Please try again later.");
+        setLoading(false);
+      }
+    };
+    
+    fetchUserData();
+  }, [userId]);
+
+  // Calculate average rating
+  const calculateAverageRating = () => {
+    if (!ratings || ratings.length === 0) return 0;
+    const sum = ratings.reduce((total, rating) => total + rating.score, 0);
+    return (sum / ratings.length).toFixed(1);
+  };
+
+  // Render user products
+  const renderProducts = () => {
+    if (products.length === 0) {
+      return <p className="no-items">This user hasn't listed any products yet.</p>;
+    }
+
+    return (
+      <div className="user-products-grid">
+        {products.map((product) => (
+          <div key={product.id} className="user-product-card">
+            {product.imageUrls && product.imageUrls.length > 0 ? (
+              <img
+                src={`http://localhost:8080${product.imageUrls[0]}`}
+                alt={product.title}
+                className="user-product-image"
+              />
+            ) : (
+              <div className="no-image">No image</div>
+            )}
+            <div className="user-product-details">
+              <h3>{product.title}</h3>
+              <p className="user-product-price">{product.price} USD</p>
+              <Link to={`/product/${product.id}`} className="view-product-btn">
+                View Product
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Render user ratings and comments
+  const renderRatings = () => {
+    if (ratings.length === 0) {
+      return <p className="no-items">This user has no ratings yet.</p>;
+    }
+
+    return (
+      <div className="user-ratings-list">
+        {ratings.map((rating) => (
+          <div key={rating.id} className="rating-card">
+            <div className="rating-header">
+              <div className="rating-stars">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className={i < rating.score ? "star filled" : "star"}>
+                    ★
+                  </span>
+                ))}
+              </div>
+              <span className="rating-date">
+                {new Date(rating.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+            <p className="rating-comment">{rating.comment}</p>
+            <p className="rating-author">
+              By: {rating.reviewer ? rating.reviewer.username : "Anonymous"}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return <div className="loading">Loading user profile...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
+  return (
+    <div className="user-profile-container">
+      {user && (
+        <>
+          <div className="user-profile-header">
+            <div className="user-avatar">
+              {user.profilePic ? (
+                <img
+                  src={user.profilePic.startsWith('http') ? user.profilePic : `http://localhost:8080${user.profilePic}`}
+                  alt={`${user.username}'s profile`}
+                />
+              ) : (
+                <div className="default-avatar">{user.username ? user.username.charAt(0) : '?'}</div>
+              )}
+            </div>
+            <div className="user-info">
+              <h2>{user.username || 'Unknown User'}</h2>
+              <p className="user-location">{user.city || "Location not specified"}</p>
+              <div className="user-rating">
+                <span className="rating-value">{calculateAverageRating()}</span>
+                <div className="rating-stars">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < Math.round(calculateAverageRating()) ? "star filled" : "star"}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span className="rating-count">({ratings.length} ratings)</span>
+              </div>
+              <p className="member-since">
+                Member since: {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+              </p>
+            </div>
+          </div>
+
+          <div className="user-profile-tabs">
+            <button
+              className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
+              onClick={() => setActiveTab("products")}
+            >
+              Products ({products.length})
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "ratings" ? "active" : ""}`}
+              onClick={() => setActiveTab("ratings")}
+            >
+              Ratings & Comments ({ratings.length})
+            </button>
+          </div>
+
+          <div className="user-profile-content">
+            {activeTab === "products" ? renderProducts() : renderRatings()}
+          </div>
+        </>
+      )}
+      {!user && !loading && (
+        <div className="error">User not found or data missing.</div>
+      )}
+    </div>
+  );
+};
+
+export default UserProfile;

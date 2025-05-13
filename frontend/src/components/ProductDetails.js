@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import "../Styles/ProductDetails.css";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -10,6 +11,7 @@ const ProductDetails = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isFavorited, setIsFavorited] = useState(false);
+  const [sellerRating, setSellerRating] = useState(0);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const currentUser = loggedInUser?.id;
@@ -30,6 +32,22 @@ const ProductDetails = () => {
   
         const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
         setIsFavorited(storedFavorites.some((fav) => fav.id === data.id));
+        
+        // Fetch seller's ratings if product has a user
+        if (data.user && data.user.id) {
+          try {
+            const ratingResponse = await fetch(`http://localhost:8080/api/ratings/user/${data.user.id}`);
+            if (ratingResponse.ok) {
+              const ratingData = await ratingResponse.json();
+              if (ratingData.length > 0) {
+                const sum = ratingData.reduce((total, rating) => total + rating.score, 0);
+                setSellerRating((sum / ratingData.length).toFixed(1));
+              }
+            }
+          } catch (err) {
+            console.error("Error fetching seller ratings:", err);
+          }
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -103,21 +121,40 @@ const ProductDetails = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div>
-      <h2>{product.title}</h2>
-      <p><strong>Category:</strong> {product.category}</p>
-      <p><strong>Description:</strong> {product.description}</p>
-      <p><strong>Price:</strong> {product.price} USD</p>
-      <p><strong>Brand:</strong> {product.brand}</p>
-      <p><strong>Condition:</strong> {product.condition || "Not Available"}</p>
-
-      {product.imageUrls?.length > 0 ? (
-        product.imageUrls.map((img, i) => (
-          <img key={i} src={`http://localhost:8080${img}`} alt="Product" width="200" />
-        ))
-      ) : (
-        <p style={{ color: "red" }}>No image available</p>
-      )}
+    <div className="product-details-container">
+      <div className="product-main-content">
+        <h2>{product.title}</h2>
+        
+        <div className="product-images-container">
+          {product.imageUrls?.length > 0 ? (
+            product.imageUrls.map((img, i) => (
+              <img key={i} src={`http://localhost:8080${img}`} alt="Product" className="product-image" />
+            ))
+          ) : (
+            <p className="no-image">No image available</p>
+          )}
+        </div>
+        
+        <div className="product-info">
+          <p><strong>Category:</strong> {product.category}</p>
+          <p><strong>Description:</strong> {product.description}</p>
+          <p><strong>Price:</strong> {product.price} USD</p>
+          <p><strong>Brand:</strong> {product.brand}</p>
+          <p><strong>Condition:</strong> {product.condition || "Not Available"}</p>
+          
+          <div className="seller-info">
+            <h3>Seller Information</h3>
+            <p>
+              <strong>Seller: </strong>
+              <Link to={`/user/${product.user.id}`} className="seller-link">
+                {product.user.username} 
+                {sellerRating > 0 && <span className="seller-rating"> ★ {sellerRating}</span>}
+              </Link>
+            </p>
+            <p><strong>Location:</strong> {product.location || "Not specified"}</p>
+          </div>
+        </div>
+      </div>
 
       {!isOwner && (
         <button onClick={toggleFavorite} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>

@@ -7,6 +7,7 @@ import SearchResults from "./components/SearchResults";
 import ProductDetails from "./components/ProductDetails";
 import AddProduct from "./components/AddProduct";
 import MyProfile from "./components/MyProfile";
+import UserProfile from "./components/UserProfile";
 import Chats from "./components/Chats";
 
 import Navbar from "./components/Navbar";
@@ -87,6 +88,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
+            <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/chats" element={<Chats />} />
 
             <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
