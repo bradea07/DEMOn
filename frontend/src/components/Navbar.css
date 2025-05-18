@@ -157,8 +157,27 @@
     font-size: 0.9rem;
     padding: 8px 12px;
   }
-  
-  .ecoswap-title {
+    .ecoswap-title {
     font-size: 1.4rem;
   }
+}
+
+/* Special style for delivery button */
+.delivery-nav-item {
+  background-color: #ff6f00;
+  border-radius: 4px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.delivery-nav-item:hover {
+  background-color: #e65100;
+  transform: translateY(-2px);
+}
+
+.delivery-nav-item i {
+  font-size: 0.9rem;
+  margin-left: 3px;
 }

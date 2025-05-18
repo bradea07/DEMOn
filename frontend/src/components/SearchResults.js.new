@@ -1,0 +1,330 @@
+import React, { useState, useEffect } from "react";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../Styles/NewSearchResults.css";
+
+const SearchResults = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
+
+  // Get query parameters
+  const queryParams = new URLSearchParams(location.search);
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    query: queryParams.get("query") || "",
+    category: queryParams.get("category") || "",
+    condition: queryParams.get("condition") || "",
+    location: queryParams.get("location") || "",
+    brand: queryParams.get("brand") || "",
+    minPrice: queryParams.get("minPrice") || "",
+    maxPrice: queryParams.get("maxPrice") || ""
+  });
+
+  // Categories and conditions for filters
+  const categories = ["All Categories", "Electronics", "Clothing", "Home", "Garden", "Sports", "Toys", "Books", "Other"];
+  const conditions = ["Any Condition", "New", "Like New", "Good", "Fair", "Poor"];
+  const locations = ["Any Location", "Alba", "Arad", "Argeș", "Bacău", "Bihor", "Bistrița-Năsăud", "Botoșani", "Brașov", "Brăila", "București", "Buzău", "Caraș-Severin", "Cluj", "Constanța", "Covasna", "Călărași", "Dolj", "Dâmbovița", "Galați", "Giurgiu", "Gorj", "Harghita", "Hunedoara", "Ialomița", "Iași", "Ilfov", "Maramureș", "Mehedinți", "Mureș", "Neamț", "Olt", "Prahova", "Satu Mare", "Sibiu", "Suceava", "Sălaj", "Teleorman", "Timiș", "Tulcea", "Vaslui", "Vrancea", "Vâlcea"];
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const applyFilters = () => {
+    const params = new URLSearchParams();
+    
+    // Only add non-empty filters to the URL
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value !== "All Categories" && value !== "Any Condition" && value !== "Any Location") {
+        params.append(key, value);
+      }
+    });
+    
+    // Navigate with the new search params
+    navigate({
+      pathname: "/search",
+      search: params.toString()
+    });
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      query: "",
+      category: "",
+      condition: "",
+      location: "",
+      brand: "",
+      minPrice: "",
+      maxPrice: ""
+    });
+    
+    navigate("/search");
+  };
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      setLoading(true);
+      
+      // Build the URL with query parameters
+      let params = new URLSearchParams(location.search);
+      
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/products/search-with-filters?${params.toString()}`
+        );
+        
+        setResults(response.data);
+        setError(response.data.length === 0 ? "No products found." : "");
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        setError("Error fetching search results.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+    
+    // Update filters from URL when location changes
+    const newFilters = {
+      query: queryParams.get("query") || "",
+      category: queryParams.get("category") || "",
+      condition: queryParams.get("condition") || "",
+      location: queryParams.get("location") || "",
+      brand: queryParams.get("brand") || "",
+      minPrice: queryParams.get("minPrice") || "",
+      maxPrice: queryParams.get("maxPrice") || ""
+    };
+    setFilters(newFilters);
+    
+  }, [location.search]);
+
+  // Pagination logic
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = results.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(results.length / productsPerPage);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  return (
+    <div className="search-results-container">
+      {/* Search filters */}
+      <div className="search-filters">
+        <div className="filter-group">
+          <label htmlFor="query">Search</label>
+          <input
+            type="text"
+            id="query"
+            name="query"
+            value={filters.query}
+            onChange={handleFilterChange}
+            placeholder="Search products"
+          />
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            name="category"
+            value={filters.category}
+            onChange={handleFilterChange}
+          >
+            {categories.map((category) => (
+              <option key={category} value={category === "All Categories" ? "" : category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="condition">Condition</label>
+          <select
+            id="condition"
+            name="condition"
+            value={filters.condition}
+            onChange={handleFilterChange}
+          >
+            {conditions.map((condition) => (
+              <option key={condition} value={condition === "Any Condition" ? "" : condition}>
+                {condition}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="location">Location</label>
+          <select
+            id="location"
+            name="location"
+            value={filters.location}
+            onChange={handleFilterChange}
+          >
+            {locations.map((location) => (
+              <option key={location} value={location === "Any Location" ? "" : location}>
+                {location}
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="minPrice">Min Price</label>
+          <input
+            type="number"
+            id="minPrice"
+            name="minPrice"
+            value={filters.minPrice}
+            onChange={handleFilterChange}
+            placeholder="Min price"
+          />
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="maxPrice">Max Price</label>
+          <input
+            type="number"
+            id="maxPrice"
+            name="maxPrice"
+            value={filters.maxPrice}
+            onChange={handleFilterChange}
+            placeholder="Max price"
+          />
+        </div>
+        
+        <div className="filter-group">
+          <label htmlFor="brand">Brand</label>
+          <input
+            type="text"
+            id="brand"
+            name="brand"
+            value={filters.brand}
+            onChange={handleFilterChange}
+            placeholder="Brand name"
+          />
+        </div>
+        
+        <div className="filter-buttons">
+          <button className="filter-button" onClick={applyFilters}>Apply Filters</button>
+          <button className="filter-button reset" onClick={resetFilters}>Reset</button>
+        </div>
+      </div>
+      
+      {/* Results count */}
+      <div className="results-count">
+        {loading ? "Searching..." : `Found ${results.length} results`}
+      </div>
+      
+      {/* Results list */}
+      {loading ? (
+        <div className="loading">Loading results...</div>
+      ) : error ? (
+        <div className="search-error">{error}</div>
+      ) : (
+        <>
+          <div className="search-results-list">
+            {currentProducts.map((product) => (
+              <div key={product.id} className="product-item">
+                <div className="product-image-container">
+                  {product.imageUrls && product.imageUrls.length > 0 ? (
+                    <img
+                      src={`http://localhost:8080${product.imageUrls[0]}`}
+                      alt={product.title}
+                      className="product-image"
+                    />
+                  ) : (
+                    <div className="no-image">No image available</div>
+                  )}
+                </div>
+                
+                <div className="product-details">
+                  <Link to={`/product/${product.id}`} className="product-title">
+                    {product.title}
+                  </Link>
+                  
+                  <div className="product-price">{product.price} USD</div>
+                  
+                  {product.condition && (
+                    <span className="product-condition">{product.condition}</span>
+                  )}
+                  
+                  {product.location && (
+                    <div className="product-location">
+                      <i className="fa fa-map-marker"></i> {product.location}
+                    </div>
+                  )}
+                  
+                  {product.createdAt && (
+                    <div className="product-date">
+                      Listed on {formatDate(product.createdAt)}
+                    </div>
+                  )}
+                  
+                  <div className="product-actions">
+                    <Link to={`/product/${product.id}`} className="view-product-btn">
+                      View Details
+                    </Link>
+                    <button className="favorite-btn">
+                      ❤
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button onClick={prevPage} disabled={currentPage === 1}>
+                Previous
+              </button>
+              
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={currentPage === index + 1 ? "active" : ""}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              
+              <button onClick={nextPage} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default SearchResults;

@@ -16,6 +16,7 @@ import Chatbot from "./components/Chatbot";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import EditProduct from "./components/EditProduct"; // ✅ importat
+import Delivery from "./components/Delivery"; // Import Delivery component
 import "./Styles/Chatbot.css";
 
 // Function to check if user is authenticated
@@ -91,7 +92,8 @@ function App() {
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/chats" element={<Chats />} />
-
+            <Route path="/delivery" element={<Delivery />} />
+            
             <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
           </>
         ) : (

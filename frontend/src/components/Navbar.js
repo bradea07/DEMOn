@@ -57,6 +57,7 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
               )}
             </Link>
           </li>
+          <li><Link to="/delivery" className="nav-item delivery-nav-item">Delivery <i className="fas fa-truck"></i></Link></li>
         </ul>
       </div>
       <div className="right-section">
