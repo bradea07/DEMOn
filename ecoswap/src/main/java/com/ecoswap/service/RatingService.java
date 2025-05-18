@@ -70,4 +70,17 @@ public class RatingService {
         
         ratingRepository.delete(rating);
     }
+
+    public RatingDTO updateShipmentInfo(Long ratingId, RatingDTO ratingDTO) {
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RuntimeException("Rating not found with ID: " + ratingId));
+        
+        // Update shipment tracking information
+        rating.setShipmentTrackingId(ratingDTO.getShipmentTrackingId());
+        rating.setSelectedDeliveryOption(ratingDTO.getSelectedDeliveryOption());
+        rating.setDeliveryConfirmed(ratingDTO.isDeliveryConfirmed());
+        
+        Rating updatedRating = ratingRepository.save(rating);
+        return new RatingDTO(updatedRating);
+    }
 }

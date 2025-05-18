@@ -222,19 +222,35 @@ const handleFinalConfirmation = async () => {
       deliveryConfirmed: true
     };
     
-    // This would normally call an API endpoint to save to your backend
+    // Log the data we're about to save
     console.log('Saving shipment data to rating:', ratingData);
     
-    // Mock API call - In a real app, you would call your actual API endpoint
-    // await axios.post('http://localhost:8080/api/ratings/update-shipment', ratingData);
+    // Get the rating ID from localStorage or context
+    // For this example, we'll assume the rating ID is 1 (you would need to get this from your app's state)
+    const ratingId = 1; // Replace with actual rating ID from your app state
     
-    // Show success message
-    setDeliveryConfirmed(true);
-    alert('Delivery confirmed! The courier has been notified and will arrive according to the selected service.');
+    // Call the actual API endpoint
+    const response = await axios.post(
+      `http://localhost:8080/api/ratings/update-shipment/${ratingId}`,
+      ratingData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    if (response.status === 200) {
+      // Show success message
+      setDeliveryConfirmed(true);
+      alert('Delivery confirmed! The courier has been notified and will arrive according to the selected service.');
+    } else {
+      throw new Error('Failed to update shipment information');
+    }
     
   } catch (err) {
     console.error('Error confirming delivery:', err);
-    setError('Failed to confirm delivery. Please try again.');
+    setError('Failed to confirm delivery. Please try again: ' + (err.response?.data || err.message));
   } finally {
     setLoading(false);
   }

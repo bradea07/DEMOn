@@ -36,4 +36,16 @@ public class RatingController {    private final RatingService ratingService;
         ratingService.deleteRating(ratingId, userId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/update-shipment/{ratingId}")
+    public ResponseEntity<?> updateShipmentInfo(
+            @PathVariable Long ratingId,
+            @RequestBody RatingDTO ratingDTO) {
+        try {
+            RatingDTO updatedRating = ratingService.updateShipmentInfo(ratingId, ratingDTO);
+            return ResponseEntity.ok(updatedRating);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
