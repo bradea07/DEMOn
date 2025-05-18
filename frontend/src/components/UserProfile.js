@@ -11,8 +11,26 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Rating form state
+  const [showRatingForm, setShowRatingForm] = useState(false);
+  const [ratingValue, setRatingValue] = useState(5);
+  const [ratingComment, setRatingComment] = useState("");
+  const [submittingRating, setSubmittingRating] = useState(false);
+  const [ratingError, setRatingError] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    // Get current logged in user info from localStorage
+    const userJson = localStorage.getItem("user");
+    if (userJson) {
+      try {
+        setCurrentUser(JSON.parse(userJson));
+      } catch (err) {
+        console.error("Error parsing user data from localStorage:", err);
+      }
+    }
+    
     console.log("UserProfile component mounted with userId:", userId);
     
     const fetchUserData = async () => {
@@ -131,6 +149,132 @@ const UserProfile = () => {
     );
   };
 
+  // Handle rating submission
+  const submitRating = async (e) => {
+    e.preventDefault();
+    
+    if (!currentUser || !currentUser.id) {
+      setRatingError("You must be logged in to leave a rating");
+      return;
+    }
+    
+    if (currentUser.id.toString() === userId) {
+      setRatingError("You cannot rate yourself");
+      return;
+    }
+    
+    if (!ratingComment.trim()) {
+      setRatingError("Please add a comment with your rating");
+      return;
+    }
+    
+    setSubmittingRating(true);
+    setRatingError("");
+    
+    try {
+      const ratingData = {
+        sellerId: parseInt(userId),
+        reviewerId: currentUser.id,
+        raterId: currentUser.id,
+        score: ratingValue,
+        comment: ratingComment
+      };
+      
+      const response = await axios.post("http://localhost:8080/api/ratings", ratingData);
+      
+      // Add the new rating to the existing ratings
+      setRatings([...ratings, response.data]);
+      
+      // Reset form
+      setRatingComment("");
+      setRatingValue(5);
+      setShowRatingForm(false);
+      
+      // Switch to ratings tab to show the new rating
+      setActiveTab("ratings");
+      
+    } catch (err) {
+      console.error("Error submitting rating:", err);
+      setRatingError("Failed to submit rating. Please try again.");
+    } finally {
+      setSubmittingRating(false);
+    }
+  };
+  
+  // Render rating form
+  const renderRatingForm = () => {
+    if (!currentUser) {
+      return <p className="login-to-rate">Please log in to leave a rating</p>;
+    }
+    
+    if (currentUser.id.toString() === userId) {
+      return null; // Don't show rating form for own profile
+    }
+    
+    return (
+      <div className="rating-form-container">
+        {!showRatingForm ? (
+          <button 
+            className="show-rating-form-btn" 
+            onClick={() => setShowRatingForm(true)}
+          >
+            Leave a Rating
+          </button>
+        ) : (
+          <form className="rating-form" onSubmit={submitRating}>
+            <h3>Rate this user</h3>
+            
+            <div className="rating-stars-input">
+              {[...Array(5)].map((_, i) => (
+                <span
+                  key={i}
+                  className={`star-input ${i < ratingValue ? "filled" : ""}`}
+                  onClick={() => setRatingValue(i + 1)}
+                >
+                  ★
+                </span>
+              ))}
+              <span className="rating-value-display">{ratingValue}/5</span>
+            </div>
+            
+            <textarea
+              className="rating-comment-input"
+              placeholder="Write your review here..."
+              value={ratingComment}
+              onChange={(e) => setRatingComment(e.target.value)}
+              rows={4}
+              required
+            />
+            
+            {ratingError && <p className="rating-error">{ratingError}</p>}
+            
+            <div className="rating-form-actions">
+              <button 
+                type="button" 
+                className="cancel-rating-btn"
+                onClick={() => {
+                  setShowRatingForm(false);
+                  setRatingError("");
+                  setRatingComment("");
+                  setRatingValue(5);
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="submit-rating-btn"
+                disabled={submittingRating}
+              >
+                {submittingRating ? "Submitting..." : "Submit Rating"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    );
+  };
+  
   if (loading) {
     return <div className="loading">Loading user profile...</div>;
   }
@@ -193,8 +337,47 @@ const UserProfile = () => {
           </div>
 
           <div className="user-profile-content">
-            {activeTab === "products" ? renderProducts() : renderRatings()}
+            {activeTab === "products" ? renderProducts() : (
+              <>
+                {renderRatingForm()}
+                {renderRatings()}
+              </>
+            )}
           </div>
+
+          {/* Rating form - only visible to the current user */}
+          {currentUser && currentUser.id === userId && (
+            <div className="rating-form-container">
+              <h3>Your Rating</h3>
+              <form onSubmit={submitRating} className="rating-form">
+                <div className="rating-stars">
+                  {[...Array(5)].map((_, i) => (
+                    <span
+                      key={i}
+                      className={i < ratingValue ? "star filled" : "star"}
+                      onClick={() => setRatingValue(i + 1)}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <textarea
+                  value={ratingComment}
+                  onChange={(e) => setRatingComment(e.target.value)}
+                  placeholder="Leave a comment about this user..."
+                  className="rating-comment"
+                />
+                {ratingError && <p className="error-message">{ratingError}</p>}
+                <button
+                  type="submit"
+                  className="submit-rating-btn"
+                  disabled={submittingRating}
+                >
+                  {submittingRating ? "Submitting..." : "Submit Rating"}
+                </button>
+              </form>
+            </div>
+          )}
         </>
       )}
       {!user && !loading && (
