@@ -15,13 +15,15 @@ import java.time.LocalDateTime;
 public class RatingDTO {
     private Long id;
     private Long sellerId;
-    private Long reviewerId;
-    private Long raterId; 
+    private Long reviewerId;    private Long raterId; 
     private String reviewerUsername;
     private Integer score;
     private String comment;
     private LocalDateTime createdAt;
     private boolean active;
+    private String shipmentTrackingId;
+    private String selectedDeliveryOption;
+    private boolean deliveryConfirmed;
 
     public RatingDTO(Rating rating) {
         this.id = rating.getId();
@@ -32,10 +34,12 @@ public class RatingDTO {
             this.reviewerId = rating.getReviewer().getId();
             this.reviewerUsername = rating.getReviewer().getUsername();
         }
-        this.raterId = rating.getRaterId();
-        this.score = rating.getScore();
+        this.raterId = rating.getRaterId();        this.score = rating.getScore();
         this.comment = rating.getComment();
         this.createdAt = rating.getCreatedAt();
         this.active = rating.isActive();
+        this.shipmentTrackingId = rating.getShipmentTrackingId();
+        this.selectedDeliveryOption = rating.getSelectedDeliveryOption();
+        this.deliveryConfirmed = rating.isDeliveryConfirmed();
     }
 }

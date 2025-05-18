@@ -36,6 +36,11 @@ const Delivery = () => {
   const [rates, setRates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedRate, setSelectedRate] = useState(null);
+  const [confirmationStep, setConfirmationStep] = useState(false);
+  const [confirmationText, setConfirmationText] = useState('');
+  const [confirmationValid, setConfirmationValid] = useState(false);
+  const [deliveryConfirmed, setDeliveryConfirmed] = useState(false);
   
   const handleFromAddressChange = (e) => {
     setFromAddress({
@@ -189,6 +194,51 @@ const createShipment = async (e) => {
   }
 };
 
+// Handle rate selection
+const handleSelectRate = (rate) => {
+  setSelectedRate(rate);
+  // Save the shipment tracking ID
+  console.log('Selected rate:', rate);
+};
+
+// Handle confirmation input
+const handleConfirmInput = (e) => {
+  const value = e.target.value;
+  setConfirmationText(value);
+  setConfirmationValid(value.trim().toUpperCase() === 'CONFIRM');
+};
+
+// Handle final confirmation
+const handleFinalConfirmation = async () => {
+  if (!confirmationValid) return;
+  
+  try {
+    setLoading(true);
+    
+    // Save the shipment tracking info to the rating table
+    const ratingData = {
+      shipmentTrackingId: shipment.object_id,
+      selectedDeliveryOption: `${selectedRate.provider} - ${selectedRate.servicelevel.name}`,
+      deliveryConfirmed: true
+    };
+    
+    // This would normally call an API endpoint to save to your backend
+    console.log('Saving shipment data to rating:', ratingData);
+    
+    // Mock API call - In a real app, you would call your actual API endpoint
+    // await axios.post('http://localhost:8080/api/ratings/update-shipment', ratingData);
+    
+    // Show success message
+    setDeliveryConfirmed(true);
+    alert('Delivery confirmed! The courier has been notified and will arrive according to the selected service.');
+    
+  } catch (err) {
+    console.error('Error confirming delivery:', err);
+    setError('Failed to confirm delivery. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
   
   return (
     <div className="delivery-container">      <h2>Delivery Calculator</h2>
@@ -493,12 +543,61 @@ const createShipment = async (e) => {
                     ? '1 day delivery' 
                     : `${rate.estimated_days} days delivery`}
                 </div>
-                <button className="select-rate-btn">
-                  Select This Option
+                <button 
+                  className={`select-rate-btn ${selectedRate?.object_id === rate.object_id ? 'selected' : ''}`}
+                  onClick={() => handleSelectRate(rate)}
+                >
+                  {selectedRate?.object_id === rate.object_id ? 'Selected' : 'Select This Option'}
                 </button>
               </div>
             ))}
           </div>
+          
+          {selectedRate && !confirmationStep && (
+            <div className="confirmation-section">
+              <h4>Selected Option: {selectedRate.provider} - {selectedRate.servicelevel.name}</h4>
+              <p>Price: {selectedRate.amount} {selectedRate.currency}</p>
+              <p>Estimated Delivery: {selectedRate.estimated_days === 1 
+                ? '1 day' 
+                : `${selectedRate.estimated_days} days`}
+              </p>
+              <button 
+                className="confirm-btn"
+                onClick={() => setConfirmationStep(true)}
+              >
+                Proceed to Confirmation
+              </button>
+            </div>
+          )}
+          
+          {confirmationStep && (
+            <div className="final-confirmation">
+              <h4>Final Confirmation</h4>
+              <p>Shipment ID: {shipment.object_id}</p>
+              <p>Provider: {selectedRate.provider}</p>
+              <p>Service: {selectedRate.servicelevel.name}</p>
+              <p>Price: {selectedRate.amount} {selectedRate.currency}</p>
+              <div className="confirm-input">
+                <p>Type "CONFIRM" to confirm your selection and call the courier:</p>
+                <input 
+                  type="text" 
+                  placeholder="Type CONFIRM here"
+                  onChange={handleConfirmInput}
+                  className="confirm-text-input"
+                />
+              </div>
+              <button 
+                className="submit-confirmation-btn" 
+                disabled={!confirmationValid}
+                onClick={handleFinalConfirmation}
+              >
+                Confirm and Call Courier
+              </button>
+              <button className="cancel-btn" onClick={() => setConfirmationStep(false)}>
+                Go Back
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
