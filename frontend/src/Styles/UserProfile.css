@@ -348,6 +348,45 @@
   background-color: #d0d0d0;
 }
 
+.already-rated {
+  background-color: #f1f8e9;
+  border: 1px solid #c5e1a5;
+  color: #558b2f;
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+  margin-top: 10px;
+  font-size: 15px;
+  padding: 15px;
+  background-color: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+  color: #1b5e20;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.rating-error {
+  color: #d32f2f;
+  margin-top: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.already-rated-message {
+  background-color: #f0f8ff;
+  border-left: 3px solid #2e7d32;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 15px;
+  color: #333;
+}
+
 .rating-error {
   color: #d32f2f;
   font-size: 14px;

@@ -7,6 +7,7 @@ import com.ecoswap.repository.RatingRepository;
 import com.ecoswap.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,25 +20,32 @@ public class RatingService {
     public RatingService(RatingRepository ratingRepository, UserRepository userRepository) {
         this.ratingRepository = ratingRepository;
         this.userRepository = userRepository;
-    }
-
-    public List<RatingDTO> getRatingsForUser(Long userId) {
-        User user = userRepository.findById(userId)
+    }    public List<RatingDTO> getRatingsForUser(Long userId) {
+        // Verify user exists
+        userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
         
         List<Rating> ratings = ratingRepository.findBySellerIdAndActiveTrue(userId);
         return ratings.stream()
                 .map(RatingDTO::new)
                 .collect(Collectors.toList());
-    }
-
-    public RatingDTO createRating(RatingDTO ratingDTO) {
+    }    public RatingDTO createRating(RatingDTO ratingDTO) {
         User seller = userRepository.findById(ratingDTO.getSellerId())
                 .orElseThrow(() -> new RuntimeException("Seller not found"));
         
         User reviewer = userRepository.findById(ratingDTO.getReviewerId())
                 .orElseThrow(() -> new RuntimeException("Reviewer not found"));
         
+        // Check if the user has already rated this seller
+        Rating existingRating = ratingRepository.findBySellerIdAndReviewerId(
+                ratingDTO.getSellerId(), ratingDTO.getReviewerId());
+        
+        if (existingRating != null) {
+            // Prevent editing existing ratings
+            throw new RuntimeException("You have already rated this user and cannot modify your rating.");
+        }
+        
+        // Create new rating if one doesn't exist
         Rating rating = new Rating();
         rating.setSeller(seller);
         rating.setReviewer(reviewer);

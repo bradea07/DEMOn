@@ -20,12 +20,15 @@ public class RatingController {    private final RatingService ratingService;
     public ResponseEntity<List<RatingDTO>> getUserRatings(@PathVariable Long userId) {
         List<RatingDTO> ratings = ratingService.getRatingsForUser(userId);
         return ResponseEntity.ok(ratings);
-    }
-
-    @PostMapping
-    public ResponseEntity<RatingDTO> createRating(@RequestBody RatingDTO ratingDTO) {
-        RatingDTO createdRating = ratingService.createRating(ratingDTO);
-        return ResponseEntity.ok(createdRating);
+    }    @PostMapping
+    public ResponseEntity<?> createRating(@RequestBody RatingDTO ratingDTO) {
+        try {
+            RatingDTO createdRating = ratingService.createRating(ratingDTO);
+            return ResponseEntity.ok(createdRating);
+        } catch (RuntimeException e) {
+            // Return 400 Bad Request with the error message when a duplicate rating is attempted
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{ratingId}")

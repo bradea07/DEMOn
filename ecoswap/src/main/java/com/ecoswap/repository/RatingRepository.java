@@ -12,4 +12,6 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> findBySeller(User seller);
     List<Rating> findByReviewer(User reviewer);
     List<Rating> findBySellerIdAndActiveTrue(Long sellerId);
+    // Check if a rating already exists from this reviewer to this seller
+    Rating findBySellerIdAndReviewerId(Long sellerId, Long reviewerId);
 }

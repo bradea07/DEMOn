@@ -19,9 +19,11 @@ const UserProfile = () => {
   const [submittingRating, setSubmittingRating] = useState(false);
   const [ratingError, setRatingError] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [hasRated, setHasRated] = useState(false);
+  const [existingRating, setExistingRating] = useState(null);
 
+  // Get current logged in user info only once when component mounts
   useEffect(() => {
-    // Get current logged in user info from localStorage
     const userJson = localStorage.getItem("user");
     if (userJson) {
       try {
@@ -30,7 +32,10 @@ const UserProfile = () => {
         console.error("Error parsing user data from localStorage:", err);
       }
     }
-    
+  }, []); // Empty dependency array means this runs once on mount
+  
+  // Fetch user data, products, and ratings
+  useEffect(() => {
     console.log("UserProfile component mounted with userId:", userId);
     
     const fetchUserData = async () => {
@@ -76,8 +81,30 @@ const UserProfile = () => {
     };
     
     fetchUserData();
-  }, [userId]);
+  }, [userId]); // Only re-run when userId changes
 
+  // This effect runs when both currentUser and ratings are available
+  // It determines if the current user has already rated the profile
+  useEffect(() => {
+    if (currentUser && ratings.length > 0) {
+      const userRating = ratings.find(
+        rating => rating.reviewerId === currentUser.id
+      );
+      
+      if (userRating) {
+        setHasRated(true);
+        setExistingRating(userRating);
+        
+        // Pre-populate form with existing rating data
+        setRatingValue(userRating.score);
+        setRatingComment(userRating.comment);
+      } else {
+        setHasRated(false);
+        setExistingRating(null);
+      }
+    }
+  }, [currentUser, ratings]); // This dependency won't cause an infinite loop
+  
   // Calculate average rating
   const calculateAverageRating = () => {
     if (!ratings || ratings.length === 0) return 0;
@@ -172,6 +199,12 @@ const UserProfile = () => {
     setRatingError("");
     
     try {
+      // If user already rated, prevent submitting again
+      if (hasRated) {
+        setRatingError("You have already rated this user and cannot modify your rating.");
+        return;
+      }
+      
       const ratingData = {
         sellerId: parseInt(userId),
         reviewerId: currentUser.id,
@@ -185,9 +218,13 @@ const UserProfile = () => {
       // Add the new rating to the existing ratings
       setRatings([...ratings, response.data]);
       
+      // Update state to show user has now rated
+      setHasRated(true);
+      
+      // Save the existing rating data for future edits
+      setExistingRating(response.data);
+      
       // Reset form
-      setRatingComment("");
-      setRatingValue(5);
       setShowRatingForm(false);
       
       // Switch to ratings tab to show the new rating
@@ -195,7 +232,13 @@ const UserProfile = () => {
       
     } catch (err) {
       console.error("Error submitting rating:", err);
-      setRatingError("Failed to submit rating. Please try again.");
+      if (err.response && err.response.status === 400) {
+        // If backend returns a 400 Bad Request, display the specific error message
+        setRatingError(err.response.data || "You have already rated this user.");
+      } else {
+        // Generic error for other issues
+        setRatingError("Failed to submit rating. Please try again.");
+      }
     } finally {
       setSubmittingRating(false);
     }
@@ -209,6 +252,10 @@ const UserProfile = () => {
     
     if (currentUser.id.toString() === userId) {
       return null; // Don't show rating form for own profile
+    }
+    
+    if (hasRated) {
+      return <p className="already-rated">You have already rated this user.</p>;
     }
     
     return (
