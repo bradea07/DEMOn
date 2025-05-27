@@ -17,6 +17,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import EditProduct from "./components/EditProduct"; // ✅ importat
 import Delivery from "./components/Delivery"; // Import Delivery component
+import MapComponent from "./components/Map"; // Import Map component
 import "./Styles/Chatbot.css";
 
 // Function to check if user is authenticated
@@ -93,6 +94,7 @@ function App() {
             <Route path="/user/:userId" element={<UserProfile />} />
             <Route path="/chats" element={<Chats />} />
             <Route path="/delivery" element={<Delivery />} />
+            <Route path="/map" element={<MapComponent />} />
             
             <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
           </>

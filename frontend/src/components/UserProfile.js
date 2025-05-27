@@ -175,6 +175,45 @@ const UserProfile = () => {
       </div>
     );
   };
+  
+  // Render My Store section
+  const renderMyStore = () => {
+    return (
+      <div className="my-store-container">
+        <div className="store-header">
+          <h3>My Store Management</h3>
+          <p>Manage your products and track your sales</p>
+        </div>
+        
+        <div className="store-stats">
+          <div className="stat-card">
+            <span className="stat-number">{products.length}</span>
+            <span className="stat-label">Active Listings</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{ratings.length}</span>
+            <span className="stat-label">Reviews</span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{calculateAverageRating()}</span>
+            <span className="stat-label">Rating</span>
+          </div>
+        </div>
+        
+        <div className="store-actions">
+          <Link to="/add-product" className="store-action-btn">
+            <i className="fas fa-plus-circle"></i> Add New Product
+          </Link>
+          <Link to="/my-profile" className="store-action-btn">
+            <i className="fas fa-list"></i> Manage Listings
+          </Link>
+          <Link to="/settings" className="store-action-btn">
+            <i className="fas fa-cog"></i> Store Settings
+          </Link>
+        </div>
+      </div>
+    );
+  };
 
   // Handle rating submission
   const submitRating = async (e) => {
@@ -381,15 +420,24 @@ const UserProfile = () => {
             >
               Ratings & Comments ({ratings.length})
             </button>
+            {currentUser && currentUser.id === parseInt(userId) && (
+              <button
+                className={`tab-btn ${activeTab === "myStore" ? "active" : ""}`}
+                onClick={() => setActiveTab("myStore")}
+              >
+                My Store
+              </button>
+            )}
           </div>
 
           <div className="user-profile-content">
-            {activeTab === "products" ? renderProducts() : (
+            {activeTab === "products" ? renderProducts() : 
+             activeTab === "ratings" ? (
               <>
                 {renderRatingForm()}
                 {renderRatings()}
               </>
-            )}
+             ) : renderMyStore()}
           </div>
 
           {/* Rating form - only visible to the current user */}

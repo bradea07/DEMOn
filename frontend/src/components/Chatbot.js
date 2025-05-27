@@ -119,6 +119,10 @@ const generateResponse = (input) => {
     return "To create an account, click the 'Sign Up' button in the top-right corner. Fill in your information and you'll be able to start using all EcoSwap features!";
   }
   
+  if (input.includes("my store") || input.includes("store management") || input.includes("manage listings") || input.includes("store settings")) {
+    return "Poți accesa secțiunea 'My Store' direct din profilul tău. Accesează 'My Profile' din bara de navigare și apoi dă click pe butonul 'My Store'. Pentru a gestiona anunțurile tale, poți da click pe 'Manage Listings' unde poți selecta mai multe anunțuri și le poți șterge simultan.";
+  }
+  
   if (input.includes("add product") || input.includes("sell") || input.includes("listing") || input.includes("post item")) {
     return "To add a new product, go to the 'Add Product' section in the main menu. Make sure to include high-quality images and detailed descriptions to attract more potential buyers or exchange partners!";
   }

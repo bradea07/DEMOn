@@ -1,0 +1,99 @@
+/* Adding styles for the view all products link */
+.view-all-products {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.view-all-link {
+  display: inline-block;
+  padding: 8px 15px;
+  background-color: #f0f0f0;
+  color: #040e29;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-all-link:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+/* Clickable stat cards */
+.stat-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Reviews styling */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.review-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  transition: all 0.2s ease;
+}
+
+.review-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.reviewer-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #040e29;
+}
+
+.review-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.review-score {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  color: #ddd;
+  font-size: 1.2rem;
+}
+
+.star.filled {
+  color: #ffb400;
+}
+
+.review-content {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.review-content p {
+  margin: 0;
+}

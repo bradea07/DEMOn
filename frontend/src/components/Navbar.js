@@ -38,7 +38,7 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
     <nav className="navbar">
       <div className="left-section">
         <div className="navbar-brand">
-          <h1 className="ecoswap-title">EcoSwap</h1>
+
         </div>
       </div>
       <div className="center-section">
@@ -58,6 +58,7 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
             </Link>
           </li>
           <li><Link to="/delivery" className="nav-item delivery-nav-item">Delivery <i className="fas fa-truck"></i></Link></li>
+          <li><Link to="/map" className="nav-item map-nav-item">Map <i className="fas fa-map-marker-alt"></i></Link></li>
         </ul>
       </div>
       <div className="right-section">

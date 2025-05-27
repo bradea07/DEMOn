@@ -8,6 +8,7 @@ import MyListings from "./sections/MyListings";
 import Notifications from "./sections/Notifications";
 import Favorites from "./sections/Favorites";
 import SecurityPrivacy from "./sections/SecurityPrivacy";
+import MyStore from "./sections/MyStore"; // Import the MyStore component
 
 const MyProfile = () => {
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -173,6 +174,8 @@ const MyProfile = () => {
             </div>
           </div>
         );
+        case "MyStore":
+          return <MyStore userId={userId} />;
         case "MyListings":
           return <MyListings userId={userId} />;        
       case "Notifications":
@@ -195,30 +198,42 @@ const MyProfile = () => {
           <button 
             className={`${activeSection === "AccountInfo" ? "active" : ""} staggered-item`} 
             onClick={() => setActiveSection("AccountInfo")}
+            data-section="AccountInfo"
           >
             👤 Account Info
           </button>
           <button 
+            className={`${activeSection === "MyStore" ? "active" : ""} staggered-item`} 
+            onClick={() => setActiveSection("MyStore")}
+            data-section="MyStore"
+          >
+            🏪 My Store
+          </button>
+          <button 
             className={`${activeSection === "MyListings" ? "active" : ""} staggered-item`} 
             onClick={() => setActiveSection("MyListings")}
+            data-section="MyListings"
           >
             🛍 My Listings
           </button>
           <button 
             className={`${activeSection === "Notifications" ? "active" : ""} staggered-item`} 
             onClick={() => setActiveSection("Notifications")}
+            data-section="Notifications"
           >
             🔔 Notifications
           </button>
           <button 
             className={`${activeSection === "Favorites" ? "active" : ""} staggered-item`} 
             onClick={() => setActiveSection("Favorites")}
+            data-section="Favorites"
           >
             💚 Favorites
           </button>
           <button 
             className={`${activeSection === "SecurityPrivacy" ? "active" : ""} staggered-item`} 
             onClick={() => setActiveSection("SecurityPrivacy")}
+            data-section="SecurityPrivacy"
           >
             🛡️ Security & Privacy
           </button>

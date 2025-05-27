@@ -177,6 +177,21 @@
   transform: translateY(-2px);
 }
 
+/* Special style for map button */
+.map-nav-item {
+  background-color: #2e7d32;
+  border-radius: 4px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.map-nav-item:hover {
+  background-color: #1b5e20;
+  transform: translateY(-2px);
+}
+
 .delivery-nav-item i {
   font-size: 0.9rem;
   margin-left: 3px;
