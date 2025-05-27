@@ -57,11 +57,10 @@ const MyStore = ({ userId }) => {
   }
 
   return (
-    <div className="my-store-container">
-      <div className="store-header">
+    <div className="my-store-container">      <div className="store-header">
         <h3>My Store Management</h3>
-        <p>Manage your products and track your sales</p>
-      </div>      <div className="store-stats">
+        <p>Online Manage Your Products Here</p>
+      </div><div className="store-stats">
         <div 
           className="stat-card"
           onClick={() => toggleView("products")}
