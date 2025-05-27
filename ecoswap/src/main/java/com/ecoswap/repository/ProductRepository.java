@@ -13,6 +13,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 👤 Produse postate de un anumit user
     List<Product> findByUserId(Long userId);
     
+    // For recommendations
+    List<Product> findByCategoryOrderByIdDesc(String category);
+    
+    // For recommendations
+    List<Product> findByBrandIgnoreCaseOrderByIdDesc(String brand);
+    
     // 🔍 Advanced search with filters
     @Query("SELECT p FROM Product p WHERE " +
            "(:query IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%'))) AND " +

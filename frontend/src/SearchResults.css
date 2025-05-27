@@ -7,17 +7,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  position: fixed;
+  position: absolute; /* Changed from fixed to allow scrolling */
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   background-image: url("../public/searchpage.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  overflow: hidden;
+  background-attachment: fixed; /* Keep the background fixed while scrolling */
+  overflow-y: auto; /* Allow vertical scrolling */
   padding-top: 50px;
+  padding-bottom: 50px; /* Add padding at the bottom for recommendations */
 }
 
 /* Title styling */

@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
+import axios from "axios";
+import RecommendedProducts from "./RecommendedProducts";
 // Remove Navbar import since it's already included in App.js
 import "../SearchPage.css";
 
@@ -11,9 +14,10 @@ const SearchPage = () => {
     minPrice: "",
     maxPrice: "",
     productCondition: "",
-    location: "",
-    brand: "",
+    location: "",    brand: "",
   });
+  const authContext = useContext(AuthContext);
+  const currentUser = authContext ? authContext.currentUser : null;
   const navigate = useNavigate();
 
   // Categories list (same as in AddProduct.js)
@@ -45,7 +49,6 @@ const SearchPage = () => {
            filters.location !== '' || 
            filters.brand !== '';
   };
-
   const handleSearch = (e) => {
     e.preventDefault();
     
@@ -66,15 +69,38 @@ const SearchPage = () => {
     if (filters.minPrice) searchParams.append("minPrice", filters.minPrice);
     if (filters.maxPrice) searchParams.append("maxPrice", filters.maxPrice);
     if (filters.productCondition) searchParams.append("condition", filters.productCondition);
-    if (filters.location) searchParams.append("location", filters.location);
-    if (filters.brand) searchParams.append("brand", filters.brand);
+    if (filters.location) searchParams.append("location", filters.location);    if (filters.brand) searchParams.append("brand", filters.brand);
+
+    // Record search for logged-in users
+    if (currentUser && currentUser.id) {
+      const recordSearchParams = new URLSearchParams();
+      recordSearchParams.append("userId", currentUser.id.toString());
+      if (searchTerm.trim()) recordSearchParams.append("query", searchTerm);
+      if (filters.category) recordSearchParams.append("category", filters.category);
+      if (filters.brand) recordSearchParams.append("brand", filters.brand);
+      if (filters.productCondition) recordSearchParams.append("condition", filters.productCondition);
+      if (filters.location) recordSearchParams.append("location", filters.location);
+      if (filters.minPrice) recordSearchParams.append("minPrice", filters.minPrice);
+      if (filters.maxPrice) recordSearchParams.append("maxPrice", filters.maxPrice);
+
+      // Send to backend - but don't wait for response to improve UX
+      axios.post(`http://localhost:8080/api/recommendations/record-search?${recordSearchParams.toString()}`)
+        .catch(err => {
+          console.error("Error recording search:", err);
+          if (err.response) {
+            console.error("Response data:", err.response.data);
+            console.error("Response status:", err.response.status);
+          }
+        });
+    }
 
     navigate(`/search-results?${searchParams.toString()}`);
   };
-
   const toggleFilters = () => {
     setShowFilters(!showFilters);
-  };  return (
+  };
+  
+  return (
     <div className="search-page-container">
         {/* Header cu gradient */}
       <div className="search-header">
@@ -192,11 +218,13 @@ const SearchPage = () => {
           )}          <button 
             type="submit" 
             className="search-button"
-          >
-            🔍 Search
+          >            🔍 Search
           </button>
         </form>
       </div>
+      
+      {/* Display personalized recommendations if user is logged in */}
+      {currentUser && <RecommendedProducts />}
     </div>
   );
 };

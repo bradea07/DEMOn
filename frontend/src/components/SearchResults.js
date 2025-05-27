@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 import axios from "axios";
+import RecommendedProducts from "./RecommendedProducts";
 import "../SearchResults.css";
 
 const SearchResults = () => {
@@ -8,6 +10,8 @@ const SearchResults = () => {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+  const authContext = useContext(AuthContext);
+  const currentUser = authContext ? authContext.currentUser : null;
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -87,6 +91,9 @@ const SearchResults = () => {
     <div className="search-results-container">
       <h2 className="search-results-title">{generateSearchTitle()}</h2>
 
+      {/* Show recommendations on empty results or with results */}
+      {currentUser && results.length === 0 && <RecommendedProducts />}
+
       {results.length === 0 ? (
         <p className="search-error">No products match your search criteria. Try adjusting your filters.</p>
       ) : (
@@ -145,6 +152,9 @@ const SearchResults = () => {
           )}
         </div>
       )}
+      
+      {/* Show recommendations at the bottom of non-empty results too */}
+      {currentUser && results.length > 0 && <RecommendedProducts />}
     </div>
   );
 };
