@@ -1,6 +1,7 @@
 package com.ecoswap.model;
 
 import jakarta.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,10 @@ public class Product {
     private String brand;
     private String productCondition;
 
-    @ManyToOne
+    // Add timestamp field to track when products were created
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -28,6 +32,14 @@ public class Product {
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> imageUrls;
+    
+    // Auto-initialize creation date for new products
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = new Date();
+        }
+    }
 
     // ✅ Getters and Setters
     public Long getId() { return id; }
@@ -53,6 +65,9 @@ public class Product {
 
     public String getProductCondition() { return productCondition; }
     public void setProductCondition(String productCondition) { this.productCondition = productCondition; }
+
+    public Date getCreatedAt() { return createdAt; }  // ✅ Get product creation timestamp
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }  // ✅ Set product creation timestamp
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

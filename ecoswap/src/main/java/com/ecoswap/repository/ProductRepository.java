@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
+import java.util.Date;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // 🔍 Căutare după titlu (search bar)
@@ -37,4 +38,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice
     );
+    
+    // Find products ordered by creation date (newest first)
+    List<Product> findByOrderByCreatedAtDesc();
+    
+    // Find products created after a specific date
+    List<Product> findByCreatedAtAfterOrderByCreatedAtDesc(Date date);
 }

@@ -5,7 +5,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     // Check if user is logged in from localStorage
     const getUserFromStorage = () => {
@@ -14,7 +13,15 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         
         if (userToken && storedUser) {
-          setCurrentUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          
+          // Make sure the user ID is stored as a number
+          if (parsedUser && parsedUser.id && typeof parsedUser.id === 'string') {
+            parsedUser.id = parseInt(parsedUser.id, 10);
+          }
+          
+          console.log("Loaded user from storage:", parsedUser);
+          setCurrentUser(parsedUser);
         }
         setLoading(false);
       } catch (error) {

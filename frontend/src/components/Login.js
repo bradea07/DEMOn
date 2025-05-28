@@ -64,6 +64,15 @@ const Login = ({ setIsLoggedIn }) => {
         throw new Error("Invalid response from server. Missing authentication data.");
       }
       
+      // Ensure user ID is numeric
+      if (data.user && data.user.id) {
+        if (typeof data.user.id === 'string') {
+          data.user.id = parseInt(data.user.id, 10);
+        }
+      }
+      
+      console.log("User data from login:", data.user);
+      
       // Clear any existing data first
       localStorage.removeItem("userToken");
       localStorage.removeItem("user");

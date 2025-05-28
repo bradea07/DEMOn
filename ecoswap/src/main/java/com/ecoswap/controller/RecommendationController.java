@@ -45,21 +45,37 @@ public class RecommendationController {
         }
     }    /**
      * Get personalized product recommendations for a user
-     */
-    @GetMapping("/{userId}")
+     */    @GetMapping("/{userId}")
     public ResponseEntity<?> getRecommendations(@PathVariable String userId) {
         try {
             logger.info("Fetching recommendations for userId: " + userId);
+            
+            if (userId == null || userId.trim().isEmpty()) {
+                logger.warning("Received null or empty user ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID cannot be null or empty");
+            }
+            
             Long userIdLong = Long.parseLong(userId);
+            logger.info("Parsed user ID: " + userIdLong);
+            
             List<Product> recommendations = recommendationService.getRecommendationsForUser(userIdLong);
-            logger.info("Found " + recommendations.size() + " recommendations for userId: " + userId);            return ResponseEntity.ok(recommendations);
+            logger.info("Found " + recommendations.size() + " recommendations for userId: " + userId);
+            
+            if (recommendations.isEmpty()) {
+                // Even if no recommendations are found, return an empty list with 200 OK
+                logger.warning("No recommendations found for userId: " + userId);
+                return ResponseEntity.ok(recommendations);
+            }
+            
+            return ResponseEntity.ok(recommendations);
         } catch (NumberFormatException e) {
             logger.warning("Invalid user ID format: " + userId);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID format");
         } catch (Exception e) {
             logger.severe("Error fetching recommendations: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching recommendations: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error fetching recommendations: " + e.getMessage() + " at " + e.getStackTrace()[0]);
         }
     }
 }

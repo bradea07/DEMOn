@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import axios from "axios";
-import RecommendedProducts from "./RecommendedProducts";
+import RecommendedProducts, { invalidateRecommendationsCache } from "./RecommendedProducts";
 // Remove Navbar import since it's already included in App.js
 import "../SearchPage.css";
 
@@ -38,18 +38,18 @@ const SearchPage = () => {
       ...filters,
       [e.target.name]: e.target.value
     });
-  };
-  // Verifică dacă cel puțin un câmp de căutare sau filtru este completat
+  };  // Verifică dacă cel puțin un câmp de căutare sau filtru este completat
   const isSearchEnabled = () => {
-    return searchTerm.trim() !== '' || 
-           filters.category !== '' || 
-           filters.minPrice !== '' || 
-           filters.maxPrice !== '' || 
-           filters.productCondition !== '' || 
-           filters.location !== '' || 
-           filters.brand !== '';
-  };
-  const handleSearch = (e) => {
+    const hasSearchTerm = searchTerm.trim() !== '';
+    const hasCategory = filters.category !== '';
+    const hasMinPrice = filters.minPrice !== '';
+    const hasMaxPrice = filters.maxPrice !== '';
+    const hasCondition = filters.productCondition !== '';
+    const hasLocation = filters.location !== '';
+    const hasBrand = filters.brand !== '';
+    
+    return hasSearchTerm || hasCategory || hasMinPrice || hasMaxPrice || hasCondition || hasLocation || hasBrand;
+  };const handleSearch = (e) => {
     e.preventDefault();
     
     // Dacă nu există niciun criteriu de căutare, nu face nimic
@@ -69,22 +69,29 @@ const SearchPage = () => {
     if (filters.minPrice) searchParams.append("minPrice", filters.minPrice);
     if (filters.maxPrice) searchParams.append("maxPrice", filters.maxPrice);
     if (filters.productCondition) searchParams.append("condition", filters.productCondition);
-    if (filters.location) searchParams.append("location", filters.location);    if (filters.brand) searchParams.append("brand", filters.brand);
-
-    // Record search for logged-in users
+    if (filters.location) searchParams.append("location", filters.location);    if (filters.brand) searchParams.append("brand", filters.brand);    // Record search for logged-in users
     if (currentUser && currentUser.id) {
+      console.log("Recording search for user:", currentUser);
+      
+      // Ensure user ID is a number
+      const userId = typeof currentUser.id === 'string' ? parseInt(currentUser.id, 10) : currentUser.id;
+      
       const recordSearchParams = new URLSearchParams();
-      recordSearchParams.append("userId", currentUser.id.toString());
+      recordSearchParams.append("userId", userId.toString());
       if (searchTerm.trim()) recordSearchParams.append("query", searchTerm);
       if (filters.category) recordSearchParams.append("category", filters.category);
       if (filters.brand) recordSearchParams.append("brand", filters.brand);
       if (filters.productCondition) recordSearchParams.append("condition", filters.productCondition);
       if (filters.location) recordSearchParams.append("location", filters.location);
       if (filters.minPrice) recordSearchParams.append("minPrice", filters.minPrice);
-      if (filters.maxPrice) recordSearchParams.append("maxPrice", filters.maxPrice);
-
-      // Send to backend - but don't wait for response to improve UX
+      if (filters.maxPrice) recordSearchParams.append("maxPrice", filters.maxPrice);      // Send to backend - but don't wait for response to improve UX
       axios.post(`http://localhost:8080/api/recommendations/record-search?${recordSearchParams.toString()}`)
+        .then(() => {
+          console.log("Search recorded successfully. Invalidating recommendations cache...");
+          // Invalidate recommendations cache after a successful search and log result
+          const invalidated = invalidateRecommendationsCache(currentUser.id);
+          console.log("Cache invalidation result:", invalidated);
+        })
         .catch(err => {
           console.error("Error recording search:", err);
           if (err.response) {
@@ -99,16 +106,13 @@ const SearchPage = () => {
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
-  
-  return (
+    return (
     <div className="search-page-container">
-        {/* Header cu gradient */}
       <div className="search-header">
       </div>
-        <h2 className="search-title">Search for products</h2>
+      <h2 className="search-title">Find What You're Looking For</h2>
       <div className="search-box">
-        <form onSubmit={handleSearch}>
-          <div className="search-bar">
+        <form onSubmit={handleSearch}><div className="search-bar">
             <input
               type="text"
               placeholder="What are you looking for?"
@@ -211,14 +215,15 @@ const SearchPage = () => {
                     value={filters.brand}
                     onChange={handleFilterChange}
                     className="filter-input"
-                  />
-                </div>
+                  />                </div>
               </div>
             </div>
-          )}          <button 
+          )}          
+          <button 
             type="submit" 
-            className="search-button"
-          >            🔍 Search
+            className={`search-button ${!isSearchEnabled() ? 'search-button-disabled' : ''}`}
+          >
+            🔍 Search Products
           </button>
         </form>
       </div>
