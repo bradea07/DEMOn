@@ -78,7 +78,7 @@ const MapComponent = () => {
         6. Make sure billing is enabled for your account
       */}
       <LoadScript
-        googleMapsApiKey="AIzaSyAJPIEGuFEiK9ZalKe588s5ibLnhaSkbiQ"
+        googleMapsApiKey="AIzaSyDdWRophBdKq73p8cb7wbGoUJ9pd0StQG8"
         onLoad={() => setMapLoaded(true)}
         libraries={["places"]}
       >
