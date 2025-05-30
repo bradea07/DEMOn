@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Maps API Test</title>
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .status {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <h1>Google Maps API Test</h1>
+  <p>This page tests if your Google Maps API key is working correctly.</p>
+  
+  <div id="map"></div>
+  <div id="status"></div>
+  
+  <script>
+    // Function to initialize the map
+    function initMap() {
+      try {
+        // Create a map centered on Timisoara
+        const map = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 45.760696, lng: 21.226788 },
+          zoom: 14
+        });
+        
+        // Add a marker
+        const marker = new google.maps.Marker({
+          position: { lat: 45.760696, lng: 21.226788 },
+          map: map,
+          title: 'Timisoara'
+        });
+        
+        // Update status
+        document.getElementById('status').innerHTML = 
+          '<div class="status success">Google Maps API loaded successfully!</div>';
+        
+        return true;
+      } catch (error) {
+        document.getElementById('status').innerHTML = 
+          `<div class="status error">Error: ${error.message}</div>`;
+        return false;
+      }
+    }
+    
+    // Error handling
+    function handleError() {
+      document.getElementById('map').innerHTML = 
+        '<p>Failed to load Google Maps. Check your API key and network connection.</p>';
+      document.getElementById('status').innerHTML = 
+        '<div class="status error">Failed to load Google Maps API</div>';
+    }
+  </script>
+  
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8DpYk-k3-a4gJZcuVpYCESz8Y5h3-O6M&callback=initMap&libraries=places,geometry"
+    onerror="handleError()">
+  </script>
+  
+  <h2>Additional Troubleshooting</h2>
+  <ul>
+    <li>Check if your API key has the Maps JavaScript API enabled</li>
+    <li>Verify that billing is set up for your Google Cloud account</li>
+    <li>Check if there are any API key restrictions (IP, HTTP referrer) that might be blocking access</li>
+    <li>Check your browser console for any errors</li>
+  </ul>
+</body>
+</html>
