@@ -359,51 +359,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
     });
   };
   
-  // Export directions to a recycling point
-  const handleExportDirections = () => {
-    if (!directions) return;
-    
-    try {
-      // Get route information
-      const route = directions.routes[0];
-      const legs = route.legs[0];
-      
-      // Create a text representation of the directions
-      let directionsText = `Directions to Recycling Point\n`;
-      directionsText += `===========================\n\n`;
-      directionsText += `From: Your Location\n`;
-      directionsText += `To: ${selectedPlace ? selectedPlace.name : 'Recycling Point'}\n`;
-      directionsText += `Distance: ${legs.distance.text}\n`;
-      directionsText += `Duration: ${legs.duration.text}\n\n`;
-      directionsText += `Steps:\n`;
-      
-      // Add each step
-      legs.steps.forEach((step, index) => {
-        // Strip HTML tags from instructions
-        const instructions = step.instructions.replace(/<[^>]*>/g, '');
-        directionsText += `${index + 1}. ${instructions} (${step.distance.text})\n`;
-      });
-      
-      // Create a Blob and download link
-      const blob = new Blob([directionsText], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'recycling-directions.txt';
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
-    } catch (error) {
-      console.error('Error exporting directions:', error);
-      alert('Failed to export directions. Please try again.');
-    }
-  };
-
   // Show only the nearest recycling points (within a certain distance)
   const handleShowNearestPoints = (distance = distanceFilter) => {
     const position = searchedLocation || currentPosition;
@@ -506,10 +461,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
         setCurrentPosition(userPosition);
         setLocationStatus('success');
         
-        // Show location updated notification
-        setLocationUpdated(true);
-        setTimeout(() => setLocationUpdated(false), 3000);
-        
         // Set animation for the marker
         if (window.google) {
           setMarkerAnimation(window.google.maps.Animation.BOUNCE);
@@ -589,10 +540,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
             // Store the searched location
             setSearchedLocation(location);
             setCurrentPosition(null); // Clear current position when using searched location
-            
-            // Show location updated notification
-            setLocationUpdated(true);
-            setTimeout(() => setLocationUpdated(false), 3000);
             
             // Set animation for the marker
             if (window.google) {
@@ -741,16 +688,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
       <h2>Recycling Points Near You</h2>
       <p>Find recycling points near your location or search for a specific address!</p>
       
-      {/* Location updated notification */}
-      {locationUpdated && (
-        <div className="location-updated">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
-          </svg>
-          {nearestPoint ? `Found closest recycling point: ${nearestPoint.distanceFromUser} km away! Directions calculated.` : 'Location updated successfully!'}
-        </div>
-      )}
-      
       {/* Custom location search */}
       <div className="search-container">
         <div className="search-input-container">
@@ -813,17 +750,7 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
         )}
       </div>
       
-      {/* Location status message */}
-      <div className={`location-status ${locationStatus}`}>
-        {locationStatus === 'pending' && 'Locating you...'}
-        {locationStatus === 'success' && 'Location found!'}
-        {locationStatus === 'error' && (
-          <div>
-            <span>Error finding location. </span>
-            <button className="retry-button" onClick={handleRetryLocation}>Retry</button>
-          </div>
-        )}
-      </div>
+
       
       {/* Directions status message */}
       {directionsStatus === 'loading' && (
@@ -834,19 +761,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
       {directionsStatus === 'error' && (
         <div className="directions-status error">
           Unable to calculate directions. Please try again.
-        </div>
-      )}
-      
-      {/* Directions actions */}
-      {showDirections && directions && (
-        <div className="directions-actions">
-          <button className="export-directions-button" onClick={handleExportDirections}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-            </svg>
-            Export Directions
-          </button>
         </div>
       )}
       
@@ -884,19 +798,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
           zoom={14}
           onLoad={(map) => mapRef.current = map}
         >
-          {/* User's location marker - either current position or searched location */}
-          {(currentPosition || searchedLocation) && (
-            <Marker
-              position={searchedLocation || currentPosition}
-              icon={{
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                scaledSize: window.google && new window.google.maps.Size(40, 40)
-              }}
-              title="Your location"
-              animation={markerAnimation}
-            />
-          )}
-          
           {/* Recycling Points markers */}
           <MarkerClusterer>
             {(clusterer) =>
