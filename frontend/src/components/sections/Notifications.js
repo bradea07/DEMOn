@@ -57,7 +57,6 @@ const Notifications = () => {
       console.error('Error marking all notifications as read:', err);
     }
   };
-
   const formatNotificationMessage = (notification) => {
     const { type, triggerUser, product, ratingScore } = notification;
     const triggerUsername = triggerUser?.username || 'Someone';
@@ -68,7 +67,7 @@ const Notifications = () => {
       case 'NEW_MESSAGE':
         return `${triggerUsername} sent you a message`;
       case 'RATING_RECEIVED':
-        return `${triggerUsername} gave you a ${ratingScore}-star rating`;
+        return `You received a ${ratingScore}-star rating`;
       default:
         return notification.message || 'You have a new notification';
     }
@@ -77,13 +76,13 @@ const Notifications = () => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'PRODUCT_FAVORITED':
-        return '❤️';
+        return 'favorite';
       case 'NEW_MESSAGE':
-        return '💬';
+        return 'message';
       case 'RATING_RECEIVED':
-        return '⭐';
+        return 'star';
       default:
-        return '🔔';
+        return 'notifications';
     }
   };
 
@@ -150,21 +149,23 @@ const Notifications = () => {
         )}
       </div>
 
-      {notifications.length === 0 ? (
-        <div className="no-notifications">
-          <div className="no-notifications-icon">🔔</div>
+      {notifications.length === 0 ? (        <div className="no-notifications">
+          <div className="no-notifications-icon">
+            <span className="material-icons">notifications_none</span>
+          </div>
           <p>No notifications yet.</p>
           <small>You'll see notifications here when someone favorites your products, sends you messages, or rates your profile.</small>
         </div>
       ) : (
         <div className="notifications-list">
-          {notifications.map(notification => (
-            <div 
+          {notifications.map(notification => (            <div 
               key={notification.id} 
               className={`notification-item ${!notification.read ? 'unread' : ''}`}
-            >
-              <div className="notification-icon">
-                {getNotificationIcon(notification.type)}
+              data-type={notification.type}
+            ><div className="notification-icon">
+                <span className="material-icons">
+                  {getNotificationIcon(notification.type)}
+                </span>
               </div>
               
               <div className="notification-content">
@@ -174,25 +175,22 @@ const Notifications = () => {
                 <div className="notification-time">
                   {formatTimeAgo(notification.createdAt)}
                 </div>
-              </div>
-
-              {!notification.read && (
+              </div>              {!notification.read && (
                 <button 
                   onClick={() => markAsRead(notification.id)}
                   className="mark-read-btn"
                   title="Mark as read"
                 >
-                  ✓
+                  <span className="material-icons">check</span>
                 </button>
               )}
             </div>
           ))}
         </div>
-      )}
-
-      <div className="notifications-footer">
+      )}      <div className="notifications-footer">
         <button onClick={fetchNotifications} className="refresh-btn">
-          🔄 Refresh
+          <span className="material-icons">refresh</span>
+          Refresh
         </button>
       </div>
     </div>
