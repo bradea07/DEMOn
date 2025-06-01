@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Test</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Maps API Test</h1>
+    <div id="status">Loading...</div>
+    <div id="map"></div>
+    
+    <div>
+        <h2>Troubleshooting Tips</h2>
+        <ol>
+            <li>This page tests if the Google Maps API key is working correctly</li>
+            <li>If the map loads here but not in your app, there may be an issue with your React implementation</li>
+            <li>Check the browser console for any errors</li>
+            <li>Make sure the API key has the necessary APIs enabled (Maps JavaScript API, Places API, Geocoding API)</li>
+        </ol>
+    </div>
+
+    <script>
+        function initMap() {
+            try {
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: 45.760696, lng: 21.226788 },
+                    zoom: 14,
+                });
+                
+                // Add a marker for Timisoara
+                const marker = new google.maps.Marker({
+                    position: { lat: 45.760696, lng: 21.226788 },
+                    map: map,
+                    title: "Timisoara"
+                });
+                
+                document.getElementById("status").className = "status success";
+                document.getElementById("status").innerHTML = "Map loaded successfully!";
+                
+                return true;
+            } catch (error) {
+                document.getElementById("status").className = "status error";
+                document.getElementById("status").innerHTML = "Error loading map: " + error.message;
+                console.error("Map initialization error:", error);
+                return false;
+            }
+        }
+        
+        function onMapError() {
+            document.getElementById("status").className = "status error";
+            document.getElementById("status").innerHTML = "Failed to load Google Maps API. Check your API key and network connection.";
+        }
+    </script>
+    
+    <script 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdWRophBdKq73p8cb7wbGoUJ9pd0StQG8&callback=initMap&libraries=places,geometry" 
+        async 
+        defer
+        onerror="onMapError()">
+    </script>
+</body>
+</html>

@@ -197,11 +197,16 @@ const MapComponent = () => {
         setLocationStatus('success');
         
         // Set initial animation for the marker
-        if (window.google) {
-          setMarkerAnimation(window.google.maps.Animation.DROP);
-          // Stop animation after 2 seconds
-          setTimeout(() => setMarkerAnimation(null), 2000);
-        }
+        // ✅ FIX for the error: Cannot read properties of undefined (reading 'DROP')
+// Place this inside the geoSuccess function where you set the animation
+if (window.google && window.google.maps && window.google.maps.Animation) {
+  setMarkerAnimation(window.google.maps.Animation.DROP);
+  setTimeout(() => setMarkerAnimation(null), 2000);
+} else {
+  console.warn("google.maps.Animation.DROP is not available yet");
+  setMarkerAnimation(null); // fallback or avoid setting it
+}
+
         
         // NOTE: We don't automatically fetch recycling points anymore
         // User must manually search for a location or use "Find My Location" button
