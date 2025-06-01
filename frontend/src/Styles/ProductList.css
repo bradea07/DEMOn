@@ -1,3 +1,19 @@
+.search-results-page {
+  background-image: url("../public/background3.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 40px;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
 /* Product List Styling */
 .product-list-container {
   max-width: 1200px;

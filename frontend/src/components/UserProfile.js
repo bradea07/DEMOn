@@ -122,18 +122,23 @@ const UserProfile = () => {
       <div className="user-products-grid">
         {products.map((product) => (
           <div key={product.id} className="user-product-card">
-            {product.imageUrls && product.imageUrls.length > 0 ? (
-              <img
-                src={`http://localhost:8080${product.imageUrls[0]}`}
-                alt={product.title}
-                className="user-product-image"
-              />
-            ) : (
-              <div className="no-image">No image</div>
-            )}
+            <div className="user-product-image-container">
+              {product.imageUrls && product.imageUrls.length > 0 ? (
+                <img
+                  src={`http://localhost:8080${product.imageUrls[0]}`}
+                  alt={product.title}
+                  className="user-product-image"
+                />
+              ) : (
+                <div className="no-image-placeholder">
+                  <i className="fas fa-image"></i>
+                  <span>No image available</span>
+                </div>
+              )}
+            </div>
             <div className="user-product-details">
-              <h3>{product.title}</h3>
-              <p className="user-product-price">{product.price} USD</p>
+              <h3 className="user-product-title">{product.title}</h3>
+              <p className="user-product-price">${product.price}</p>
               <Link to={`/product/${product.id}`} className="view-product-btn">
                 View Product
               </Link>

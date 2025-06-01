@@ -671,22 +671,23 @@
 
 .view-product-btn {
   flex: 1;
-  padding: 16px 25px;
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--text-dark) 100%);
+  padding: 12px 20px;
+  background-color: #7bac08;
   color: white;
   text-decoration: none;
-  border-radius: var(--border-radius-button);
-  font-weight: 700;
+  border-radius: 25px;
+  font-weight: 600;
   font-size: 14px;
   text-align: center;
-  transition: var(--transition-smooth);
+  transition: all 0.3s ease;
   border: none;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-family: 'Josefin Sans', sans-serif;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(123, 172, 8, 0.2);
 }
 
 .view-product-btn::before {
@@ -705,9 +706,9 @@
 }
 
 .view-product-btn:hover {
-  background: linear-gradient(135deg, var(--text-dark) 0%, var(--text-light) 100%);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-medium);
+  background-color: #435e04;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(67, 94, 4, 0.3);
 }
 
 .favorite-btn {

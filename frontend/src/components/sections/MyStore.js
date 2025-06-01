@@ -105,10 +105,9 @@ const MyStore = ({ userId }) => {
                       />
                     ) : (
                       <div className="no-image">No image</div>
-                    )}
-                    <div className="recent-product-details">
+                    )}                    <div className="recent-product-details">
                       <h6>{product.title}</h6>
-                      <p className="recent-product-price">{product.price} USD</p>
+                      <p className="recent-product-price">${product.price}</p>
                       <Link to={`/product/${product.id}`} className="view-product-btn">
                         View
                       </Link>

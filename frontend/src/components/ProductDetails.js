@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import "../Styles/ProductDetails.css";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +21,14 @@ const ProductDetails = () => {
   const isOwner = product?.user?.id === currentUser;
 
   const userFavoritesKey = `favorites_${currentUser}`;
+
+  // Helper function to get profile picture with fallback
+  const getProfilePic = (user) => {
+    if (!user || !user.profilePic || user.profilePic.trim() === "") {
+      return "/default-avatar.jpg";
+    }
+    return user.profilePic.startsWith("http") ? user.profilePic : `http://localhost:8080${user.profilePic}`;
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -181,96 +190,173 @@ const ProductDetails = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="product-details-container">
-      <div className="product-main-content">
-        <h2>{product.title}</h2>
-        
-        <div className="product-images-container">
-          {product.imageUrls?.length > 0 ? (
-            product.imageUrls.map((img, i) => (
-              <img key={i} src={`http://localhost:8080${img}`} alt="Product" className="product-image" />
-            ))
-          ) : (
-            <p className="no-image">No image available</p>
-          )}
+    <div className="product-details-wrapper">
+      <div className="product-details-container">
+        <div className="back-button-container">
+          <button 
+            className="back-button"
+            onClick={() => navigate(-1)}
+          >
+            <span>←</span>
+            <span>Back</span>
+          </button>
         </div>
         
-        <div className="product-info">
-          <p><strong>Category:</strong> {product.category}</p>
-          <p><strong>Description:</strong> {product.description}</p>
-          <p><strong>Price:</strong> {product.price} USD</p>
-          <p><strong>Brand:</strong> {product.brand}</p>
-          <p><strong>Condition:</strong> {product.condition || "Not Available"}</p>
+        <div className="product-details-card">
+          <div className="product-images-section">
+            {product.imageUrls?.length > 0 ? (
+              <div className="main-image-container">
+                <img 
+                  src={`http://localhost:8080${product.imageUrls[0]}`} 
+                  alt={product.title} 
+                  className="main-product-image" 
+                />
+                {product.imageUrls.length > 1 && (
+                  <div className="thumbnail-images">
+                    {product.imageUrls.slice(1).map((img, i) => (
+                      <img 
+                        key={i} 
+                        src={`http://localhost:8080${img}`} 
+                        alt={`${product.title} ${i + 2}`} 
+                        className="thumbnail-image" 
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="no-image-placeholder">
+                <span>📷</span>
+                <p>No image available</p>
+              </div>
+            )}
+          </div>
           
-          <div className="seller-info">
-            <h3>Seller Information</h3>
-            <p>
-              <strong>Seller: </strong>
-              <Link to={`/user/${product.user.id}`} className="seller-link">
-                {product.user.username} 
-                {sellerRating > 0 && <span className="seller-rating"> ★ {sellerRating}</span>}
-              </Link>
-            </p>
-            <p><strong>Location:</strong> {product.location || "Not specified"}</p>
+          <div className="product-info-section">
+            <div className="product-header">
+              <h1 className="product-title">{product.title}</h1>
+              <div className="product-price">${product.price}</div>
+            </div>
+            
+            <div className="product-details-grid">
+              <div className="detail-item">
+                <span className="detail-label">Category</span>
+                <span className="detail-value">{product.category}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Brand</span>
+                <span className="detail-value">{product.brand}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Condition</span>
+                <span className="detail-value">{product.condition || "Not specified"}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Location</span>
+                <span className="detail-value">{product.location || "Not specified"}</span>
+              </div>
+            </div>
+            
+            <div className="product-description">
+              <h3>Description</h3>
+              <p>{product.description}</p>
+            </div>
+            
+            <div className="seller-section">
+              <h3>Seller Information</h3>
+              <div className="seller-info">
+                <div className="seller-details">
+                  <Link to={`/user/${product.user.id}`} className="seller-name">
+                    {product.user.username}
+                  </Link>
+                  {sellerRating > 0 && (
+                    <div className="seller-rating">
+                      <span className="rating-stars">★</span>
+                      <span className="rating-value">{sellerRating}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="action-buttons">
+              {!isOwner && (
+                <>
+                  <button 
+                    className="btn-contact-seller"
+                    onClick={() => { setChatOpen(!chatOpen); fetchMessages(); }}
+                  >
+                    <span>💬</span>
+                    {chatOpen ? "Close Chat" : "Contact Seller"}
+                  </button>
+                  <button 
+                    className={`btn-favorite ${isFavorited ? 'favorited' : ''}`}
+                    onClick={toggleFavorite}
+                  >
+                    <span>{isFavorited ? "❤️" : "🤍"}</span>
+                    {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
+                  </button>
+                </>
+              )}
+              {isOwner && (
+                <div className="owner-notice">
+                  <span>🛠️</span>
+                  <span>This is your product listing</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {!isOwner && (
-        <button onClick={toggleFavorite} style={{ fontSize: "20px", background: "none", border: "none", cursor: "pointer" }}>
-          {isFavorited ? "❤️" : "🤍"}
-        </button>
-      )}
-
-      {!isOwner && (
-        <button onClick={() => { setChatOpen(!chatOpen); fetchMessages(); }}>
-          {chatOpen ? "Close Chat" : "Send Message"}
-        </button>
-      )}
-
-      {isOwner && <p style={{ color: "gray" }}>🛠️ This is your product.</p>}
-
       {chatOpen && (
-        <div style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          width: "350px",
-          background: "#F0F0F0",
-          border: "1px solid #ccc",
-          padding: "10px",
-          borderRadius: "10px"
-        }}>
-          <h4>Chat with Seller</h4>
-          <div style={{ maxHeight: "200px", overflowY: "auto", padding: "10px" }}>
-            {messages.length > 0 ? (
-              messages.map((msg, i) => (
-                <div key={i} style={{
-                  textAlign: msg.sender.id === currentUser ? "left" : "right",
-                  backgroundColor: msg.sender.id === currentUser ? "#DCF8C6" : "#FFFFFF",
-                  color: "black",
-                  padding: "8px",
-                  borderRadius: "10px",
-                  margin: "5px",
-                  maxWidth: "75%"
-                }}>
-                  <strong>{msg.sender.username}:</strong> {msg.content}
+        <div className="chat-overlay">
+          <div className="chat-container">
+            <div className="chat-header">
+              <h4>Chat with {product.user.username}</h4>
+              <button 
+                className="chat-close"
+                onClick={() => setChatOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="chat-messages">
+              {messages.length > 0 ? (
+                messages.map((msg, i) => (
+                  <div 
+                    key={i} 
+                    className={`message ${msg.sender.id === currentUser ? 'sent' : 'received'}`}
+                  >
+                    <img
+                      src={getProfilePic(msg.sender)}
+                      alt={msg.sender.username}
+                      className="message-avatar"
+                    />
+                    <div className="message-content">
+                      {msg.content}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-messages">
+                  <p>Start the conversation!</p>
                 </div>
-              ))
-            ) : (
-              <p>No messages yet.</p>
-            )}
+              )}
+            </div>
+            <div className="chat-input">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              />
+              <button onClick={sendMessage}>
+                Send
+              </button>
+            </div>
           </div>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            style={{ width: "100%", marginBottom: "5px", padding: "5px" }}
-          />
-          <button onClick={sendMessage} style={{ width: "100%", backgroundColor: "#4CAF50", color: "white" }}>
-            Send
-          </button>
         </div>
       )}
     </div>

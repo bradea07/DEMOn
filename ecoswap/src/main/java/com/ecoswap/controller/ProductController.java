@@ -184,9 +184,17 @@ public ResponseEntity<?> addProduct(
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id) {
         try {
+            // First, check if the product exists
+            Optional<Product> productOpt = productService.getProductById(id);
+            if (productOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Product with ID " + id + " does not exist."));
+            }
+            
             productService.deleteProductById(id);
+            // Return a proper JSON response
             return ResponseEntity.ok(Map.of("message", "Product deleted successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

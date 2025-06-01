@@ -22,12 +22,30 @@ const MyListings = ({ userId }) => {
   }, [userId]);
 
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8080/api/products/${id}`)
-      .then(() => {
-        setProducts(products.filter((product) => product.id !== id));
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      fetch(`http://localhost:8080/api/products/${id}`, {
+        method: 'DELETE',
       })
-      .catch((err) => console.error("Failed to delete product", err));
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+          }
+          // Check if there's actually JSON content to parse
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json();
+          } else {
+            return Promise.resolve();  // Empty promise for no content
+          }
+        })
+        .then(() => {
+          setProducts(products.filter((product) => product.id !== id));
+        })
+        .catch((err) => {
+          console.error("Failed to delete product", err);
+          alert(`Error deleting product: ${err.message}`);
+        });
+    }
   };
 
   const toggleProductSelection = (id) => {
@@ -62,7 +80,21 @@ const MyListings = ({ userId }) => {
     if (window.confirm(`Are you sure you want to delete ${selectedProducts.length} selected listing(s)?`)) {
       // Create an array of promises for each delete operation
       const deletePromises = selectedProducts.map(id => 
-        axios.delete(`http://localhost:8080/api/products/${id}`)
+        fetch(`http://localhost:8080/api/products/${id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+          }
+          // Check if there's actually JSON content to parse
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.indexOf("application/json") !== -1) {
+            return response.json();
+          } else {
+            return Promise.resolve();  // Empty promise for no content
+          }
+        })
       );
       
       // Execute all delete operations
@@ -77,10 +109,14 @@ const MyListings = ({ userId }) => {
         })
         .catch(err => {
           console.error("Failed to delete some products", err);
+          alert(`Error deleting products: ${err.message}`);
           // Refresh the list to get the current state
-          axios
-            .get(`http://localhost:8080/api/products/user/${userId}`)
-            .then((res) => setProducts(res.data))
+          fetch(`http://localhost:8080/api/products/user/${userId}`)
+            .then((res) => {
+              if (!res.ok) throw new Error(`Server returned ${res.status}`);
+              return res.json();
+            })
+            .then((data) => setProducts(data))
             .catch((err) => console.error("Failed to refresh products", err));
         });
     }
@@ -206,7 +242,7 @@ const MyListings = ({ userId }) => {
                   
                   <div className="listing-info">
                     <strong>{product.title}</strong>
-                    <span className="listing-price">{product.price} USD</span>
+                    <span className="listing-price">${product.price}</span>
                   </div>
                   
                   {!selectMode && (

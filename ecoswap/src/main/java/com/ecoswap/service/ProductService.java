@@ -53,9 +53,13 @@ public List<Product> getProductsByUserId(Long userId) {
 }
 
 public void deleteProductById(Long id) {
+    if (id == null) {
+        throw new IllegalArgumentException("Product ID cannot be null");
+    }
+    
     Optional<Product> product = productRepository.findById(id);
     if (product.isPresent()) {
-        productRepository.delete(product.get());
+        productRepository.deleteById(id);
     } else {
         throw new RuntimeException("Product with ID " + id + " does not exist.");
     }
