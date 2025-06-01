@@ -31,30 +31,45 @@ const Notifications = () => {
       setLoading(false);
     }
   };
-
   const markAsRead = async (notificationId) => {
     try {
       await axios.post(`http://localhost:8080/api/notifications/${notificationId}/mark-read`);
       
-      // Update local state
+      // Update local state to reflect the change immediately
       setNotifications(notifications.map(n =>
         n.id === notificationId ? { ...n, read: true } : n
       ));
     } catch (err) {
       console.error('Error marking notification as read:', err);
+      // Refresh notifications on error to ensure consistency
+      fetchNotifications();
     }
   };
 
+  const deleteNotification = async (notificationId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/notifications/${notificationId}`);
+      
+      // Remove notification from local state
+      setNotifications(notifications.filter(n => n.id !== notificationId));
+    } catch (err) {
+      console.error('Error deleting notification:', err);
+      // Refresh notifications on error to ensure consistency
+      fetchNotifications();
+    }
+  };
   const markAllAsRead = async () => {
     if (!currentUser || !currentUser.id) return;
 
     try {
       await axios.post(`http://localhost:8080/api/notifications/user/${currentUser.id}/mark-all-read`);
       
-      // Update local state
+      // Update local state to reflect the change immediately
       setNotifications(notifications.map(n => ({ ...n, read: true })));
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
+      // Refresh notifications on error to ensure consistency
+      fetchNotifications();
     }
   };
   const formatNotificationMessage = (notification) => {
@@ -167,23 +182,33 @@ const Notifications = () => {
                   {getNotificationIcon(notification.type)}
                 </span>
               </div>
-              
-              <div className="notification-content">
+                <div className="notification-content">
                 <div className="notification-message">
                   {formatNotificationMessage(notification)}
                 </div>
                 <div className="notification-time">
                   {formatTimeAgo(notification.createdAt)}
                 </div>
-              </div>              {!notification.read && (
+              </div>
+              
+              <div className="notification-actions">
+                {!notification.read && (
+                  <button 
+                    onClick={() => markAsRead(notification.id)}
+                    className="mark-read-btn"
+                    title="Mark as read"
+                  >
+                    <span className="material-icons">check</span>
+                  </button>
+                )}
                 <button 
-                  onClick={() => markAsRead(notification.id)}
-                  className="mark-read-btn"
-                  title="Mark as read"
+                  onClick={() => deleteNotification(notification.id)}
+                  className="delete-btn"
+                  title="Delete notification"
                 >
-                  <span className="material-icons">check</span>
+                  <span className="material-icons">delete</span>
                 </button>
-              )}
+              </div>
             </div>
           ))}
         </div>

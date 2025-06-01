@@ -108,7 +108,22 @@ public class NotificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                .body(Map.of("error", "Failed to mark all notifications as read"));
         }
-    }    // Test endpoint for creating a product favorited notification
+    }
+    
+    // Delete a specific notification
+    @DeleteMapping("/{notificationId}")
+    public ResponseEntity<Map<String, String>> deleteNotification(@PathVariable Long notificationId) {
+        try {
+            notificationService.deleteNotification(notificationId);
+            return ResponseEntity.ok(Map.of("message", "Notification deleted successfully"));
+        } catch (Exception e) {
+            System.err.println("Error deleting notification: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                               .body(Map.of("error", "Failed to delete notification"));
+        }
+    }
+
+    // Test endpoint for creating a product favorited notification
     @PostMapping("/test/product-favorited")
     public ResponseEntity<Map<String, String>> testProductFavoritedNotification(
             @RequestParam Long productOwnerId,

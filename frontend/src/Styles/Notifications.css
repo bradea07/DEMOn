@@ -1,7 +1,7 @@
 /* Notifications Component Styles */
 .notifications-container {
   max-width: 900px;
-  margin: 0 auto;
+  margin: 80px auto 0 auto; /* Added top margin to account for fixed navbar */
   padding: 24px;
   background-color: #fff;
   border-radius: 12px;
@@ -158,6 +158,14 @@
   min-width: 0;
 }
 
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
 .notification-message {
   color: #3c4043;
   line-height: 1.5;
@@ -188,7 +196,6 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  margin-left: 12px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
 }
@@ -200,6 +207,33 @@
 }
 
 .mark-read-btn .material-icons {
+  font-size: 16px;
+}
+
+.delete-btn {
+  background-color: #ea4335;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(234, 67, 53, 0.3);
+}
+
+.delete-btn:hover {
+  background-color: #d33b2c;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.4);
+}
+
+.delete-btn .material-icons {
   font-size: 16px;
 }
 
@@ -315,7 +349,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .notifications-container {
-    margin: 10px;
+    margin: 80px 10px 10px 10px; /* Keep top margin for navbar on mobile */
     padding: 15px;
   }
 
@@ -332,11 +366,29 @@
 
   .notification-item {
     padding: 12px;
+    flex-wrap: wrap;
   }
 
   .notification-icon {
-    font-size: 1.25rem;
     margin-right: 12px;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .notification-actions {
+    margin-left: 0;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .mark-read-btn, .delete-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .mark-read-btn .material-icons, .delete-btn .material-icons {
+    font-size: 14px;
   }
 
   .no-notifications {

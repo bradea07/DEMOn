@@ -151,6 +151,15 @@ public class NotificationService {
         }
     }
     
+    // Delete a specific notification
+    public void deleteNotification(Long notificationId) {
+        try {
+            notificationRepository.deleteById(notificationId);
+        } catch (Exception e) {
+            System.err.println("Error deleting notification: " + e.getMessage());
+        }
+    }
+
     // Clean up old notifications (can be called periodically)
     public void cleanupOldNotifications() {
         try {
