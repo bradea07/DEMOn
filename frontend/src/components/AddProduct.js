@@ -66,6 +66,13 @@ const AddProduct = () => {
       return;
     }
 
+    // Validate that at least one image is uploaded
+    if (images.length === 0) {
+      setMessage("Please upload at least one image for your product.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const productData = new FormData();
     productData.append("title", formData.title.trim());
     productData.append("category", formData.category);
@@ -224,8 +231,9 @@ const AddProduct = () => {
               </select>
               
               <div className="file-input-container">
+                <label htmlFor="images">Product Images <span className="required-asterisk">*</span></label>
                 <label className="custom-file-label" htmlFor="fileInput">
-                  Choose Files
+                  Choose Files (Required)
                 </label>
                 <input 
                   id="fileInput" 

@@ -54,6 +54,12 @@ public ResponseEntity<?> addProduct(
                 .body(Map.of("error", "Invalid user_id! User does not exist."));
     }
 
+    // Validate that at least one image is provided
+    if (images == null || images.isEmpty() || images.stream().allMatch(MultipartFile::isEmpty)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "At least one product image is required."));
+    }
+
     // ✅ Use an absolute path for the uploads directory
     String uploadDirPath = System.getProperty("user.dir") + "/uploads/";
     File uploadDir = new File(uploadDirPath);

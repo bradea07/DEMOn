@@ -134,6 +134,13 @@
   font-family: 'Josefin Sans', sans-serif;
 }
 
+/* Required asterisk styling */
+.required-asterisk {
+  color: #ea4335;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
 /* Input & Select fields */
 .add-product-input,
 .add-product-select {
