@@ -30,8 +30,25 @@ const ProductDetails = () => {
         const data = await response.json();
         setProduct(data);
   
-        const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
-        setIsFavorited(storedFavorites.some((fav) => fav.id === data.id));
+        // Check favorite status from backend if user is logged in
+        if (currentUser) {
+          try {
+            const favoriteResponse = await fetch(`http://localhost:8080/api/favorites/check/${currentUser}/${data.id}`);
+            if (favoriteResponse.ok) {
+              const favoriteData = await favoriteResponse.json();
+              setIsFavorited(favoriteData.isFavorited);
+            } else {
+              // Fallback to localStorage check
+              const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+              setIsFavorited(storedFavorites.some((fav) => fav.id === data.id));
+            }
+          } catch (err) {
+            console.error("Error checking favorite status:", err);
+            // Fallback to localStorage check
+            const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+            setIsFavorited(storedFavorites.some((fav) => fav.id === data.id));
+          }
+        }
         
         // Fetch seller's ratings if product has a user
         if (data.user && data.user.id) {
@@ -59,17 +76,60 @@ const ProductDetails = () => {
   }, [id, currentUser]); // ✅ fără warning
   
 
-  const toggleFavorite = () => {
-    const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+  const toggleFavorite = async () => {
+    if (!currentUser) {
+      alert('Please log in to add favorites');
+      return;
+    }
 
-    if (isFavorited) {
-      const updated = favorites.filter((item) => item.id !== product.id);
-      localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
-      setIsFavorited(false);
-    } else {
-      const updated = [...favorites, product];
-      localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
-      setIsFavorited(true);
+    try {
+      if (isFavorited) {
+        // Remove from favorites
+        await fetch('http://localhost:8080/api/favorites/remove', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: currentUser,
+            productId: product.id
+          })
+        });
+        
+        setIsFavorited(false);
+        
+        // Also update localStorage for backward compatibility
+        const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+        const updated = favorites.filter((item) => item.id !== product.id);
+        localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
+      } else {
+        // Add to favorites
+        const response = await fetch('http://localhost:8080/api/favorites/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: currentUser,
+            productId: product.id
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+        
+        setIsFavorited(true);
+        
+        // Also update localStorage for backward compatibility
+        const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+        const updated = [...favorites, product];
+        localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('Failed to update favorites: ' + error.message);
     }
   };
 

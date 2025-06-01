@@ -1,0 +1,240 @@
+/* Notifications Component Styles */
+.notifications-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+
+.notifications-header h3 {
+  margin: 0;
+  color: #2e7d32;
+  font-size: 1.5rem;
+}
+
+.notifications-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.unread-count {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.mark-all-read-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.mark-all-read-btn:hover {
+  background-color: #1b5e20;
+}
+
+.no-notifications {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-notifications-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-notifications p {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.no-notifications small {
+  color: #666;
+  line-height: 1.5;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.notification-item.unread {
+  background-color: #fff3e0;
+  border-left-color: #ff9800;
+  font-weight: 500;
+}
+
+.notification-item:hover {
+  background-color: #f5f5f5;
+}
+
+.notification-item.unread:hover {
+  background-color: #ffecb3;
+}
+
+.notification-icon {
+  font-size: 1.5rem;
+  margin-right: 15px;
+  margin-top: 2px;
+  min-width: 24px;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-message {
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.mark-read-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.mark-read-btn:hover {
+  background-color: #388e3c;
+}
+
+.notifications-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.refresh-btn {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background-color: #eeeeee;
+  border-color: #ccc;
+}
+
+.retry-btn {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background-color: #1565c0;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 20px;
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notifications-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .notifications-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .notifications-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .notification-item {
+    padding: 12px;
+  }
+
+  .notification-icon {
+    font-size: 1.25rem;
+    margin-right: 12px;
+  }
+
+  .no-notifications {
+    padding: 40px 15px;
+  }
+
+  .no-notifications-icon {
+    font-size: 3rem;
+  }
+}

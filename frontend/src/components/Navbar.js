@@ -5,10 +5,11 @@ import "./Navbar.css"; // Import CSS file
 const Navbar = ({ onLogout, toggleChatbot }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const userId = loggedInUser?.id;
 
-  // Check for unread messages
+  // Check for unread messages and notifications
   useEffect(() => {
     if (userId) {
       // Fetch unread message count
@@ -24,11 +25,28 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
         }
       };
 
-      // Initial check
+      // Fetch unread notification count
+      const checkUnreadNotifications = async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/api/notifications/user/${userId}/unread-count`);
+          if (response.ok) {
+            const count = await response.json();
+            setUnreadNotifications(count);
+          }
+        } catch (err) {
+          console.error("Error checking unread notifications:", err);
+        }
+      };
+
+      // Initial checks
       checkUnread();
+      checkUnreadNotifications();
       
       // Set interval to check periodically
-      const interval = setInterval(checkUnread, 30000); // Check every 30 seconds
+      const interval = setInterval(() => {
+        checkUnread();
+        checkUnreadNotifications();
+      }, 30000); // Check every 30 seconds
       
       return () => clearInterval(interval);
     }
@@ -49,6 +67,14 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
           <li><Link to="/" className="nav-item">Home</Link></li>
           <li><Link to="/add-product" className="nav-item">Add Product</Link></li>
           <li><Link to="/my-profile" className="nav-item">My Profile</Link></li>
+          <li>
+            <Link to="/notifications" className="nav-item">
+              Notifications
+              {unreadNotifications > 0 && (
+                <span className="message-badge">{unreadNotifications}</span>
+              )}
+            </Link>
+          </li>
           <li>
             <Link to="/chats" className="nav-item">
               Chats

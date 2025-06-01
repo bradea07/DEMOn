@@ -6,6 +6,7 @@ import com.ecoswap.model.User;
 import com.ecoswap.repository.MessageRepository;
 import com.ecoswap.repository.ProductRepository;
 import com.ecoswap.repository.UserRepository;
+import com.ecoswap.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class MessageController {
 
     @Autowired
     private ProductRepository productRepository;
+    
+    @Autowired
+    private NotificationService notificationService;
 
     // ✅ Send a message
     @PostMapping("/send")
@@ -46,6 +50,13 @@ public class MessageController {
             message.setProduct(product.get());
             message.setRead(false); // Explicitly set as unread
             messageRepository.save(message);
+            
+            // Create notification for the message recipient
+            notificationService.createNewMessageNotification(
+                receiver.get().getId(), 
+                sender.get().getId(), 
+                product.get()
+            );
 
             return ResponseEntity.ok("Message sent successfully.");
         } catch (Exception e) {

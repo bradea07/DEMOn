@@ -2,6 +2,7 @@ package com.ecoswap.controller;
 
 import com.ecoswap.dto.RatingDTO;
 import com.ecoswap.service.RatingService;
+import com.ecoswap.service.NotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +12,11 @@ import java.util.List;
 @RequestMapping("/api/ratings")
 @CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*") // Match UserController CORS config
 public class RatingController {    private final RatingService ratingService;
+    private final NotificationService notificationService;
 
-    public RatingController(RatingService ratingService) {
+    public RatingController(RatingService ratingService, NotificationService notificationService) {
         this.ratingService = ratingService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/user/{userId}")
@@ -24,6 +27,14 @@ public class RatingController {    private final RatingService ratingService;
     public ResponseEntity<?> createRating(@RequestBody RatingDTO ratingDTO) {
         try {
             RatingDTO createdRating = ratingService.createRating(ratingDTO);
+            
+            // Create notification for the user who received the rating
+            notificationService.createRatingReceivedNotification(
+                createdRating.getSellerId(),
+                createdRating.getReviewerId(),
+                createdRating.getScore()
+            );
+            
             return ResponseEntity.ok(createdRating);
         } catch (RuntimeException e) {
             // Return 400 Bad Request with the error message when a duplicate rating is attempted

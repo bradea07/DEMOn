@@ -10,6 +10,7 @@ import AddProduct from "./components/AddProduct";
 import MyProfile from "./components/MyProfile";
 import UserProfile from "./components/UserProfile";
 import Chats from "./components/Chats";
+import NotificationsPage from "./components/NotificationsPage";
 
 import Navbar from "./components/Navbar";
 import Chatbot from "./components/Chatbot";
@@ -92,6 +93,7 @@ function App() {
             <Route path="/add-product" element={<AddProduct />} />
             <Route path="/my-profile" element={<MyProfile />} />
             <Route path="/user/:userId" element={<UserProfile />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/chats" element={<Chats />} />
             <Route path="/delivery" element={<Delivery />} />
             <Route path="/map" element={<MapComponent />} />
