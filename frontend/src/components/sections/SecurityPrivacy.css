@@ -46,7 +46,7 @@
 
 .change-password-btn {
   padding: 8px 16px;
-  background-color: #040e29;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 6px;
@@ -56,7 +56,7 @@
 }
 
 .change-password-btn:hover {
-  background-color: #0a1c40;
+  background-color: #011c1c;
   transform: scale(1.05);
 }
 

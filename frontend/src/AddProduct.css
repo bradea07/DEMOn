@@ -40,10 +40,7 @@
   left: 0;
   width: 100%;
   min-height: 100vh;
-  background-image: url("../public/background3.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: #f8f9fa;
   overflow-y: auto;
   padding-top: 90px;
   padding-bottom: 60px;
@@ -57,12 +54,11 @@
   font-size: 2.4rem;
   font-weight: 700;
   text-align: center;
-  color: #ffffff;
+  color: #002828;
   margin-bottom: 25px;
   position: relative;
-  letter-spacing: -0.5px;
-  animation: fadeIn 0.8s ease-in-out;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.5px;  animation: fadeIn 0.8s ease-in-out;
+  text-shadow: none;
 }
 
 .add-product-title:after {
@@ -73,20 +69,18 @@
   transform: translateX(-50%);
   width: 120px;
   height: 4px;
-  background: linear-gradient(90deg, #040e29, #0a214d, #13326e);
+  background-color: #002828;
   border-radius: 2px;
   transition: all 0.4s ease;
-  animation: gradientFlow 3s ease infinite;
-  background-size: 200% 200%;
 }
 
 /* Main form box */
 .add-product-box {
-  background: rgba(255, 255, 255, 0.98);
+  background: white;
   border-radius: 16px;
   padding: 2.2rem;
   width: 680px;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
   animation: slideUp 0.7s ease-in-out;

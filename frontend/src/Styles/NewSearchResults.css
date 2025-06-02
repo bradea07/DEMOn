@@ -331,9 +331,9 @@
 
 .filter-select:focus,
 .filter-input:focus {
-  border-color: var(--accent-purple);
+  border-color: #002828;
   outline: none;
-  box-shadow: 0 0 0 4px rgba(94, 91, 252, 0.1), var(--shadow-soft);
+  box-shadow: 0 0 0 4px rgba(0, 40, 40, 0.1), var(--shadow-soft);
   background: linear-gradient(135deg, #ffffff 0%, #fefeff 100%);
 }
 
@@ -672,7 +672,7 @@
 .view-product-btn {
   flex: 1;
   padding: 12px 20px;
-  background-color: #7bac08;
+  background-color: #002828;
   color: white;
   text-decoration: none;
   border-radius: 25px;
@@ -687,7 +687,7 @@
   font-family: 'Josefin Sans', sans-serif;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(123, 172, 8, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.2);
 }
 
 .view-product-btn::before {
@@ -706,9 +706,9 @@
 }
 
 .view-product-btn:hover {
-  background-color: #435e04;
+  background-color: #011c1c;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(67, 94, 4, 0.3);
+  box-shadow: 0 4px 12px rgba(1, 28, 28, 0.3);
 }
 
 .favorite-btn {

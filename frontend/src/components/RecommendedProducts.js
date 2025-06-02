@@ -136,7 +136,7 @@ const RecommendedProducts = () => {
   }  return (
     <div className="recommendations-container">
       <h3 className="recommendations-title">
-        <span className="recommendations-icon">🌱</span> Recommendations:
+        Recommendations:
         <span className="recommendations-subtitle">
           Based on your search history and trending items
         </span>        <button 
@@ -144,7 +144,7 @@ const RecommendedProducts = () => {
           onClick={handleRefresh} 
           title="Refresh recommendations"
         >
-          🔄 Refresh Recommendations
+          Refresh Recommendations
         </button>
       </h3>
       <div className="recommendations-grid">

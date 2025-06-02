@@ -32,28 +32,16 @@ const SearchPage = () => {
   const conditionOptions = [
     "New", "Used - Like New", "Used - Good", "Used - Acceptable"
   ];
-
   const handleFilterChange = (e) => {
     setFilters({
       ...filters,
       [e.target.name]: e.target.value
     });
-  };  // Verifică dacă cel puțin un câmp de căutare sau filtru este completat
-  const isSearchEnabled = () => {
-    const hasSearchTerm = searchTerm.trim() !== '';
-    const hasCategory = filters.category !== '';
-    const hasMinPrice = filters.minPrice !== '';
-    const hasMaxPrice = filters.maxPrice !== '';
-    const hasCondition = filters.productCondition !== '';
-    const hasLocation = filters.location !== '';
-    const hasBrand = filters.brand !== '';
-    
-    return hasSearchTerm || hasCategory || hasMinPrice || hasMaxPrice || hasCondition || hasLocation || hasBrand;
   };const handleSearch = (e) => {
     e.preventDefault();
     
-    // Dacă nu există niciun criteriu de căutare, nu face nimic
-    if (!isSearchEnabled()) {
+    // Dacă search input-ul este gol, nu face nimic
+    if (!searchTerm.trim()) {
       return;
     }
     
@@ -218,12 +206,12 @@ const SearchPage = () => {
                   />                </div>
               </div>
             </div>
-          )}          
-          <button 
+          )}            <button 
             type="submit" 
-            className={`search-button ${!isSearchEnabled() ? 'search-button-disabled' : ''}`}
+            className="search-button"
+            disabled={!searchTerm.trim()}
           >
-            🔍 Search Products
+            Search Products
           </button>
         </form>
       </div>

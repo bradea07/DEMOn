@@ -305,16 +305,16 @@
 }
 
 .btn-contact-seller {
-  background: #4CAF50;
+  background: #002828;
   color: white;
   flex: 1;
   min-width: 200px;
 }
 
 .btn-contact-seller:hover {
-  background: #3d8b40;
+  background: #011c1c;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.3);
 }
 
 .btn-favorite {
@@ -325,8 +325,8 @@
 
 .btn-favorite:hover {
   background: #e8f5e8;
-  border-color: #4CAF50;
-  color: #4CAF50;
+  border-color: #002828;
+  color: #002828;
 }
 
 .btn-favorite.favorited {
@@ -566,15 +566,15 @@
 }
 
 .product-details-wrapper .chat-input input:focus {
-  border-color: #040e29;
-  box-shadow: 0 0 0 2px rgba(4, 14, 41, 0.1);
+  border-color: #002828;
+  box-shadow: 0 0 0 2px rgba(0, 40, 40, 0.1);
 }
 
 .product-details-wrapper .chat-input button {
   width: 36px;
   height: 36px;
   margin-left: 10px;
-  background-color: #040e29;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 50%;
@@ -588,7 +588,7 @@
 }
 
 .product-details-wrapper .chat-input button:hover {
-  background-color: #0d2456;
+  background-color: #011c1c;
   transform: scale(1.05);
 }
 

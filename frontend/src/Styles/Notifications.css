@@ -43,7 +43,7 @@
 }
 
 .mark-all-read-btn {
-  background-color: #34a853;
+  background-color: #002828;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -52,11 +52,11 @@
   font-size: 0.875rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(52, 168, 83, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3);
 }
 
 .mark-all-read-btn:hover {
-  background-color: #2d7c3e;
+  background-color: #011c1c;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(52, 168, 83, 0.4);
 }
@@ -184,7 +184,7 @@
 }
 
 .mark-read-btn {
-  background-color: #1a73e8;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 50%;
@@ -197,13 +197,13 @@
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3);
 }
 
 .mark-read-btn:hover {
-  background-color: #1557b0;
+  background-color: #011c1c;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4);
 }
 
 .mark-read-btn .material-icons {
@@ -244,27 +244,28 @@
   text-align: center;
 }
 
+/* Refresh button - EcoSwap theme */
 .refresh-btn {
-  background-color: #ffffff;
-  color: #1a73e8;
-  border: 1px solid #dadce0;
-  padding: 12px 24px;
-  border-radius: 8px;
+  background: #002828;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3);
 }
 
 .refresh-btn:hover {
-  background-color: #f8f9fa;
-  border-color: #1a73e8;
+  background: #011c1c;
+  cursor: pointer;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4);
 }
 
 .refresh-btn .material-icons {

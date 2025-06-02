@@ -95,7 +95,7 @@
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #2e7d32;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 4px;
@@ -106,7 +106,7 @@
 }
 
 .calculate-btn:hover {
-  background-color: #1b5e20;
+  background-color: #011c1c;
 }
 
 .calculate-btn:disabled {
@@ -181,7 +181,7 @@
 
 /* New styles for rate selection and confirmation */
 .select-rate-btn.selected {
-  background-color: #2e7d32;
+  background-color: #002828;
   color: white;
 }
 
@@ -202,7 +202,7 @@
 .confirm-btn {
   margin-top: 15px;
   padding: 10px 15px;
-  background-color: #2e7d32;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 4px;
@@ -211,7 +211,7 @@
 }
 
 .confirm-btn:hover {
-  background-color: #1b5e20;
+  background-color: #011c1c;
 }
 
 .final-confirmation {
@@ -244,7 +244,7 @@
 .submit-confirmation-btn {
   margin-top: 15px;
   padding: 10px 15px;
-  background-color: #2e7d32;
+  background-color: #002828;
   color: white;
   border: none;
   border-radius: 4px;

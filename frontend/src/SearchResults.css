@@ -22,11 +22,8 @@
   padding: 20px;
   font-family: 'Roboto', sans-serif;
 
-  /* 🔥 Asta lipsea pentru fundalul cu imagine */
-background-image: url("../public/background3.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  /* Clean white background to match EcoSwap theme */
+  background: white;
 }
 
 
@@ -51,16 +48,33 @@ background-image: url("../public/background3.png");
 
 .search-input {
   flex: 1;
-  padding: 12px 15px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 50px;
+  border: 2px solid #002828 !important;
+  outline: none;
   font-size: 16px;
+  background-color: #ffffff !important; /* MEREU alb, nu gri */
+  color: #000000 !important; /* MEREU text negru */
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease !important;
+  cursor: text !important; /* MEREU cursor normal */
   min-width: 200px;
+}
+
+.search-input:focus {
+  border-color: #002828 !important;
+  box-shadow: 0 0 0 3px rgba(0, 40, 40, 0.1) !important;
+  background-color: #ffffff !important;
+}
+
+.search-input::placeholder {
+  color: #999999 !important;
+  font-style: italic;
 }
 
 .filter-toggle-btn {
   padding: 12px 20px;
-  background: #7bac08;
+  background: #002828;
   border: none;
   border-radius: 6px;
   color: white;
@@ -71,28 +85,45 @@ background-image: url("../public/background3.png");
 }
 
 .filter-toggle-btn:hover {
-  background: #5c8006;
+  background: #011c1c;
 }
 
 .search-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  background: #7bac08;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
+  width: 100% !important; /* Same width as search bar container */
+  padding: 15px 20px !important; /* Same padding as search input */
+  border: none !important;
+  border-radius: 50px !important; /* Same border radius as search bar */
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  background: #002828 !important; /* EcoSwap navbar color */
+  color: #ffffff !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-in-out !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  display: block !important;
+  text-align: center !important;
+  margin-top: 15px !important; /* Space above button */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-shadow: 0 4px 15px rgba(0, 40, 40, 0.3) !important;
 }
 
-.search-button:hover {
-  background: #5c8006;
+.search-button:hover:not(:disabled) {
+  background: #013030 !important; /* EcoSwap hover color */
+  cursor: pointer !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 18px rgba(0, 40, 40, 0.4) !important;
+}
+
+/* Buton disabled când search input este gol */
+.search-button:disabled {
+  background: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  pointer-events: none !important;
 }
 
 .filters-container {
@@ -142,9 +173,9 @@ background-image: url("../public/background3.png");
 }
 
 .filter-select:focus, .filter-input:focus {
-  border-color: #7bac08;
+  border-color: #002828;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(123, 172, 8, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 40, 40, 0.1);
 }
 
 /* Title styling */
@@ -308,29 +339,30 @@ background-image: url("../public/background3.png");
 }
 
 .view-product-btn {
-  display: inline-block;
-  padding: 12px 20px;
-  background-color: #7bac08;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  text-align: center;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  margin-top: auto;
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(123, 172, 8, 0.2);
-  cursor: pointer;
+  display: inline-block !important;
+  padding: 10px 20px !important;
+  background-color: #002828 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease-in-out !important;
+  margin-top: auto !important;
+  font-family: 'Josefin Sans', sans-serif !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3) !important;
+  cursor: pointer !important;
 }
 
 .view-product-btn:hover {
-  background-color: #435e04;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(67, 94, 4, 0.3);
+  background-color: #011c1c !important;
+  cursor: pointer !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4) !important;
 }
 
 /* Loading state */

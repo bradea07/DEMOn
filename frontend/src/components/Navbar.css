@@ -1,198 +1,391 @@
-/* Navbar container */
+/* OLX-Style Navbar for EcoSwap */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: rgba(4, 14, 41, 0.9); /* Folosim culoarea #040e29 cu transparență */
-  padding: 15px 20px;
-  display: grid;
-  grid-template-columns: 250px 1fr 250px;
+  height: 60px;
+  background-color: #002828;
+  border-bottom: 2px solid #003d3d;
+  display: flex;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  justify-content: space-between;
+  padding: 0 20px;
   z-index: 1000;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Navbar sections */
-.left-section {
-  justify-self: start;
+/* Left Section - Brand Logo */
+.navbar-left {
   display: flex;
   align-items: center;
 }
 
-.center-section {
-  justify-self: center;
-  display: flex;
-  align-items: center;
-}
-
-.right-section {
-  justify-self: start;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-/* Navbar brand/logo container */
 .navbar-brand {
-  display: flex;
-  align-items: center;
-  padding-left: 5px;
-  margin-right: auto;
-  width: 100%;
-}
-
-/* EcoSwap Title */
-.ecoswap-title {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: white;
-  margin: 0; 
-  padding: 0 0 0 10px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 1001;
-}
-
-/* Navigation links */
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-  margin: 0;
-  padding: 0;
-  justify-content: center;
-  width: 100%;
-}
-
-/* Individual nav items */
-.nav-item {
   text-decoration: none;
-  font-size: 1.2rem;
-  font-weight: bold;
-  font-family: 'Josefin Sans', sans-serif;
-  color: white; /* Text alb pentru contrast cu fundalul închis */
-  transition: all 0.3s;
-  padding: 8px 15px;
-  border-radius: 6px;
+  color: inherit;
 }
 
-.nav-item:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+.ecoswap-logo {
+  font-family: 'Pacifico', 'Josefin Sans', cursive, sans-serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
 }
 
-/* Message notification badge */
-.message-badge {
-  position: relative;
-  top: -8px;
-  right: -5px;
-  background: #7bac08;
-  color: white;
-  border-radius: 50%;
-  padding: 3px 6px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  margin-left: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(123, 172, 8, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 7px rgba(123, 172, 8, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(123, 172, 8, 0);
-  }
-}
-
-/* Remove the menu toggle (3 lines button) */
-.menu-toggle {
-  display: none !important;
-}
-
-/* Logout button */
-.logout-btn {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  background: #040e29;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-left: 0; /* Eliminăm margin-left pentru a poziționa butonul mai la stânga */
-  white-space: nowrap;
-  min-width: 100px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.logout-btn:hover {
-  background: #010320;
+.ecoswap-logo:hover {
   transform: scale(1.05);
 }
 
-/* Responsive adjustments */
+/* Right Section - Navigation */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  flex: 1;
+  justify-content: flex-end;
+  margin-right: 60px; /* Shift items more to the left for better centering */
+}
+
+/* Navigation Items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.nav-item i {
+  font-size: 16px;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #002828;
+}
+
+/* Account Dropdown */
+.account-dropdown-container {
+  position: relative;
+}
+
+.account-trigger {
+  background: none !important;
+}
+
+.dropdown-arrow {
+  font-size: 12px !important;
+  transition: transform 0.3s ease;
+}
+
+.account-dropdown-container:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 1001;
+  border: 1px solid #e0e0e0;
+  margin-top: 8px;
+  animation: dropdownFadeIn 0.2s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  color: #333333;
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-item i {
+  font-size: 14px;
+  width: 16px;
+  color: #666666;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+}
+
+.logout-item {
+  color: #ff4444 !important;
+}
+
+.logout-item i {
+  color: #ff4444 !important;
+}
+
+/* Add New Listing Button */
+.add-listing-btn {
+  background-color: #ffffff;
+  color: #002828;
+  padding: 10px 16px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  border: 2px solid #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.add-listing-btn:hover {
+  background-color: #f0f0f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.add-listing-btn i {
+  font-size: 14px;
+}
+
+/* Help Chatbot Button */
+.help-chatbot-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.help-chatbot-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.help-chatbot-btn i {
+  font-size: 16px;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  gap: 4px;
+}
+
+.mobile-menu-toggle span {
+  width: 25px;
+  height: 3px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Mobile Navigation Menu */
+.mobile-nav-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #002828;
+  border-top: 1px solid #003d3d;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #ffffff;
+  text-decoration: none;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  position: relative;
+}
+
+.mobile-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav-item.highlight {
+  background-color: #ffffff;
+  color: #002828;
+  font-weight: 700;
+}
+
+.mobile-nav-item.highlight:hover {
+  background-color: #f0f0f0;
+}
+
+.mobile-nav-item.logout {
+  color: #ff6b6b;
+}
+
+.mobile-nav-item.help-mobile {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-nav-item.help-mobile:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.mobile-nav-item i {
+  font-size: 18px;
+  width: 20px;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
-    padding: 10px;
-    grid-template-columns: auto 1fr auto;
+    padding: 0 15px;
   }
 
-  .nav-links {
-    gap: 15px;
+  .navbar-nav-desktop {
+    display: none;
   }
 
-  .logout-btn {
-    min-width: auto;
-    font-size: 0.9rem;
-    padding: 8px 12px;
+  .help-chatbot-btn {
+    display: none; /* Hide desktop help button on mobile */
   }
-    .ecoswap-title {
+
+  .mobile-menu-toggle {
+    display: flex;
+  }
+
+  .ecoswap-logo {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 10px;
+  }
+
+  .ecoswap-logo {
     font-size: 1.4rem;
   }
+
+  .mobile-nav-menu {
+    padding: 15px;
+  }
+
+  .mobile-nav-item {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
 }
 
-/* Special style for delivery button */
-.delivery-nav-item {
-  background-color: #ff6f00;
-  border-radius: 4px;
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+/* Sticky Navbar Enhancement */
+.navbar.scrolled {
+  background-color: rgba(0, 40, 40, 0.95);
+  backdrop-filter: blur(10px);
 }
 
-.delivery-nav-item:hover {
-  background-color: #e65100;
-  transform: translateY(-2px);
+/* Icon-only items for favorites */
+.nav-item:has(> .fas.fa-heart) span {
+  display: none;
 }
 
-/* Special style for map button */
-.map-nav-item {
-  background-color: #2e7d32;
-  border-radius: 4px;
-  padding: 6px 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.map-nav-item:hover {
-  background-color: #1b5e20;
-  transform: translateY(-2px);
-}
-
-.delivery-nav-item i {
-  font-size: 0.9rem;
-  margin-left: 3px;
+@media (min-width: 769px) {
+  .nav-item:has(> .fas.fa-heart) {
+    width: 40px;
+    justify-content: center;
+  }
 }

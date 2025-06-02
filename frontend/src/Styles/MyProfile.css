@@ -176,19 +176,19 @@
   border-radius: 10px;
   font-size: 1.05rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #040e29, #0a214d);
+  background: linear-gradient(135deg, #002828, #011c1c);
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 12px;
   letter-spacing: 0.7px;
-  box-shadow: 0 4px 12px rgba(4, 14, 41, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.25);
   position: relative;
   overflow: hidden;
 }
 
 .profile-box button:hover {
-  background: linear-gradient(135deg, #0a214d, #13326e);
+  background: linear-gradient(135deg, #011c1c, #013030);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
@@ -257,11 +257,11 @@
   background: #edf0f2;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  color: #040e29;
+  color: #002828;
 }
 
 .section-buttons button.active {
-  background: #040e29;
+  background: #002828;
   color: white;
   border-color: #040e29;
   box-shadow: 0 5px 15px rgba(4, 14, 41, 0.2);
@@ -405,7 +405,7 @@
 
 /* Interior section styles with blue color scheme */
 .profile-action-btn {
-  background: #040e29 !important;
+  background: #002828 !important;
   color: white;
   border: none;
   border-radius: 8px;
@@ -414,13 +414,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 15px;
-  box-shadow: 0 4px 12px rgba(4, 14, 41, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
 }
 
 .profile-action-btn:hover {
-  background: #0a214d !important;
+  background: #011c1c !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(4, 14, 41, 0.3);
+  box-shadow: 0 6px 15px rgba(0, 40, 40, 0.3);
 }
 
 .profile-action-btn:active {
@@ -596,22 +596,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #040e29, #0a214d);
+  background: linear-gradient(135deg, #002828, #011c1c);
   color: white;
   padding: 14px 24px;
   border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(4, 14, 41, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 40, 40, 0.15);
   letter-spacing: 0.5px;
   width: 180px;
 }
 
 .store-action-btn:hover {
-  background: linear-gradient(135deg, #0a214d, #13326e);
+  background: linear-gradient(135deg, #011c1c, #013030);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(4, 14, 41, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 40, 40, 0.2);
 }
 
 .store-action-btn i {

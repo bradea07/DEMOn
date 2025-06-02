@@ -75,14 +75,14 @@
   border-radius: 8px;
   font-size: 1rem;
   font-weight: bold;
-  background: #7bac08; /* Green button */
+  background: #002828; /* EcoSwap navbar color */
   color: white;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }
 
 .login-btn:hover {
-  background: #435e04; /* Darker green on hover */
+  background: #011c1c; /* Darker green on hover */
   transform: scale(1.05); /* Slight zoom effect */
 }
 

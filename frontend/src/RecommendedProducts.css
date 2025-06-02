@@ -1,8 +1,8 @@
-/* RecommendedProducts.css */
+/* Recommendations container with clean white background */
 .recommendations-container {
   margin: 50px auto;
   padding: 35px;
-  background-color: rgba(255, 255, 255, 0.97);
+  background-color: white;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   max-width: 1200px;
@@ -40,13 +40,13 @@
   left: 0;
   width: 100px;
   height: 3px;
-  background-color: #27ae60;
+  background-color: #002828;
   border-radius: 2px;
 }
 
 .recommendations-icon {
   font-size: 1.6rem;
-  color: #27ae60;
+  color: #002828;
 }
 
 .recommendations-grid {
@@ -56,7 +56,7 @@
 }
 
 .recommendation-card {
-  background-color: #fff;
+  background-color: white;
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -80,7 +80,7 @@
   left: 0;
   width: 0;
   height: 3px;
-  background-color: #27ae60;
+  background-color: #002828;
   transition: width 0.3s ease;
 }
 
@@ -100,31 +100,35 @@
   transform: scale(1.03);
 }
 
+/* Refresh recommendations button - EcoSwap navbar theme */
 .refresh-recommendations-btn {
-  background-color: #27ae60;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-left: 15px;
-  padding: 6px 12px;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #002828 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: white !important;
+  cursor: pointer !important;
+  font-size: 0.9rem !important;
+  margin-left: 15px !important;
+  padding: 10px 20px !important;
+  transition: all 0.2s ease-in-out !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3) !important;
+  font-weight: 600 !important;
 }
 
 .refresh-recommendations-btn:hover {
-  background-color: #2ecc71;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #011c1c !important;
+  cursor: pointer !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4) !important;
 }
 
 .refresh-recommendations-btn:active {
-  background-color: #27ae60;
-  transform: translateY(2px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #002828 !important;
+  transform: translateY(1px) !important;
+  box-shadow: 0 1px 3px rgba(0, 40, 40, 0.3) !important;
 }
 
 .no-recommendation-image {
@@ -163,7 +167,7 @@
 
 .recommendation-price {
   margin: 0 0 20px;
-  color: #27ae60;
+  color: #000000;
   font-weight: 700;
   font-size: 1.1rem;
   position: relative;
@@ -177,7 +181,7 @@
   left: 0;
   width: 40px;
   height: 2px;
-  background-color: rgba(39, 174, 96, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   border-radius: 1px;
 }
 
@@ -222,7 +226,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: 3px solid #27ae60;
+  border: 3px solid #002828;
   border-top-color: transparent;
   animation: spin 1s linear infinite;
   position: absolute;
@@ -239,33 +243,36 @@
   }
 }
 
+/* View recommendation button - EcoSwap navbar theme */
 .view-recommendation-btn {
-  background-color: #0a255c;
-  color: white;
-  text-decoration: none;
-  padding: 10px 15px;
-  border-radius: 30px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 0.95rem;
-  margin-top: auto;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(10, 37, 92, 0.2);
-  border: none;
-  cursor: pointer;
-  display: inline-block;
+  background: #002828 !important;
+  color: white !important;
+  text-decoration: none !important;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  margin-top: auto !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3) !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: inline-block !important;
 }
 
 .view-recommendation-btn:hover {
-  background-color: #051938;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(10, 37, 92, 0.3);
+  background: #011c1c !important;
+  cursor: pointer !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4) !important;
 }
 
+/* Loading state - EcoSwap theme */
 .recommendations-loading {
   text-align: center;
   padding: 20px;
-  color: #0a255c;
+  color: #002828;
   font-style: italic;
 }
 

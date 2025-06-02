@@ -26,7 +26,7 @@
   border-radius: 6px;
   margin-bottom: 20px;
   color: #555;
-  border-left: 4px solid #2e7d32;
+  border-left: 4px solid #002828;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   animation: pulse 1.5s infinite;
@@ -85,13 +85,13 @@
 }
 
 .location-search-input:focus {
-  border-color: #2e7d32;
+  border-color: #002828;
   outline: none;
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
 }
 
 .search-button {
-  background: linear-gradient(90deg, #002244, #003366);
+  background: linear-gradient(90deg, #002828, #003d3d);
   color: #fff;
   border: none;
   padding: 10px 18px;
@@ -99,7 +99,7 @@
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  height: 42px;
+  height: 44px;
   display: flex;
   align-items: center;
   transition: background 0.2s ease, box-shadow 0.2s ease;
@@ -169,7 +169,7 @@
 
 /* Find closest point button */
 .find-closest-button {
-  background: linear-gradient(90deg, #006064, #00838f);
+  background: linear-gradient(90deg, #002828, #003d3d);
   color: white;
   border: none;
   padding: 14px 20px;
@@ -282,7 +282,7 @@
 }
 
 .retry-button {
-  background-color: #c62828;
+  background-color: #002828;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -415,7 +415,7 @@
 }
 
 .direction-button:hover {
-  background-color: #1b5e20;
+  background-color: #011c1c;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 

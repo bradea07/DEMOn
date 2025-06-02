@@ -296,7 +296,7 @@ const SearchResults = () => {
           )}
 
           <button type="submit" className="search-button">
-            🔍 Search Products
+            Search Products
           </button>
         </form>
       </div>

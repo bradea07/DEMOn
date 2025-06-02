@@ -299,8 +299,8 @@
 }
 
 .chat-input:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  border-color: #002828;
+  box-shadow: 0 0 0 2px rgba(0, 40, 40, 0.2);
 }
 
 .send-btn {
@@ -308,7 +308,7 @@
   height: 45px;
   margin-left: 10px;
   border-radius: 50%;
-  background-color: #4CAF50;
+  background-color: #002828;
   color: white;
   border: none;
   cursor: pointer;
@@ -319,7 +319,7 @@
 }
 
 .send-btn:hover {
-  background-color: #3d8b40;
+  background-color: #011c1c;
 }
 
 .send-btn:disabled {
