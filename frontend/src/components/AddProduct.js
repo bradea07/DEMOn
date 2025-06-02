@@ -45,6 +45,19 @@ const AddProduct = () => {
     setImages([...images, ...filesToAdd]);
   };
 
+  const handleSingleImageChange = (e, targetIndex) => {
+    const file = e.target.files[0];
+    if (file) {
+      const newImages = [...images];
+      // Fill empty slots up to the target index if needed
+      while (newImages.length <= targetIndex) {
+        newImages.push(null);
+      }
+      newImages[targetIndex] = file;
+      setImages(newImages.filter(img => img !== null));
+    }
+  };
+
   const handleDeleteImage = (index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
@@ -132,7 +145,7 @@ const AddProduct = () => {
   return (
     <div className="add-product-container">
       <h2 className="add-product-title">
-        Add Product
+        Add new listing
       </h2>
       
       {message && (
@@ -194,7 +207,9 @@ const AddProduct = () => {
                 className="add-product-input" 
                 required 
               />
-              
+            </div>
+
+            <div className="right-column">
               <label htmlFor="price">Price</label>
               <input
                 type="number"
@@ -249,46 +264,54 @@ const AddProduct = () => {
                 <option value="Used - Acceptable">Used - Acceptable</option>
               </select>
             </div>
+          </div>
 
-            <div className="right-column">
-              <div className="file-input-container">
-                <label htmlFor="images">Product Images <span className="required-asterisk">*</span></label>
-                <label className="custom-file-label" htmlFor="fileInput">
-                  Choose Files
-                </label>
-                <input 
-                  id="fileInput" 
-                  type="file" 
-                  multiple 
-                  accept="image/*" 
-                  onChange={handleImageChange} 
-                  className="add-product-file-input" 
-                />
-                
-                {/* Image Grid: 9 slots (3x3) */}
-                <div className="image-grid-container">
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
-                    <div key={index} className="image-slot">
-                      {images[index] ? (
-                        <div className="image-preview-slot">
-                          <img src={URL.createObjectURL(images[index])} alt="Preview" />
-                          <button 
-                            type="button" 
-                            className="remove-image-btn"
-                            onClick={() => handleDeleteImage(index)}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="image-placeholder">
-                          <FontAwesomeIcon icon={faCamera} style={{color: '#003d3d'}} />
-                        </div>
-                      )}
+          {/* Image Upload Section - Moved below form */}
+          <div className="file-input-container">
+            <div className="file-input-header">
+              <label htmlFor="images">Product Images <span className="required-asterisk">*</span></label>
+              <label className="custom-file-label" htmlFor="fileInput">
+                Select Images
+              </label>
+              <input 
+                id="fileInput" 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                onChange={handleImageChange} 
+                className="add-product-file-input" 
+              />
+            </div>
+            
+            {/* Image Grid: 9 slots (3x3) */}
+            <div className="image-grid-container">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+                <div key={index} className="image-slot">
+                  {images[index] ? (
+                    <div className="image-preview-slot">
+                      <img src={URL.createObjectURL(images[index])} alt="Preview" />
+                      <button 
+                        type="button" 
+                        className="remove-image-btn"
+                        onClick={() => handleDeleteImage(index)}
+                      >
+                        ×
+                      </button>
                     </div>
-                  ))}
+                  ) : (
+                    <label className="image-placeholder" htmlFor={`fileInput-${index}`}>
+                      <FontAwesomeIcon icon={faCamera} style={{color: '#003d3d'}} />
+                      <input
+                        id={`fileInput-${index}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleSingleImageChange(e, index)}
+                        className="add-product-file-input"
+                      />
+                    </label>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -297,7 +320,7 @@ const AddProduct = () => {
             className="add-product-button" 
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Adding Product..." : "Add Product"}
+            {isSubmitting ? "Posting..." : "Post"}
           </button>
         </form>
       </div>

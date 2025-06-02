@@ -19,6 +19,7 @@ public class Product {
     private Double price;
     private String brand;
     private String productCondition;
+    private String phone;
 
     // Add timestamp field to track when products were created
     @Column(name = "created_at")
@@ -65,6 +66,9 @@ public class Product {
 
     public String getProductCondition() { return productCondition; }
     public void setProductCondition(String productCondition) { this.productCondition = productCondition; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public Date getCreatedAt() { return createdAt; }  // ✅ Get product creation timestamp
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }  // ✅ Set product creation timestamp

@@ -12,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -26,8 +24,6 @@ public class ProductController {
 
     @Autowired
     private UserRepository userRepository;
-
-    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
 
 
@@ -43,6 +39,7 @@ public ResponseEntity<?> addProduct(
         @RequestParam("price") Double price,
         @RequestParam("brand") String brand,
         @RequestParam("product_condition") String productCondition,
+        @RequestParam("phone") String phone,
         @RequestParam("user_id") Long userId,
         @RequestParam(value = "images", required = false) List<MultipartFile> images) {
 
@@ -104,6 +101,7 @@ public ResponseEntity<?> addProduct(
     product.setPrice(price);
     product.setBrand(brand);
     product.setProductCondition(productCondition);
+    product.setPhone(phone);
     product.setUser(user.get());
     product.setImageUrls(imagePaths); // ✅ Save all images
 
@@ -215,6 +213,7 @@ public ResponseEntity<?> updateProduct(
         @RequestParam("price") Double price,
         @RequestParam("brand") String brand,
         @RequestParam("product_condition") String productCondition,
+        @RequestParam("phone") String phone,
         @RequestParam(value = "images", required = false) List<MultipartFile> images
 ) {
     Optional<Product> optionalProduct = productService.getProductById(id);
@@ -233,6 +232,7 @@ public ResponseEntity<?> updateProduct(
     product.setPrice(price);
     product.setBrand(brand);
     product.setProductCondition(productCondition);
+    product.setPhone(phone);
 
     // dacă trimiți noi imagini, le înlocuim
     if (images != null && !images.isEmpty()) {
