@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useUnreadMessages } from "../contexts/UnreadMessagesContext";
 import "./Navbar.css"; // Import CSS file
 
 const Navbar = ({ onLogout, toggleChatbot }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [notificationsDropdownOpen, setNotificationsDropdownOpen] = useState(false);
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const { unreadCount: unreadMessages } = useUnreadMessages();
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [dropdownTimer, setDropdownTimer] = useState(null);
@@ -44,22 +45,9 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
     }
   };
 
-  // Check for unread messages and notifications
+  // Check for unread notifications
   useEffect(() => {
     if (userId) {
-      // Fetch unread message count
-      const checkUnread = async () => {
-        try {
-          const response = await fetch(`http://localhost:8080/messages/unread/${userId}`);
-          if (response.ok) {
-            const count = await response.json();
-            setUnreadMessages(count);
-          }
-        } catch (err) {
-          console.error("Error checking unread messages:", err);
-        }
-      };
-
       // Fetch unread notification count
       const checkUnreadNotifications = async () => {
         try {
@@ -73,13 +61,11 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
         }
       };
 
-      // Initial checks
-      checkUnread();
+      // Initial check
       checkUnreadNotifications();
       
       // Set interval to check periodically
       const interval = setInterval(() => {
-        checkUnread();
         checkUnreadNotifications();
       }, 30000); // Check every 30 seconds
       

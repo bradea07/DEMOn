@@ -19,6 +19,7 @@ import ResetPassword from "./components/ResetPassword";
 import EditProduct from "./components/EditProduct"; // ✅ importat
 import Delivery from "./components/Delivery"; // Import Delivery component
 import MapComponent from "./components/Map"; // Import Map component
+import { UnreadMessagesProvider } from "./contexts/UnreadMessagesContext";
 import "./Styles/Chatbot.css";
 
 // Function to check if user is authenticated
@@ -63,48 +64,50 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      {isLoggedIn && (
-        <>
-          <Navbar
-            onLogout={() => {
-              // Clear all authentication-related data
-              localStorage.removeItem("userToken");
-              localStorage.removeItem("user");
-              setIsLoggedIn(false);
-            }}
-            toggleChatbot={toggleChatbot}
-          />
-          <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
-        </>
-      )}
-
-      <Routes>
-        <Route path="/login" element={!isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-
-        {isLoggedIn ? (
+    <UnreadMessagesProvider>
+      <Router>
+        {isLoggedIn && (
           <>
-            <Route path="/" element={<SearchPage />} />
-            <Route path="/search-results" element={<SearchResults />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/user/:userId" element={<UserProfile />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/chats" element={<Chats />} />
-            <Route path="/delivery" element={<Delivery />} />
-            <Route path="/map" element={<MapComponent />} />
-            
-            <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
+            <Navbar
+              onLogout={() => {
+                // Clear all authentication-related data
+                localStorage.removeItem("userToken");
+                localStorage.removeItem("user");
+                setIsLoggedIn(false);
+              }}
+              toggleChatbot={toggleChatbot}
+            />
+            <Chatbot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />
           </>
-        ) : (
-          <Route path="*" element={<Navigate to="/login" />} />
         )}
-      </Routes>
-    </Router>
+
+        <Routes>
+          <Route path="/login" element={!isLoggedIn ? <Login setIsLoggedIn={setIsLoggedIn} /> : <Navigate to="/" />} />
+          <Route path="/signup" element={!isLoggedIn ? <Signup /> : <Navigate to="/" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
+          {isLoggedIn ? (
+            <>
+              <Route path="/" element={<SearchPage />} />
+              <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/my-profile" element={<MyProfile />} />
+              <Route path="/user/:userId" element={<UserProfile />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/chats" element={<Chats />} />
+              <Route path="/delivery" element={<Delivery />} />
+              <Route path="/map" element={<MapComponent />} />
+              
+              <Route path="/edit-product/:id" element={<EditProduct />} /> {/* ✅ ruta pentru edit */}
+            </>
+          ) : (
+            <Route path="*" element={<Navigate to="/login" />} />
+          )}
+        </Routes>
+      </Router>
+    </UnreadMessagesProvider>
   );
 }
 

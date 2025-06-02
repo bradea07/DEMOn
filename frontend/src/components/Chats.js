@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useUnreadMessages } from "../contexts/UnreadMessagesContext";
 import "./Chats.css";
 
 const Chats = () => {
@@ -11,6 +12,8 @@ const Chats = () => {
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const messagesEndRef = useRef(null); // Referință pentru scrollul automat
+  
+  const { markChatAsRead, checkUnreadMessages } = useUnreadMessages();
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const userId = loggedInUser?.id;
@@ -73,11 +76,26 @@ const Chats = () => {
     
     try {
       setIsLoadingMessages(true);
+      
+      const otherUserId = chat.sender.id === userId ? chat.receiver.id : chat.sender.id;
+      const key = `${otherUserId}-${chat.product.id}`;
+      
+      // Immediately update unread count in context if there are unread messages
+      if (unreadMessages[key]) {
+        markChatAsRead(otherUserId, chat.product.id);
+        
+        // Update local unread state
+        setUnreadMessages(prev => {
+          const updated = {...prev};
+          delete updated[key];
+          return updated;
+        });
+      }
+      
       // Get messages
       const res = await fetch(`http://localhost:8080/messages/product/${chat.product.id}`);
       const data = await res.json();
       
-      const otherUserId = chat.sender.id === userId ? chat.receiver.id : chat.sender.id;
       const filtered = data.filter(
         (msg) =>
           (msg.sender.id === userId || msg.receiver.id === userId) &&
@@ -89,24 +107,6 @@ const Chats = () => {
       );
       setChatMessages(sortedMessages);
       
-      // Mark messages as read
-      const key = `${otherUserId}-${chat.product.id}`;
-      if (unreadMessages[key]) {
-        try {
-          await fetch(`http://localhost:8080/messages/markRead/${userId}/${otherUserId}/${chat.product.id}`, {
-            method: 'POST'
-          });
-          
-          // Update unread state
-          setUnreadMessages(prev => {
-            const updated = {...prev};
-            delete updated[key];
-            return updated;
-          });
-        } catch (err) {
-          console.error("Error marking messages as read:", err);
-        }
-      }
     } catch (err) {
       console.error("Error loading messages:", err);
     } finally {
