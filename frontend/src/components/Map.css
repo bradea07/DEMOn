@@ -91,7 +91,7 @@
 }
 
 .search-button {
-  background: linear-gradient(90deg, #002828, #003d3d);
+  background: #002828;
   color: #fff;
   border: none;
   padding: 10px 18px;
@@ -102,7 +102,7 @@
   height: 44px;
   display: flex;
   align-items: center;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.3s ease;
   min-width: 110px;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -112,8 +112,7 @@
 }
 
 .search-button:hover {
-  background: linear-gradient(90deg, #001933, #002244);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  background: #001818;
 }
 
 .search-button svg {
@@ -169,7 +168,7 @@
 
 /* Find closest point button */
 .find-closest-button {
-  background: linear-gradient(90deg, #002828, #003d3d);
+  background: #002828;
   color: white;
   border: none;
   padding: 14px 20px;
@@ -184,6 +183,7 @@
   transition: all 0.2s ease;
   min-width: 300px;
   margin: 10px auto;
+  height: 52px;
 }
 
 .find-closest-button svg {
@@ -193,7 +193,7 @@
 }
 
 .find-closest-button:hover {
-  background: linear-gradient(90deg, #00838f, #0097a7);
+  background: #001818;
   box-shadow: 0 6px 12px rgba(0,0,0,0.3);
   transform: translateY(-2px);
 }
@@ -339,6 +339,7 @@
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   justify-content: center;
+  align-items: center;
 }
 
 .legend {
@@ -431,7 +432,7 @@
 }
 
 .clear-directions-button {
-  background-color: #f44336;
+  background: #002828;
   color: white;
   border: none;
   padding: 14px 20px;
@@ -439,14 +440,19 @@
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
-  box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   transition: all 0.2s ease;
   min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
 }
 
 .clear-directions-button:hover {
-  background-color: #d32f2f;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  background: #001818;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
 }
 
 .clear-directions-button:active {
