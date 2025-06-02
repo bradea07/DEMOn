@@ -12,7 +12,6 @@ const Notifications = () => {
   useEffect(() => {
     fetchNotifications();
   }, [currentUser]);
-
   const fetchNotifications = async () => {
     if (!currentUser || !currentUser.id) {
       setLoading(false);
@@ -20,9 +19,26 @@ const Notifications = () => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:8080/api/notifications/user/${currentUser.id}`);
-      setNotifications(response.data);
-      setError(null);
+      const response = await axios.get(`http://localhost:8080/api/notifications/user/${currentUser.id}`, {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (response.status === 200 && Array.isArray(response.data)) {
+        // Ensure we have valid data before updating state
+        const validNotifications = response.data.filter(n => n && n.id);
+        setNotifications(validNotifications);
+        setError(null);
+        
+        // Log for debugging
+        console.log('Fetched notifications:', validNotifications);
+        console.log('Unread count:', validNotifications.filter(n => !n.read).length);
+      } else {
+        console.error('Invalid response format:', response);
+        setError('Invalid response from server');
+        setNotifications([]);
+      }
     } catch (err) {
       console.error('Error fetching notifications:', err);
       setError('Failed to load notifications');
@@ -30,18 +46,38 @@ const Notifications = () => {
     } finally {
       setLoading(false);
     }
-  };
-  const markAsRead = async (notificationId) => {
+  };const markAsRead = async (notificationId) => {
     try {
-      await axios.post(`http://localhost:8080/api/notifications/${notificationId}/mark-read`);
+      const response = await axios.post(`http://localhost:8080/api/notifications/${notificationId}/mark-read`, null, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
       
-      // Update local state to reflect the change immediately
-      setNotifications(notifications.map(n =>
-        n.id === notificationId ? { ...n, read: true } : n
-      ));
+      if (response.status === 200) {
+        // Update local state to reflect the change immediately
+        setNotifications(prevNotifications => 
+          prevNotifications.map(n =>
+            n.id === notificationId ? { ...n, read: true } : n
+          )
+        );
+        
+        // Verify the change was successful after a short delay
+        setTimeout(async () => {
+          const verifyResponse = await axios.get(`http://localhost:8080/api/notifications/user/${currentUser.id}`);
+          const updatedNotification = verifyResponse.data.find(n => n.id === notificationId);
+          if (updatedNotification && !updatedNotification.read) {
+            console.log('Notification read status not persisted, retrying...');
+            fetchNotifications();
+          }
+        }, 500);
+      } else {
+        console.error('Failed to mark notification as read:', response.status);
+        fetchNotifications();
+      }
     } catch (err) {
       console.error('Error marking notification as read:', err);
-      // Refresh notifications on error to ensure consistency
       fetchNotifications();
     }
   };
@@ -57,18 +93,42 @@ const Notifications = () => {
       // Refresh notifications on error to ensure consistency
       fetchNotifications();
     }
-  };
-  const markAllAsRead = async () => {
+  };  const markAllAsRead = async () => {
     if (!currentUser || !currentUser.id) return;
 
     try {
-      await axios.post(`http://localhost:8080/api/notifications/user/${currentUser.id}/mark-all-read`);
+      const response = await axios.post(
+        `http://localhost:8080/api/notifications/user/${currentUser.id}/mark-all-read`,
+        null,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
       
-      // Update local state to reflect the change immediately
-      setNotifications(notifications.map(n => ({ ...n, read: true })));
+      if (response.status === 200) {
+        // Update local state to reflect the change immediately
+        setNotifications(prevNotifications => 
+          prevNotifications.map(n => ({ ...n, read: true }))
+        );
+        
+        // Verify the change was successful after a short delay
+        setTimeout(async () => {
+          const verifyResponse = await axios.get(`http://localhost:8080/api/notifications/user/${currentUser.id}`);
+          const hasUnread = verifyResponse.data.some(n => !n.read);
+          if (hasUnread) {
+            console.log('Some notifications not marked as read, retrying...');
+            fetchNotifications();
+          }
+        }, 500);
+      } else {
+        console.error('Failed to mark all notifications as read:', response.status);
+        fetchNotifications();
+      }
     } catch (err) {
       console.error('Error marking all notifications as read:', err);
-      // Refresh notifications on error to ensure consistency
       fetchNotifications();
     }
   };

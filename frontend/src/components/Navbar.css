@@ -85,6 +85,199 @@
   font-size: 16px;
 }
 
+/* Notifications positioning */
+.notifications-trigger {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1001 !important;
+}
+/* Notifications Dropdown */
+.notifications-dropdown {
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  right: -140px !important;
+  transform: none !important;
+  width: 380px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  z-index: 1001;
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.notifications-dropdown-header {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.notifications-dropdown-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #002c3e;
+  font-weight: 600;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.notifications-dropdown-list {
+  padding: 8px 0;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 40, 40, 0.2) transparent;
+}
+
+.notifications-dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notifications-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notifications-dropdown-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 40, 40, 0.2);
+  border-radius: 3px;
+}
+
+.notifications-dropdown-item {
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+  position: relative;
+}
+
+.notifications-dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notifications-dropdown-item.unread {
+  background-color: #f0f7ff;
+  border-left: 3px solid #002828;
+}
+
+.notifications-dropdown-item .notification-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.notifications-dropdown-item.unread .notification-icon {
+  background-color: #e8f0fe;
+}
+
+.notifications-dropdown-item .notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notifications-dropdown-item .notification-message {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.notifications-dropdown-item .notification-time {
+  display: block;
+  font-size: 12px;
+  color: #666;
+}
+
+.notifications-dropdown-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+}
+
+.notifications-dropdown-empty i {
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: #999;
+}
+
+.notifications-dropdown-empty p {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.notifications-dropdown-empty small {
+  display: block;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.notification-mark-read {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: #002828;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+}
+
+.notifications-dropdown-item:hover .notification-mark-read {
+  opacity: 1;
+}
+
+.notification-mark-read:hover {
+  background-color: #011c1c;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.mark-all-read-btn {
+  background: none;
+  border: 1px solid #002828;
+  color: #002828;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.mark-all-read-btn:hover {
+  background-color: #002828;
+  color: white;
+}
+
 /* Notification Badge */
 .notification-badge {
   position: absolute;
@@ -330,6 +523,19 @@
   width: 20px;
 }
 
+/* Notifications Trigger */
+.notifications-trigger {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.notifications-trigger .nav-item {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
@@ -350,6 +556,16 @@
 
   .ecoswap-logo {
     font-size: 1.6rem;
+  }
+
+  .notifications-dropdown {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 380px;
+    right: auto;
   }
 }
 

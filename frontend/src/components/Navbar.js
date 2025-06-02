@@ -1,16 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css"; // Import CSS file
 
 const Navbar = ({ onLogout, toggleChatbot }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const [notificationsDropdownOpen, setNotificationsDropdownOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [notifications, setNotifications] = useState([]);
   const [dropdownTimer, setDropdownTimer] = useState(null);
+  const [notificationsTimer, setNotificationsTimer] = useState(null);
+  const notificationTriggerRef = useRef(null);
+  const notificationDropdownRef = useRef(null);
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const userId = loggedInUser?.id;
   const navigate = useNavigate();
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    if (!userId) return;
+    try {
+      console.log('Fetching notifications for user:', userId);
+      const response = await fetch(`http://localhost:8080/api/notifications/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched notifications:', data);
+        // Sort notifications by creation date, newest first
+        const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setNotifications(sortedData);
+        setUnreadNotifications(sortedData.filter(n => !n.read).length);
+      } else {
+        console.error('Failed to fetch notifications:', response.status);
+      }
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
 
   // Check for unread messages and notifications
   useEffect(() => {
@@ -61,8 +93,27 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
       if (dropdownTimer) {
         clearTimeout(dropdownTimer);
       }
+      if (notificationsTimer) {
+        clearTimeout(notificationsTimer);
+      }
     };
-  }, [dropdownTimer]);
+  }, [dropdownTimer, notificationsTimer]);
+
+  // Close dropdowns on click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationsDropdownOpen && 
+          notificationTriggerRef.current && 
+          notificationDropdownRef.current &&
+          !notificationTriggerRef.current.contains(event.target) &&
+          !notificationDropdownRef.current.contains(event.target)) {
+        setNotificationsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [notificationsDropdownOpen]);
 
   // Handle account dropdown navigation
   const handleAccountNavigation = (section) => {
@@ -93,6 +144,128 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
     setDropdownTimer(timer);
   };
 
+  // Handle notifications dropdown
+  const handleNotificationsClick = () => {
+    setNotificationsDropdownOpen(!notificationsDropdownOpen);
+    if (!notificationsDropdownOpen) {
+      fetchNotifications();
+    }
+  };
+
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      console.log('Marking notification as read:', notificationId);
+      
+      // Make the API call first
+      const response = await fetch(`http://localhost:8080/api/notifications/${notificationId}/mark-read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ id: notificationId })
+      });
+
+      console.log('Mark as read response status:', response.status);
+      
+      if (response.ok) {
+        console.log('Successfully marked as read on server, updating UI');
+        // Only update UI after successful server update
+        setNotifications(prevNotifications => {
+          const updated = prevNotifications.map(n =>
+            n.id === notificationId ? { ...n, read: true } : n
+          );
+          const unreadCount = updated.filter(n => !n.read).length;
+          setUnreadNotifications(unreadCount);
+          return updated;
+        });
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to mark notification as read:", response.status, errorText);
+        // Refresh notifications to ensure UI matches server state
+        await fetchNotifications();
+      }
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+      // Refetch to get current state from server
+      await fetchNotifications();
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    if (!userId) return;
+    try {
+      console.log('Marking all notifications as read for user:', userId);
+      
+      // Make the API call first
+      const response = await fetch(`http://localhost:8080/api/notifications/user/${userId}/mark-all-read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ userId })
+      });
+
+      console.log('Mark all as read response status:', response.status);
+
+      if (response.ok) {
+        console.log('Successfully marked all as read on server, updating UI');
+        // Only update UI after successful server update
+        setNotifications(prevNotifications => {
+          console.log('Previous notifications before update:', prevNotifications.map(n => ({ id: n.id, read: n.read })));
+          const updated = prevNotifications.map(n => ({ ...n, read: true }));
+          console.log('Updated notifications after mapping:', updated.map(n => ({ id: n.id, read: n.read })));
+          console.log('Setting unread count to 0');
+          return updated;
+        });
+        setUnreadNotifications(0);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to mark all notifications as read:", response.status, errorText);
+        // Refresh notifications to ensure UI matches server state
+        await fetchNotifications();
+      }
+    } catch (err) {
+      console.error("Error marking all notifications as read:", err);
+      // Refetch to get current state from server
+      await fetchNotifications();
+    }
+  };
+
+  const formatNotificationMessage = (notification) => {
+    const triggerUsername = notification.triggerUser?.username || 'Someone';
+    switch (notification.type) {
+      case 'PRODUCT_FAVORITED':
+        return `${triggerUsername} added "${notification.product?.title || 'your product'}" to favorites`;
+      case 'NEW_MESSAGE':
+        return `${triggerUsername} sent you a message`;
+      case 'RATING_RECEIVED':
+        return `You received a ${notification.ratingScore}-star rating`;
+      default:
+        return notification.message || 'You have a new notification';
+    }
+  };
+
+  const formatTimeAgo = (timestamp) => {
+    const now = new Date();
+    const notificationTime = new Date(timestamp);
+    const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
+
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    
+    return notificationTime.toLocaleDateString();
+  };
+
   return (
     <nav className="navbar">
       {/* Left Section - Brand Logo */}
@@ -118,12 +291,83 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
             <i className="fas fa-heart"></i>
           </Link>
 
-          <Link to="/notifications" className="nav-item">
-            <i className="fas fa-bell"></i>
-            {unreadNotifications > 0 && (
-              <span className="notification-badge">{unreadNotifications}</span>
+          <div className="notifications-trigger" ref={notificationTriggerRef}>
+            <button 
+              className="nav-item"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNotificationsClick();
+              }}
+            >
+              <i className="fas fa-bell"></i>
+              {unreadNotifications > 0 && (
+                <span className="notification-badge">{unreadNotifications}</span>
+              )}
+            </button>
+
+            {notificationsDropdownOpen && (
+              <div className="notifications-dropdown" ref={notificationDropdownRef}>
+                <div className="notifications-dropdown-header">
+                  <h3>Notifications</h3>
+                  {unreadNotifications > 0 && (
+                    <button 
+                      onClick={handleMarkAllAsRead}
+                      className="mark-all-read-btn"
+                      style={{ fontSize: '12px', padding: '4px 8px' }}
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+                
+                <div className="notifications-dropdown-list">
+                  {notifications.length === 0 ? (
+                    <div className="notifications-dropdown-empty">
+                      <i className="fas fa-bell"></i>
+                      <p>No notifications yet</p>
+                      <small>You'll see updates here when someone favorites your items, sends you messages, or rates your profile.</small>
+                    </div>
+                  ) : (
+                    notifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className={`notifications-dropdown-item ${!notification.read ? 'unread' : ''}`}
+                      >
+                        <div className="notification-icon">
+                          <i className={`fas fa-${
+                            notification.type === 'PRODUCT_FAVORITED' ? 'heart' :
+                            notification.type === 'NEW_MESSAGE' ? 'comment' :
+                            notification.type === 'RATING_RECEIVED' ? 'star' :
+                            'bell'
+                          }`}></i>
+                        </div>
+                        <div className="notification-content">
+                          <p className="notification-message">
+                            {formatNotificationMessage(notification)}
+                          </p>
+                          <span className="notification-time">
+                            {formatTimeAgo(notification.createdAt)}
+                          </span>
+                        </div>
+                        {!notification.read && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMarkAsRead(notification.id);
+                            }}
+                            className="notification-mark-read"
+                            title="Mark as read"
+                          >
+                            <i className="fas fa-check"></i>
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             )}
-          </Link>
+          </div>
 
           <Link to="/map" className="nav-item">
             <i className="fas fa-map-marker-alt"></i>

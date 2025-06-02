@@ -6,8 +6,13 @@ import com.ecoswap.model.Product;
 import com.ecoswap.model.User;
 import com.ecoswap.repository.NotificationRepository;
 import com.ecoswap.repository.UserRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +26,9 @@ public class NotificationService {
     
     @Autowired
     private UserRepository userRepository;
-    
+    @PersistenceContext
+private EntityManager entityManager;
+
     // Create a notification when a product is favorited
     public void createProductFavoritedNotification(Long productOwnerId, Long favoriterUserId, Product product) {
         try {
@@ -129,27 +136,34 @@ public class NotificationService {
         }
         return 0L;
     }
-    
-    // Mark a notification as read
-    public void markNotificationAsRead(Long notificationId) {
-        try {
-            notificationRepository.markAsRead(notificationId);
-        } catch (Exception e) {
-            System.err.println("Error marking notification as read: " + e.getMessage());
+      @Transactional
+   public void markNotificationAsRead(Long notificationId) {
+    try {
+        Notification n = entityManager.find(Notification.class, notificationId);
+        if (n != null) {
+            n.setIsRead(true);
+            entityManager.merge(n);
+            entityManager.flush(); // Force immediate database update
         }
+    } catch (Exception e) {
+        System.err.println("Error marking notification as read: " + e.getMessage());
     }
-    
-    // Mark all notifications as read for a user
-    public void markAllNotificationsAsRead(Long userId) {
-        try {
-            Optional<User> user = userRepository.findById(userId);
-            if (user.isPresent()) {
-                notificationRepository.markAllAsReadForUser(user.get());
-            }
-        } catch (Exception e) {
-            System.err.println("Error marking all notifications as read: " + e.getMessage());
+}
+
+@Transactional
+public void markAllNotificationsAsRead(Long userId) {
+    try {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            notificationRepository.markAllAsReadForUser(user.get());
+            entityManager.flush(); // Force immediate database update
         }
+    } catch (Exception e) {
+        System.err.println("Error marking all notifications as read: " + e.getMessage());
     }
+}
+
+
     
     // Delete a specific notification
     public void deleteNotification(Long notificationId) {

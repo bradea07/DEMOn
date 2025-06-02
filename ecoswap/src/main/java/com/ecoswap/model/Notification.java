@@ -1,6 +1,7 @@
 package com.ecoswap.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,8 +25,8 @@ public class Notification {
     
     @Column(nullable = false, length = 500)
     private String message;
-    
-    @Column(name = "is_read", nullable = false)
+      @Column(name = "is_read", nullable = false)
+    @JsonProperty("read")
     private Boolean isRead = false;
     
     @Column(name = "created_at", nullable = false)
