@@ -235,6 +235,41 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
     }
   };
 
+  const handleDeleteAllNotifications = async () => {
+    if (!userId) return;
+    try {
+      console.log('Deleting all notifications for user:', userId);
+      
+      // Make the API call first
+      const response = await fetch(`http://localhost:8080/api/notifications/user/${userId}/delete-all`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      console.log('Delete all notifications response status:', response.status);
+
+      if (response.ok) {
+        console.log('Successfully deleted all notifications on server, updating UI');
+        // Clear all notifications from UI
+        setNotifications([]);
+        setUnreadNotifications(0);
+      } else {
+        const errorText = await response.text();
+        console.error("Failed to delete all notifications:", response.status, errorText);
+        // Refresh notifications to ensure UI matches server state
+        await fetchNotifications();
+      }
+    } catch (err) {
+      console.error("Error deleting all notifications:", err);
+      // Refetch to get current state from server
+      await fetchNotifications();
+    }
+  };
+
   const formatNotificationMessage = (notification) => {
     const triggerUsername = notification.triggerUser?.username || 'Someone';
     switch (notification.type) {
@@ -309,23 +344,43 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
               <div className="notifications-dropdown" ref={notificationDropdownRef}>
                 <div className="notifications-dropdown-header">
                   <h3>Notifications</h3>
-                  {unreadNotifications > 0 && (
-                    <button 
-                      onClick={handleMarkAllAsRead}
-                      className="mark-all-read-btn"
-                      style={{ fontSize: '12px', padding: '4px 8px' }}
-                    >
-                      Mark all as read
-                    </button>
-                  )}
+                  <div className="notifications-header-buttons">
+                    {unreadNotifications > 0 && (
+                      <button 
+                        onClick={handleMarkAllAsRead}
+                        className="mark-all-read-btn"
+                        style={{ fontSize: '12px', padding: '4px 8px', marginRight: '8px' }}
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button 
+                        onClick={handleDeleteAllNotifications}
+                        className="delete-all-btn"
+                        style={{ 
+                          fontSize: '12px', 
+                          padding: '4px 8px', 
+                          backgroundColor: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete all
+                      </button>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="notifications-dropdown-list">
                   {notifications.length === 0 ? (
                     <div className="notifications-dropdown-empty">
-                      <i className="fas fa-bell"></i>
-                      <p>No notifications yet</p>
-                      <small>You'll see updates here when someone favorites your items, sends you messages, or rates your profile.</small>
+                      <i className="fas fa-bell-slash" style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }}></i>
+                      <h4 style={{ margin: '0 0 8px 0', color: '#666' }}>No notifications!</h4>
+                      <p style={{ margin: '0 0 8px 0', color: '#888' }}>You're all caught up!</p>
+                      <small style={{ color: '#aaa' }}>You'll see updates here when someone favorites your items, sends you messages, or rates your profile.</small>
                     </div>
                   ) : (
                     notifications.map(notification => (

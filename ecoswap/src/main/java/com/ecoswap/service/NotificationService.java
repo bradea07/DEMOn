@@ -174,6 +174,21 @@ public void markAllNotificationsAsRead(Long userId) {
         }
     }
 
+    // Delete all notifications for a user
+    @Transactional
+    public void deleteAllNotificationsForUser(Long userId) {
+        try {
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                List<Notification> userNotifications = notificationRepository.findByUserOrderByCreatedAtDesc(user.get());
+                notificationRepository.deleteAll(userNotifications);
+                entityManager.flush(); // Force immediate database update
+            }
+        } catch (Exception e) {
+            System.err.println("Error deleting all notifications for user: " + e.getMessage());
+        }
+    }
+
     // Clean up old notifications (can be called periodically)
     public void cleanupOldNotifications() {
         try {

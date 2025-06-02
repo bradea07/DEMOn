@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,6 +121,19 @@ public class NotificationController {
             System.err.println("Error deleting notification: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                .body(Map.of("error", "Failed to delete notification"));
+        }
+    }
+
+    // Delete all notifications for a user
+    @DeleteMapping("/user/{userId}/delete-all")
+    @Transactional
+    public ResponseEntity<?> deleteAllNotifications(@PathVariable Long userId) {
+        try {
+            notificationService.deleteAllNotificationsForUser(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error deleting all notifications: " + e.getMessage());
         }
     }
 
