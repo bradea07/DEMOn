@@ -1,13 +1,10 @@
 /* Import fonts matching SearchResults */
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
-/* Main wrapper with background - SCOPED to prevent conflicts */
+/* Main wrapper with clean white background */
 .product-details-wrapper {
   min-height: 100vh;
-  background-image: url("../../public/background3.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: white !important; /* Clean white background */
   padding: 100px 20px 40px 20px; /* Top padding to clear navbar */
   font-family: 'Roboto', sans-serif;
 }

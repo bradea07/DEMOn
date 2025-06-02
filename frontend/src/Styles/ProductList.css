@@ -1,8 +1,5 @@
 .search-results-page {
-  background-image: url("../public/background3.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: white !important; /* Clean white background */
   min-height: 100vh;
   padding-top: 100px;
   padding-bottom: 40px;

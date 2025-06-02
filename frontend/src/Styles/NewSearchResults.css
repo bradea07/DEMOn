@@ -22,32 +22,19 @@
   --border-radius-button: 30px;
 }
 
-/* Professional Container with Overlay */
+/* Professional Container with clean white background */
 .search-results-container {
   min-height: 100vh;
-  background-image: url("../public/background3.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: white !important; /* Clean white background */
   padding: 20px;
   font-family: 'Josefin Sans', sans-serif;
   position: relative;
   overflow-x: hidden;
 }
 
+/* Remove overlay */
 .search-results-container::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(4, 14, 41, 0.1) 0%, 
-    rgba(94, 91, 252, 0.05) 50%, 
-    rgba(4, 14, 41, 0.08) 100%);
-  pointer-events: none;
-  z-index: 0;
+  display: none; /* Remove the overlay */
 }
 
 /* Professional Search Bar Section */

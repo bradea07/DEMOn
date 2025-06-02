@@ -39,9 +39,10 @@ const SearchPage = () => {
     });
   };const handleSearch = (e) => {
     e.preventDefault();
-    
-    // Dacă search input-ul este gol, nu face nimic
+
+    // Fetch all products if search input is empty
     if (!searchTerm.trim()) {
+      navigate(`/search-results?allProducts=true`);
       return;
     }
     
@@ -98,16 +99,20 @@ const SearchPage = () => {
     <div className="search-page-container">
       <div className="search-header">
       </div>
-      <h2 className="search-title">Find What You're Looking For</h2>
-      <div className="search-box">
-        <form onSubmit={handleSearch}><div className="search-bar">
+      <h2 className="search-title">Find What You're Looking For</h2>      <div className="search-box">        <form onSubmit={handleSearch}>
+          <div className="search-bar">
             <input
               type="text"
               placeholder="What are you looking for?"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
+              autoComplete="off"
             />
+          </div>
+          
+          <div className="button-row">
+            <button type="submit" className="search-button">Search</button>
             <button type="button" onClick={toggleFilters} className="filter-toggle-btn">
               {showFilters ? "Hide Filters" : "Show Filters"}
             </button>
@@ -203,16 +208,9 @@ const SearchPage = () => {
                     value={filters.brand}
                     onChange={handleFilterChange}
                     className="filter-input"
-                  />                </div>
-              </div>
+                  />                </div>              </div>
             </div>
-          )}            <button 
-            type="submit" 
-            className="search-button"
-            disabled={!searchTerm.trim()}
-          >
-            Search Products
-          </button>
+          )}
         </form>
       </div>
       

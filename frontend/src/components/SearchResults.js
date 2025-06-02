@@ -8,7 +8,7 @@ const SearchResults = () => {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const productsPerPage = 12; // Increased for better grid display
+  const productsPerPage = 8; // Changed to 8 products per page to match recommendations
   const navigate = useNavigate();
 
   // Search states
@@ -114,15 +114,17 @@ const SearchResults = () => {
   // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault();
-    
+
     let searchParams = new URLSearchParams();
-    
-    // Add search term if provided
-    if (searchTerm.trim()) {
+
+    // Fetch all products if search is empty
+    if (!searchTerm.trim()) {
+      searchParams.append("allProducts", "true");
+    } else {
       searchParams.append("query", searchTerm);
     }
-    
-    // Add filters if they have values
+
+    // Add all active filters
     if (filters.category) searchParams.append("category", filters.category);
     if (filters.minPrice) searchParams.append("minPrice", filters.minPrice);
     if (filters.maxPrice) searchParams.append("maxPrice", filters.maxPrice);
@@ -165,10 +167,7 @@ const SearchResults = () => {
  return (
   <div
     style={{
-      backgroundImage: "url('/background3.png')",
-      backgroundSize: "cover",
-      backgroundAttachment: "fixed",
-      backgroundPosition: "center",
+      backgroundColor: "white",
       minHeight: "100vh",
       width: "100%",
     }}
@@ -185,7 +184,12 @@ const SearchResults = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
+              autoComplete="off"
             />
+          </div>
+          
+          <div className="button-row">
+            <button type="submit" className="search-button">Search</button>
             <button
               type="button"
               onClick={toggleFilters}
@@ -294,10 +298,6 @@ const SearchResults = () => {
               </div>
             </div>
           )}
-
-          <button type="submit" className="search-button">
-            Search Products
-          </button>
         </form>
       </div>
 
@@ -321,78 +321,63 @@ const SearchResults = () => {
         </div>
       ) : (
         <>
-          <div className="search-results-grid">
-            {currentProducts.map((product) => (
-              <div key={product.id} className="product-card">
-                <Link to={`/product/${product.id}`} className="product-link">
-                  <div className="product-image-container">
-                    {product.imageUrls && product.imageUrls.length > 0 ? (
-                      <img
-                        src={`http://localhost:8080${product.imageUrls[0]}`}
-                        alt={product.title}
-                        className="product-image"
-                      />
-                    ) : (
-                      <div className="no-image">No image available</div>
-                    )}
-                  </div>
-                </Link>
-                <div className="product-info">
-                  <h3 className="product-title">{product.title}</h3>
-                  <p className="product-description">
-                    {getShortDescription(product.description)}
-                  </p>
-                  <p className="product-price">${product.price}</p>
-
-                  {product.category && (
-                    <p className="product-category">
-                      <i className="fas fa-tag"></i> {product.category}
-                    </p>
-                  )}
-
-                  {product.location && (
-                    <p className="product-location">
-                      <i className="fas fa-map-marker-alt"></i>{" "}
-                      {product.location}
-                    </p>
-                  )}
-
-                  {product.sellerUsername && (
-                    <div className="product-user">
-                      <div className="user-avatar">👤</div>
-                      <span className="user-name">
-                        {product.sellerUsername}
-                      </span>
+          <div className="search-results-container-box">
+            <h3 className="search-results-title">
+              Search Results
+              <span className="search-results-subtitle">
+                {results.length} products found
+              </span>
+              <span className="page-indicator">
+                Page {currentPage} of {Math.ceil(results.length / productsPerPage)}
+              </span>
+            </h3>
+            <div className="search-results-grid">
+              {currentProducts.map((product) => (
+                <div key={product.id} className="product-card">
+                  <Link to={`/product/${product.id}`} className="product-link">
+                    <div className="product-image-container">
+                      {product.imageUrls && product.imageUrls.length > 0 ? (
+                        <img
+                          src={`http://localhost:8080${product.imageUrls[0]}`}
+                          alt={product.title}
+                          className="product-image"
+                        />
+                      ) : (
+                        <div className="no-image">No image available</div>
+                      )}
                     </div>
-                  )}
-
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="view-product-btn"
-                  >
-                    View Details
                   </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+                  <div className="product-info">
+                    <h3 className="product-title">{product.title}</h3>
+                    <p className="product-price">${product.price}</p>
 
-          {/* Pagination */}
-          {results.length > productsPerPage && (
-            <div className="search-pagination">
-              <button
-                onClick={prevPage}
-                disabled={currentPage === 1}
-                className="pagination-btn"
-              >
-                &laquo; Previous
-              </button>
-              <div className="pagination-info">
-                Page {currentPage} of{" "}
-                {Math.ceil(results.length / productsPerPage)}
-              </div>
-              <button
-                onClick={nextPage}
+                    <Link
+                      to={`/product/${product.id}`}
+                      className="view-product-btn"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {results.length > productsPerPage && (
+              <div className="search-pagination">
+                <button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className="pagination-btn"
+                >
+                  &laquo; Previous
+                </button>
+                <div className="pagination-info">
+                  Page {currentPage} of{" "}
+                  {Math.ceil(results.length / productsPerPage)}
+                </div>
+                <button
+                  onClick={nextPage}
                 disabled={indexOfLastProduct >= results.length}
                 className="pagination-btn"
               >
@@ -400,6 +385,7 @@ const SearchResults = () => {
               </button>
             </div>
           )}
+          </div>
         </>
       )}
     </div>
