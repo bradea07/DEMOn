@@ -110,11 +110,12 @@ const SearchPage = () => {
               autoComplete="off"
             />
           </div>
-          
-          <div className="button-row">
-            <button type="submit" className="search-button">Search</button>
+            <div className="button-row">
+            <button type="submit" className="search-button">
+              <span>Search</span>
+            </button>
             <button type="button" onClick={toggleFilters} className="filter-toggle-btn">
-              {showFilters ? "Hide Filters" : "Show Filters"}
+              <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
             </button>
           </div>
 

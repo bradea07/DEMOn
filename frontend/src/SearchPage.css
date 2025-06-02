@@ -55,102 +55,115 @@
  margin-bottom: 40px;
 }
 
-/* Search bar container */
+/* Search bar container - elegant styling */
 .search-bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
-  padding: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
   width: 100%;
+  position: relative;
 }
 
-/* Button row for search and filter buttons */
+/* Button row for search and filter buttons - elegant layout spanning input width */
 .button-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  padding: 10px 0;
+  width: 100%;
+  max-width: 550px;
+  margin: 0 auto 25px auto;
 }
 
 .search-bar:focus-within {
- box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+ box-shadow: 0 5px 20px rgba(0, 40, 40, 0.15);
  border-color: #002828;
+ transform: translateY(-2px);
+ transition: all 0.3s ease;
 }
 
-/* Search input - always accessible and interactive */
+/* Search input - elegant design */
 .search-input {
   width: 100%;
-  max-width: 500px;
-  padding: 15px;
-  border-radius: 25px;
+  max-width: 550px;
+  padding: 18px 25px;
+  border-radius: 30px;
   border: 2px solid #002828;
   outline: none;
   font-size: 16px;
   background-color: #ffffff !important;
   color: #000000 !important;
   font-family: 'Roboto', sans-serif;
-  pointer-events: auto !important; /* ALWAYS allow interaction */
-  cursor: text !important; /* ALWAYS show text cursor */
-  user-select: text !important; /* ALWAYS allow text selection */
-  z-index: 100 !important; /* Make sure it's above other elements */
+  pointer-events: auto !important;
+  cursor: text !important;
+  user-select: text !important;
+  z-index: 100 !important;
+  box-shadow: 0 4px 15px rgba(0, 40, 40, 0.1);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
  border-color: #002828 !important;
- box-shadow: 0 0 0 3px rgba(0, 40, 40, 0.1) !important;
+ box-shadow: 0 0 0 4px rgba(0, 40, 40, 0.2), 0 8px 25px rgba(0, 40, 40, 0.15) !important;
  background-color: #ffffff !important;
+ transform: translateY(-1px);
 }
 
 .search-input::placeholder {
- color: #999999 !important;
+ color: #888888 !important;
  font-style: italic !important;
+ font-weight: 300;
 }
 
-/* Buton toggle filtre - EcoSwap navbar theme */
+/* Simple search button - navbar color with darker hover */
+.search-button {
+ padding: 15px 25px;
+ border: none;
+ border-radius: 30px;
+ font-size: 15px;
+ font-weight: 700;
+ background: #002828;
+ color: #ffffff;
+ cursor: pointer;
+ transition: background-color 0.3s ease;
+ text-transform: none;
+ letter-spacing: 0.5px;
+ box-shadow: 0 6px 20px rgba(0, 40, 40, 0.3);
+ flex: 2;
+ min-height: 52px;
+}
+
+.search-button:hover:not(:disabled) {
+ background: #001818;
+}
+
+.search-button:active {
+ background: #001414;
+}
+
+/* Simple filter toggle button - navbar color scheme */
 .filter-toggle-btn {
- padding: 12px 20px;
+ padding: 15px 20px;
  background: #002828;
  border: none;
- border-radius: 25px;
+ border-radius: 30px;
  color: #ffffff;
  font-weight: 600;
  cursor: pointer;
- transition: all 0.2s ease-in-out;
+ transition: background-color 0.3s ease;
  font-family: 'Roboto', sans-serif;
- box-shadow: 0 2px 8px rgba(0, 40, 40, 0.3);
- font-size: 14px;
+ box-shadow: 0 4px 15px rgba(0, 40, 40, 0.1);
+ font-size: 15px;
+ flex: 1;
+ min-height: 52px;
 }
 
 .filter-toggle-btn:hover {
- background: #013030;
- cursor: pointer;
- transform: translateY(-1px);
- box-shadow: 0 4px 12px rgba(0, 40, 40, 0.4);
-}
-
-/* Search button - compact and aligned */
-.search-button {
- padding: 12px 25px;
- border: none;
- border-radius: 25px;
- font-size: 14px;
- font-weight: 600;
- background: #002828;
- color: #ffffff;
- cursor: pointer;
- transition: all 0.2s ease-in-out;
- text-transform: uppercase;
- letter-spacing: 1px;
- box-shadow: 0 4px 15px rgba(0, 40, 40, 0.3);
-}
-
-.search-button:hover {
- background: #013030;
- cursor: pointer;
- transform: translateY(-2px);
- box-shadow: 0 6px 18px rgba(0, 40, 40, 0.4);
+ background: #001818;
 }
 
 /* Containere pentru filtre */
@@ -248,6 +261,77 @@ h1, h2, h3, p, button {
 input, textarea, select {
  user-select: text;
  cursor: text;
+}
+
+/* No results styling */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  margin: 40px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.no-results i {
+  font-size: 3rem;
+  color: #002828;
+  margin-bottom: 20px;
+}
+
+.no-results h3 {
+  color: #2c3e50;
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.no-results p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Search pagination styling */
+.search-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 40px;
+  padding: 20px;
+}
+
+.pagination-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #002828 0%, #003838 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 40, 40, 0.2);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #003838 0%, #004848 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 40, 40, 0.3);
+}
+
+.pagination-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.pagination-info {
+  color: #002828;
+  font-weight: 500;
+  padding: 0 15px;
 }
 
 /* Responsive design pentru ecrane mici */

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../SearchPage.css";
+import "../SearchResults.css";
 import "../RecommendedProducts.css";
 
 const SearchResults = () => {
@@ -136,12 +136,41 @@ const SearchResults = () => {
     navigate(`/search-results?${searchParams.toString()}`);
   };
 
-  return (
+  // Function to generate a title based on filters applied
+  const generateSearchTitle = () => {
+    let title = "Search Results";
+    
+    if (searchTerm) {
+      title += ` for "${searchTerm}"`;
+    }
+    
+    let appliedFilters = [];
+    if (filters.category) appliedFilters.push(`Category: ${filters.category}`);
+    if (filters.condition) appliedFilters.push(`Condition: ${filters.condition}`);
+    if (filters.location) appliedFilters.push(`Location: ${filters.location}`);
+    if (filters.brand) appliedFilters.push(`Brand: ${filters.brand}`);
+    if (filters.minPrice) appliedFilters.push(`Min Price: $${filters.minPrice}`);
+    if (filters.maxPrice) appliedFilters.push(`Max Price: $${filters.maxPrice}`);
+    
+    if (appliedFilters.length > 0) {
+      title += ` with ${appliedFilters.join(', ')}`;
+    }
+    
+    return title;
+  };
+
+  // Generate a short description from the product description
+  const getShortDescription = (description) => {
+    if (!description) return "No description available";
+    return description.length > 120 ? description.substring(0, 120) + "..." : description;
+  };
+
+ return (
     <div className="search-page-container">
       <div className="search-header">
       </div>
-      <h2 className="search-title">Find What You're Looking For</h2>
-      
+      <h2 className="search-title">Find What You're Looking For</h2>      
+      {/* Search Box with Filters */}
       <div className="search-box">
         <form onSubmit={handleSearch}>
           <div className="search-bar">
@@ -159,7 +188,11 @@ const SearchResults = () => {
             <button type="submit" className="search-button">
               <span>Search</span>
             </button>
-            <button type="button" onClick={toggleFilters} className="filter-toggle-btn">
+            <button
+              type="button"
+              onClick={toggleFilters}
+              className="filter-toggle-btn"
+            >
               <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
             </button>
           </div>
@@ -178,7 +211,9 @@ const SearchResults = () => {
                   >
                     <option value="">All Categories</option>
                     {categories.map((category, index) => (
-                      <option key={index} value={category}>{category}</option>
+                      <option key={index} value={category}>
+                        {category}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -194,7 +229,9 @@ const SearchResults = () => {
                   >
                     <option value="">Any Condition</option>
                     {conditionOptions.map((condition, index) => (
-                      <option key={index} value={condition}>{condition}</option>
+                      <option key={index} value={condition}>
+                        {condition}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -331,7 +368,9 @@ const SearchResults = () => {
         </div>
       )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default SearchResults;
