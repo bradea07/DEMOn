@@ -35,7 +35,7 @@
 
 .default-avatar {
   font-size: 60px;
-  color: #2e7d32;
+  color: #002828;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -46,7 +46,7 @@
 
 .user-info h2 {
   margin: 0 0 8px;
-  color: #2e7d32;
+  color: #002828;
   font-size: 28px;
 }
 
@@ -71,7 +71,7 @@
 .rating-value {
   font-size: 18px;
   font-weight: bold;
-  color: #2e7d32;
+  color: #002828;
   margin-right: 10px;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .store-header h3 {
-  color: #2e7d32;
+  color: #002828;
   font-size: 24px;
   margin-bottom: 5px;
 }
@@ -143,7 +143,7 @@
   display: block;
   font-size: 24px;
   font-weight: bold;
-  color: #2e7d32;
+  color: #002828;
   margin-bottom: 5px;
 }
 
@@ -198,7 +198,7 @@
 }
 
 .tab-btn.active {
-  color: #2e7d32;
+  color: #002828;
   font-weight: bold;
 }
 
@@ -209,7 +209,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #2e7d32;
+  background-color: #002828;
 }
 
 .user-profile-content {
@@ -309,7 +309,7 @@
 
 .user-product-price {
   font-weight: 700;
-  color: #7bac08;
+  color: #000;
   margin-bottom: 15px;
   font-size: 18px;
   font-family: 'Josefin Sans', sans-serif;
@@ -349,7 +349,7 @@
   padding: 15px;
   border-radius: 8px;
   background-color: #f9f9f9;
-  border-left: 3px solid #2e7d32;
+  border-left: 3px solid #002828;
 }
 
 .rating-header {
@@ -408,7 +408,7 @@
 
 .rating-form h3 {
   margin-top: 0;
-  color: #2e7d32;
+  color: #002828;
   font-size: 20px;
 }
 
