@@ -2,9 +2,9 @@
 
 /* Regula generală - previne selectarea textului pe majoritatea elementelor */
 body, div, h1, h2, h3, h4, h5, h6, p, span, button, a, 
-.nav-item, .ecoswap-title, .conversation-item, .message-bubble, 
-.section-buttons button, .profile-box h2, .chat-header, 
-.sidebar-header, .product-card, .search-results-title {
+.nav-item, .ecoswap-title, 
+.section-buttons button, .profile-box h2,
+.product-card, .search-results-title {
   user-select: none !important;
   -webkit-user-select: none !important;
   -moz-user-select: none !important;

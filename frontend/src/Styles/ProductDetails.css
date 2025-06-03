@@ -1,32 +1,32 @@
 /* Import Google Fonts - OLX Style */
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;600;700&display=swap');
 
-/* Global Variables */
-:root {
-  --primary-green: #002828;
-  --primary-green-hover: #001818;
-  --primary-green-light: #013030;
-  --secondary-green: #e8f5e8;
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --text-light: #888888;
-  --border-color: #e0e0e0;
-  --background-light: #f8f9fa;
-  --white: #ffffff;
-  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
-  --border-radius: 12px;
-  --border-radius-small: 8px;
-  --transition: all 0.3s ease;
+/* Product Details Variables */
+.product-details-wrapper {
+  --pd-primary-green: #002828;
+  --pd-primary-green-hover: #001818;
+  --pd-primary-green-light: #013030;
+  --pd-secondary-green: #e8f5e8;
+  --pd-text-primary: #333333;
+  --pd-text-secondary: #666666;
+  --pd-text-light: #888888;
+  --pd-border-color: #e0e0e0;
+  --pd-background-light: #f8f9fa;
+  --pd-white: #ffffff;
+  --pd-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --pd-shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --pd-border-radius: 12px;
+  --pd-border-radius-small: 8px;
+  --pd-transition: all 0.3s ease;
 }
 
 /* Main Wrapper */
 .product-details-wrapper {
   min-height: 100vh;
-  background: var(--white);
+  background: var(--pd-white);
   padding: 100px 20px 40px 20px;
   font-family: 'Roboto', sans-serif;
-  color: var(--text-primary);
+  color: var(--pd-text-primary);
 }
 
 /* Container */
@@ -37,25 +37,25 @@
 }
 
 /* Back Button */
-.back-button-container {
+.product-details-wrapper .back-button-container {
   margin-bottom: 20px;
 }
 
-.back-button {
+.product-details-wrapper .back-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px 20px;
-  background: var(--white);
-  color: var(--primary-green);
-  border: 2px solid var(--primary-green);
-  border-radius: var(--border-radius-small);
+  background: var(--pd-white);
+  color: var(--pd-primary-green);
+  border: 2px solid var(--pd-primary-green);
+  border-radius: var(--pd-border-radius-small);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--pd-transition);
   font-family: 'Roboto', sans-serif;
-  box-shadow: var(--shadow-light);
+  box-shadow: var(--pd-shadow-light);
   text-decoration: none;
 }
 

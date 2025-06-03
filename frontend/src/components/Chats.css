@@ -1,4 +1,4 @@
-  @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
   html, body, #root {
     height: 100%;
@@ -6,25 +6,38 @@
     padding: 0;
     overflow: auto; /* ✅ sau elimină complet */
   }  /* Main chat container */
-  .chat-container {
-  display: flex;
-  width: 100%;
-  height: calc(100vh - 80px); /* Increased from 60px to 80px */
-  margin-top: 80px; /* Increased from 60px to 80px */
-  background-color: #ffffff; /* Clean white background */
-  font-family: 'Roboto', sans-serif;
-  overflow: hidden;
+  .ecoswap-chat-container {
+  display: flex !important;
+  width: 100% !important;
+  height: calc(100vh - 80px) !important;
+  margin-top: 80px !important;
+  background-color: #ffffff !important;
+  font-family: 'Roboto', sans-serif !important;
+  overflow: visible !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 1500 !important;
+  pointer-events: auto !important;
 }
 
   /* Sidebar */
-  .chat-sidebar {
-    width: 350px;
-    background-color: #ffffff; /* White sidebar */
-    border-right: 2px solid #e0e0e0; /* Light gray border */
-    display: flex;
-    flex-direction: column;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+  .ecoswap-chat-sidebar {
+  width: 350px !important;
+  min-width: 350px !important;
+  max-width: 350px !important;
+  background-color: #ffffff !important;
+  border-right: 2px solid #e0e0e0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
+  z-index: 1501 !important;
+  height: 100% !important;
+  position: fixed !important;
+  left: 0 !important;
+  overflow-y: auto !important;
   }
 
  .sidebar-header {
@@ -145,17 +158,18 @@
     70% { box-shadow: 0 0 0 7px rgba(123, 172, 8, 0); }
     100% { box-shadow: 0 0 0 0 rgba(123, 172, 8, 0); }
   }  /* Chat panel */
-  .chat-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff; /* Clean white background */
-  border-radius: 0; /* Remove rounded corners for cleaner look */
-  margin: 0; /* Remove margin */
-  box-shadow: none; /* Remove shadow */
-  border: none; /* Remove border */
-  max-height: calc(100vh - 100px); /* Adjusted to account for navbar */
-  overflow: hidden;
+  .ecoswap-chat-panel {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #ffffff !important;
+  position: relative !important;
+  height: 100% !important;
+  width: calc(100% - 350px) !important;
+  overflow: hidden !important;
+  z-index: 1501 !important;
+  margin-left: 350px !important;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1) !important;
 }
 
 
@@ -207,15 +221,13 @@
 
   /* Message list */
   .messages-container {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1 !important;
+    overflow-y: auto !important;
     padding: 20px;
-    background: #ffffff; /* Clean white background */
-    display: flex;
-    flex-direction: column;
-    min-height: 0; /* 🔥 esențial pentru ca flex-ul să nu împingă */
-    border-top: none;
-    height: calc(100% - 130px); /* Să lase spațiu pentru header și input */
+    background-color: #f8f9fa !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px;
   }
 
 
@@ -301,13 +313,15 @@
   }
   /* Input area */
   .message-input-container {
-    padding: 15px 20px;
-    background-color: #ffffff; /* White background */
-    display: flex;
-    align-items: center;
-    border-top: 1px solid #e0e0e0; /* Light gray border */
-    position: sticky;
-    bottom: 0;
+    padding: 20px;
+    background-color: #ffffff !important;
+    border-top: 1px solid #e0e0e0;
+    display: flex !important;
+    gap: 10px;
+    align-items: center !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 1002 !important;
     width: calc(100% - 40px);
     min-height: 60px;
     max-height: 80px;

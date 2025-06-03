@@ -228,9 +228,9 @@ const Chats = () => {
   }, [chatMessages]);
 
   return (
-    <div className="chat-container">
+    <div className="ecoswap-chat-container">
       {/* Conversations Sidebar */}
-      <div className="chat-sidebar">
+      <div className="ecoswap-chat-sidebar">
         <div className="sidebar-header">
           <h3>Conversations</h3>
         </div>
@@ -283,7 +283,7 @@ const Chats = () => {
       </div>
 
       {/* Chat Panel */}
-      <div className="chat-panel">
+      <div className="ecoswap-chat-panel">
         {selectedChat ? (
           <>
             <div className="chat-header">
