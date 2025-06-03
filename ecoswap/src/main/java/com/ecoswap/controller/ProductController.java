@@ -259,6 +259,33 @@ public ResponseEntity<?> updateProduct(
     return ResponseEntity.ok(Map.of("message", "Product updated", "product", updated));
 }
 
+/**
+     * Toggle product active status (disable/enable instead of delete)
+     */
+    @PutMapping("/{id}/toggle-status")
+    public ResponseEntity<?> toggleProductStatus(@PathVariable("id") Long id) {
+        try {
+            Optional<Product> productOpt = productService.getProductById(id);
+            if (productOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Product with ID " + id + " does not exist."));
+            }
+            
+            Product product = productOpt.get();
+            boolean newStatus = !product.isActive();
+            product.setActive(newStatus);
+            productService.addProduct(product); // This will update the existing product
+            
+            String statusMessage = newStatus ? "enabled" : "disabled";
+            return ResponseEntity.ok(Map.of(
+                "message", "Product " + statusMessage + " successfully.",
+                "active", newStatus
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to toggle product status: " + e.getMessage()));
+        }
+    }
     
 
 }

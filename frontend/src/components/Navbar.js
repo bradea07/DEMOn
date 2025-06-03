@@ -435,11 +435,6 @@ const Navbar = ({ onLogout, toggleChatbot }) => {
             
             {accountDropdownOpen && (
               <div className="account-dropdown">
-                <button onClick={() => { navigate('/my-profile'); setAccountDropdownOpen(false); }} className="dropdown-item">
-                  <i className="fas fa-eye"></i>
-                  View All
-                </button>
-                <div className="dropdown-divider"></div>
                 <button onClick={() => handleAccountNavigation('AccountInfo')} className="dropdown-item">
                   <i className="fas fa-user-circle"></i>
                   Account Info

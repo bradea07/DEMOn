@@ -10,9 +10,15 @@ import java.util.Date;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // 🔍 Căutare după titlu (search bar)
     List<Product> findByTitleContainingIgnoreCase(String keyword);
+    
+    // 🔍 Căutare după titlu doar pentru produse active (search bar)
+    List<Product> findByTitleContainingIgnoreCaseAndActiveTrue(String keyword);
 
     // 👤 Produse postate de un anumit user
     List<Product> findByUserId(Long userId);
+    
+    // 👤 Produse active postate de un anumit user
+    List<Product> findByUserIdAndActiveTrue(Long userId);
     
     // For recommendations
     List<Product> findByCategoryOrderByIdDesc(String category);
@@ -22,6 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     
     // 🔍 Advanced search with filters
     @Query("SELECT p FROM Product p WHERE " +
+           "p.active = true AND " +
            "(:query IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%'))) AND " +
            "(:category IS NULL OR :category = '' OR p.category = :category) AND " +
            "(:condition IS NULL OR :condition = '' OR p.productCondition = :condition) AND " +
@@ -42,6 +49,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // Find products ordered by creation date (newest first)
     List<Product> findByOrderByCreatedAtDesc();
     
+    // Find active products ordered by creation date (newest first)
+    List<Product> findByActiveTrueOrderByCreatedAtDesc();
+    
     // Find products created after a specific date
     List<Product> findByCreatedAtAfterOrderByCreatedAtDesc(Date date);
+    
+    // Find active products created after a specific date
+    List<Product> findByCreatedAtAfterAndActiveTrueOrderByCreatedAtDesc(Date date);
 }

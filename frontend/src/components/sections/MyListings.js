@@ -21,29 +21,27 @@ const MyListings = ({ userId }) => {
       .catch((err) => console.error("Failed to fetch products", err));
   }, [userId]);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      fetch(`http://localhost:8080/api/products/${id}`, {
-        method: 'DELETE',
+  const handleToggleStatus = (id, currentStatus) => {
+    const action = currentStatus ? "disable" : "enable";
+    if (window.confirm(`Are you sure you want to ${action} this product?`)) {
+      fetch(`http://localhost:8080/api/products/${id}/toggle-status`, {
+        method: 'PUT',
       })
         .then(response => {
           if (!response.ok) {
             throw new Error(`Server returned ${response.status}: ${response.statusText}`);
           }
-          // Check if there's actually JSON content to parse
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json();
-          } else {
-            return Promise.resolve();  // Empty promise for no content
-          }
+          return response.json();
         })
-        .then(() => {
-          setProducts(products.filter((product) => product.id !== id));
+        .then((data) => {
+          // Update the product in the local state
+          setProducts(products.map(product => 
+            product.id === id ? { ...product, active: data.active } : product
+          ));
         })
         .catch((err) => {
-          console.error("Failed to delete product", err);
-          alert(`Error deleting product: ${err.message}`);
+          console.error("Failed to toggle product status", err);
+          alert(`Error toggling product status: ${err.message}`);
         });
     }
   };
@@ -74,42 +72,41 @@ const MyListings = ({ userId }) => {
     }
   };
 
-  const deleteSelected = () => {
+  const toggleSelectedStatus = (newStatus) => {
     if (selectedProducts.length === 0) return;
     
-    if (window.confirm(`Are you sure you want to delete ${selectedProducts.length} selected listing(s)?`)) {
-      // Create an array of promises for each delete operation
-      const deletePromises = selectedProducts.map(id => 
-        fetch(`http://localhost:8080/api/products/${id}`, {
-          method: 'DELETE',
+    const action = newStatus ? "enable" : "disable";
+    if (window.confirm(`Are you sure you want to ${action} ${selectedProducts.length} selected listing(s)?`)) {
+      // Create an array of promises for each toggle operation
+      const togglePromises = selectedProducts.map(id => 
+        fetch(`http://localhost:8080/api/products/${id}/toggle-status`, {
+          method: 'PUT',
         })
         .then(response => {
           if (!response.ok) {
             throw new Error(`Server returned ${response.status}: ${response.statusText}`);
           }
-          // Check if there's actually JSON content to parse
-          const contentType = response.headers.get("content-type");
-          if (contentType && contentType.indexOf("application/json") !== -1) {
-            return response.json();
-          } else {
-            return Promise.resolve();  // Empty promise for no content
-          }
+          return response.json();
         })
+        .then(data => ({ id, active: data.active }))
       );
       
-      // Execute all delete operations
-      Promise.all(deletePromises)
-        .then(() => {
-          // Filter out the deleted products
-          setProducts(products.filter(product => !selectedProducts.includes(product.id)));
+      // Execute all toggle operations
+      Promise.all(togglePromises)
+        .then((results) => {
+          // Update the products with new status
+          setProducts(products.map(product => {
+            const result = results.find(r => r.id === product.id);
+            return result ? { ...product, active: result.active } : product;
+          }));
           // Clear selections
           setSelectedProducts([]);
           // Exit selection mode
           setSelectMode(false);
         })
         .catch(err => {
-          console.error("Failed to delete some products", err);
-          alert(`Error deleting products: ${err.message}`);
+          console.error("Failed to toggle some products", err);
+          alert(`Error toggling products: ${err.message}`);
           // Refresh the list to get the current state
           fetch(`http://localhost:8080/api/products/user/${userId}`)
             .then((res) => {
@@ -168,11 +165,19 @@ const MyListings = ({ userId }) => {
                 </button>
                 
                 <button 
-                  className="delete-selected-btn" 
-                  onClick={deleteSelected}
+                  className="enable-selected-btn" 
+                  onClick={() => toggleSelectedStatus(true)}
                   disabled={selectedProducts.length === 0}
                 >
-                  Delete Selected ({selectedProducts.length})
+                  Enable Selected ({selectedProducts.length})
+                </button>
+                
+                <button 
+                  className="disable-selected-btn" 
+                  onClick={() => toggleSelectedStatus(false)}
+                  disabled={selectedProducts.length === 0}
+                >
+                  Disable Selected ({selectedProducts.length})
                 </button>
               </>
             )}
@@ -216,7 +221,7 @@ const MyListings = ({ userId }) => {
             {currentItems.map((product) => (
               <li 
                 key={product.id} 
-                className={`listing-item ${selectMode && selectedProducts.includes(product.id) ? 'selected' : ''}`}
+                className={`listing-item ${selectMode && selectedProducts.includes(product.id) ? 'selected' : ''} ${!product.active ? 'disabled-item' : ''}`}
               >
                 <div className="listing-content">
                   {selectMode && (
@@ -241,8 +246,9 @@ const MyListings = ({ userId }) => {
                   </div>
                   
                   <div className="listing-info">
-                    <strong>{product.title}</strong>
+                    <strong className={!product.active ? 'disabled-product' : ''}>{product.title}</strong>
                     <span className="listing-price">${product.price}</span>
+                    {!product.active && <span className="status-badge disabled">Disabled</span>}
                   </div>
                   
                   {!selectMode && (
@@ -254,10 +260,10 @@ const MyListings = ({ userId }) => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product.id)}
-                        className="delete-btn"
+                        onClick={() => handleToggleStatus(product.id, product.active)}
+                        className={product.active ? "disable-btn" : "enable-btn"}
                       >
-                        Delete
+                        {product.active ? "Disable" : "Enable"}
                       </button>
                     </div>
                   )}
