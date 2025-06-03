@@ -362,8 +362,7 @@ const ProductDetails = () => {
                     className="product-page-seller-image"
                   />
                 </div>
-                <div className="product-page-seller-details">
-                  <a href={`/user/${product.user.id}`} className="product-page-seller-name">
+                <div className="product-page-seller-details">                  <a href={`/user/${product.user.id}`} className="product-page-seller-name">
                     {product.user.username}
                   </a>
                   {sellerRating > 0 && (
@@ -371,6 +370,12 @@ const ProductDetails = () => {
                       <span className="product-page-rating-stars">★</span>
                       <span className="product-page-rating-value">{sellerRating}</span>
                       <span className="product-page-rating-text">({sellerRating >= 4.5 ? 'Excellent' : sellerRating >= 4 ? 'Very Good' : sellerRating >= 3 ? 'Good' : 'Fair'} seller)</span>
+                    </div>
+                  )}
+                  {product.phone && (
+                    <div className="product-page-seller-phone">
+                      <span className="product-page-phone-icon">📞</span>
+                      <span className="product-page-phone-number">{product.phone}</span>
                     </div>
                   )}
                   <div className="product-page-seller-stats">

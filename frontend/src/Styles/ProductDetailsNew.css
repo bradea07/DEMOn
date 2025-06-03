@@ -436,6 +436,26 @@
   font-size: 13px;
 }
 
+.product-page-seller-phone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.product-page-phone-icon {
+  font-size: 14px;
+  color: var(--product-page-primary-green);
+}
+
+.product-page-phone-number {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--product-page-text-primary);
+  letter-spacing: 0.5px;
+}
+
 .product-page-seller-stats {
   color: var(--product-page-text-secondary);
   font-size: 13px;
