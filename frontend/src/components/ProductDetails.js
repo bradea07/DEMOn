@@ -13,6 +13,8 @@ const ProductDetails = () => {
   const [newMessage, setNewMessage] = useState("");
   const [isFavorited, setIsFavorited] = useState(false);
   const [sellerRating, setSellerRating] = useState(0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const currentUser = loggedInUser?.id;
@@ -186,6 +188,49 @@ const ProductDetails = () => {
     }
   };
 
+  // Image gallery functions
+  const nextImage = () => {
+    if (product?.imageUrls?.length > 1) {
+      setSelectedImageIndex((prev) => 
+        prev === product.imageUrls.length - 1 ? 0 : prev + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (product?.imageUrls?.length > 1) {
+      setSelectedImageIndex((prev) => 
+        prev === 0 ? product.imageUrls.length - 1 : prev - 1
+      );
+    }
+  };
+
+  const selectImage = (index) => {
+    setSelectedImageIndex(index);
+  };
+
+  const openLightbox = () => {
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  // Get formatted date
+  const formatDate = (dateString) => {
+    if (!dateString) return "Recently";
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    return date.toLocaleDateString();
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
@@ -198,73 +243,117 @@ const ProductDetails = () => {
             onClick={() => navigate(-1)}
           >
             <span>←</span>
-            <span>Back</span>
+            <span>Back to Results</span>
           </button>
         </div>
         
-        <div className="product-details-card">
-          <div className="product-images-section">
-            {product.imageUrls?.length > 0 ? (
-              <div className="main-image-container">
-                <img 
-                  src={`http://localhost:8080${product.imageUrls[0]}`} 
-                  alt={product.title} 
-                  className="main-product-image" 
-                />
-                {product.imageUrls.length > 1 && (
-                  <div className="thumbnail-images">
-                    {product.imageUrls.slice(1).map((img, i) => (
-                      <img 
-                        key={i} 
-                        src={`http://localhost:8080${img}`} 
-                        alt={`${product.title} ${i + 2}`} 
-                        className="thumbnail-image" 
-                      />
-                    ))}
+        <div className="product-details-layout">
+          {/* Left Column - Image Gallery */}
+          <div className="product-images-column">
+            <div className="main-image-container">
+              {product.imageUrls?.length > 0 ? (
+                <>
+                  <div className="main-image-wrapper" onClick={openLightbox}>
+                    <img 
+                      src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
+                      alt={product.title} 
+                      className="main-product-image"
+                    />
+                    {product.imageUrls.length > 1 && (
+                      <>
+                        <button className="image-nav-btn prev-btn" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+                          ❮
+                        </button>
+                        <button className="image-nav-btn next-btn" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+                          ❯
+                        </button>
+                        <div className="image-counter">
+                          {selectedImageIndex + 1} / {product.imageUrls.length}
+                        </div>
+                      </>
+                    )}
+                    <div className="zoom-indicator">
+                      <span>🔍</span>
+                      <span>Click to zoom</span>
+                    </div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="no-image-placeholder">
-                <span>📷</span>
-                <p>No image available</p>
-              </div>
-            )}
+                  
+                  {product.imageUrls.length > 1 && (
+                    <div className="thumbnail-gallery">
+                      {product.imageUrls.map((img, index) => (
+                        <div 
+                          key={index}
+                          className={`thumbnail-wrapper ${index === selectedImageIndex ? 'active' : ''}`}
+                          onClick={() => selectImage(index)}
+                        >
+                          <img 
+                            src={`http://localhost:8080${img}`} 
+                            alt={`${product.title} ${index + 1}`} 
+                            className="thumbnail-image"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="no-image-placeholder">
+                  <span>📷</span>
+                  <p>No images available</p>
+                </div>
+              )}
+            </div>
           </div>
           
-          <div className="product-info-section">
+          {/* Right Column - Product Information */}
+          <div className="product-info-column">
             <div className="product-header">
               <h1 className="product-title">{product.title}</h1>
-              <div className="product-price">${product.price}</div>
-            </div>
-            
-            <div className="product-details-grid">
-              <div className="detail-item">
-                <span className="detail-label">Category</span>
-                <span className="detail-value">{product.category}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Brand</span>
-                <span className="detail-value">{product.brand}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Condition</span>
-                <span className="detail-value">{product.condition || "Not specified"}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Location</span>
-                <span className="detail-value">{product.location || "Not specified"}</span>
+              <div className="price-and-date">
+                <div className="product-price">€{product.price}</div>
+                <div className="product-date">Listed {formatDate(product.createdAt)}</div>
               </div>
             </div>
             
-            <div className="product-description">
+            <div className="product-details-section">
+              <h3>Product Details</h3>
+              <div className="details-grid">
+                <div className="detail-row">
+                  <span className="detail-label">Category</span>
+                  <span className="detail-value">{product.category}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Brand</span>
+                  <span className="detail-value">{product.brand || "Not specified"}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Condition</span>
+                  <span className="detail-value">{product.condition || "Not specified"}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Location</span>
+                  <span className="detail-value">{product.location || "Not specified"}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="product-description-section">
               <h3>Description</h3>
-              <p>{product.description}</p>
+              <div className="description-content">
+                {product.description || "No description provided."}
+              </div>
             </div>
             
             <div className="seller-section">
               <h3>Seller Information</h3>
-              <div className="seller-info">
+              <div className="seller-card">
+                <div className="seller-avatar">
+                  <img 
+                    src={getProfilePic(product.user)} 
+                    alt={product.user.username}
+                    className="seller-image"
+                  />
+                </div>
                 <div className="seller-details">
                   <Link to={`/user/${product.user.id}`} className="seller-name">
                     {product.user.username}
@@ -273,32 +362,35 @@ const ProductDetails = () => {
                     <div className="seller-rating">
                       <span className="rating-stars">★</span>
                       <span className="rating-value">{sellerRating}</span>
+                      <span className="rating-text">({sellerRating >= 4.5 ? 'Excellent' : sellerRating >= 4 ? 'Very Good' : sellerRating >= 3 ? 'Good' : 'Fair'} seller)</span>
                     </div>
                   )}
+                  <div className="seller-stats">
+                    <span>Active seller</span>
+                  </div>
                 </div>
               </div>
             </div>
             
-            <div className="action-buttons">
-              {!isOwner && (
-                <>
+            <div className="action-section">
+              {!isOwner ? (
+                <div className="action-buttons">
                   <button 
-                    className="btn-contact-seller"
+                    className="btn-contact-seller primary-btn"
                     onClick={() => { setChatOpen(!chatOpen); fetchMessages(); }}
                   >
                     <span>💬</span>
-                    {chatOpen ? "Close Chat" : "Contact Seller"}
+                    <span>{chatOpen ? "Close Chat" : "Contact Seller"}</span>
                   </button>
                   <button 
                     className={`btn-favorite ${isFavorited ? 'favorited' : ''}`}
                     onClick={toggleFavorite}
                   >
                     <span>{isFavorited ? "❤️" : "🤍"}</span>
-                    {isFavorited ? "Remove from Favorites" : "Add to Favorites"}
+                    <span>{isFavorited ? "Remove from Favorites" : "Add to Favorites"}</span>
                   </button>
-                </>
-              )}
-              {isOwner && (
+                </div>
+              ) : (
                 <div className="owner-notice">
                   <span>🛠️</span>
                   <span>This is your product listing</span>
@@ -309,11 +401,51 @@ const ProductDetails = () => {
         </div>
       </div>
 
+      {/* Image Lightbox */}
+      {lightboxOpen && (
+        <div className="lightbox-overlay" onClick={closeLightbox}>
+          <div className="lightbox-container" onClick={(e) => e.stopPropagation()}>
+            <button className="lightbox-close" onClick={closeLightbox}>
+              ✕
+            </button>
+            <img 
+              src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
+              alt={product.title} 
+              className="lightbox-image"
+            />
+            {product.imageUrls.length > 1 && (
+              <>
+                <button className="lightbox-nav-btn prev-btn" onClick={prevImage}>
+                  ❮
+                </button>
+                <button className="lightbox-nav-btn next-btn" onClick={nextImage}>
+                  ❯
+                </button>
+                <div className="lightbox-counter">
+                  {selectedImageIndex + 1} / {product.imageUrls.length}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Chat Interface */}
       {chatOpen && (
         <div className="chat-overlay">
           <div className="chat-container">
             <div className="chat-header">
-              <h4>Chat with {product.user.username}</h4>
+              <div className="chat-title">
+                <img 
+                  src={getProfilePic(product.user)} 
+                  alt={product.user.username}
+                  className="chat-avatar"
+                />
+                <div>
+                  <h4>Chat with {product.user.username}</h4>
+                  <span className="chat-product-title">About: {product.title}</span>
+                </div>
+              </div>
               <button 
                 className="chat-close"
                 onClick={() => setChatOpen(false)}
@@ -334,27 +466,38 @@ const ProductDetails = () => {
                       className="message-avatar"
                     />
                     <div className="message-content">
-                      {msg.content}
+                      <div className="message-text">{msg.content}</div>
+                      <div className="message-time">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
                 <div className="no-messages">
-                  <p>Start the conversation!</p>
+                  <div className="no-messages-icon">💬</div>
+                  <p>Start the conversation about this product!</p>
+                  <span>Be polite and ask relevant questions</span>
                 </div>
               )}
             </div>
-            <div className="chat-input">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              />
-              <button onClick={sendMessage}>
-                Send
-              </button>
+            <div className="chat-input-container">
+              <div className="chat-input">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type your message..."
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                />
+                <button 
+                  onClick={sendMessage}
+                  className="send-button"
+                  disabled={!newMessage.trim()}
+                >
+                  <span>Send</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
