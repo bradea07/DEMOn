@@ -1,27 +1,24 @@
-import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import "../Styles/ProductDetails.css";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import "../Styles/ProductDetailsNew.css";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
+  // State variables
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
   const [isFavorited, setIsFavorited] = useState(false);
   const [sellerRating, setSellerRating] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
+  // User data
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const currentUser = loggedInUser?.id;
-  const username = loggedInUser?.username;
-
   const isOwner = product?.user?.id === currentUser;
-
   const userFavoritesKey = `favorites_${currentUser}`;
 
   // Helper function to get profile picture with fallback
@@ -32,15 +29,15 @@ const ProductDetails = () => {
     return user.profilePic.startsWith("http") ? user.profilePic : `http://localhost:8080${user.profilePic}`;
   };
 
+  // Load product data
   useEffect(() => {
     const fetchProduct = async () => {
-      const userFavoritesKey = `favorites_${currentUser}`;
       try {
         const response = await fetch(`http://localhost:8080/api/products/${id}`);
         if (!response.ok) throw new Error("Product not found");
         const data = await response.json();
         setProduct(data);
-  
+
         // Check favorite status from backend if user is logged in
         if (currentUser) {
           try {
@@ -73,119 +70,103 @@ const ProductDetails = () => {
               }
             }
           } catch (err) {
-            console.error("Error fetching seller ratings:", err);
+            console.error("Error fetching seller rating:", err);
           }
         }
+
+        setLoading(false);
       } catch (err) {
-        setError(err.message);
-      } finally {
+        console.error("Error fetching product:", err);
+        setError("Failed to load product details");
         setLoading(false);
       }
     };
-  
-    fetchProduct();
-  }, [id, currentUser]); // ✅ fără warning
-  
 
+    fetchProduct();
+  }, [id, currentUser, userFavoritesKey]);
+
+  // Toggle favorite status
   const toggleFavorite = async () => {
     if (!currentUser) {
-      alert('Please log in to add favorites');
+      alert("Please log in to save favorites");
+      return;
+    }    try {
+      if (isFavorited) {
+        // Remove from favorites
+        const response = await fetch(`http://localhost:8080/api/favorites/remove`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: currentUser,
+            productId: product.id
+          })
+        });
+          if (response.ok) {
+          setIsFavorited(false);
+          // Update localStorage as fallback
+          const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+          const updatedFavorites = storedFavorites.filter(fav => fav.id !== product.id);
+          localStorage.setItem(userFavoritesKey, JSON.stringify(updatedFavorites));
+          console.log("Product removed from favorites successfully");
+        } else {
+          throw new Error("Failed to remove from favorites");
+        }
+      } else {
+        // Add to favorites
+        const favoriteData = {
+          userId: currentUser,
+          productId: product.id,
+          productTitle: product.title,
+          productPrice: product.price,
+          productImageUrl: product.imageUrls?.[0] || null
+        };
+
+        const response = await fetch('http://localhost:8080/api/favorites/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(favoriteData)
+        });        if (response.ok) {
+          setIsFavorited(true);
+          // Update localStorage as fallback
+          const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
+          storedFavorites.push({
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            imageUrl: product.imageUrls?.[0] || null
+          });
+          localStorage.setItem(userFavoritesKey, JSON.stringify(storedFavorites));
+          console.log("Product added to favorites successfully");
+        } else {
+          const errorData = await response.json().catch(() => ({ message: "Unknown error" }));
+          throw new Error(errorData.message || "Failed to add to favorites");
+        }
+      }    } catch (err) {
+      console.error("Error toggling favorite:", err);
+      alert(`Failed to update favorites: ${err.message}`);
+    }
+  };
+
+  // Handle contact seller - navigate to chats
+  const handleContactSeller = () => {
+    if (!currentUser) {
+      alert("Please log in to contact the seller");
       return;
     }
 
-    try {
-      if (isFavorited) {
-        // Remove from favorites
-        await fetch('http://localhost:8080/api/favorites/remove', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            userId: currentUser,
-            productId: product.id
-          })
-        });
-        
-        setIsFavorited(false);
-        
-        // Also update localStorage for backward compatibility
-        const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
-        const updated = favorites.filter((item) => item.id !== product.id);
-        localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
-      } else {
-        // Add to favorites
-        const response = await fetch('http://localhost:8080/api/favorites/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            userId: currentUser,
-            productId: product.id
-          })
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(errorText);
-        }
-        
-        setIsFavorited(true);
-        
-        // Also update localStorage for backward compatibility
-        const favorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
-        const updated = [...favorites, product];
-        localStorage.setItem(userFavoritesKey, JSON.stringify(updated));
-      }
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-      alert('Failed to update favorites: ' + error.message);
+    if (isOwner) {
+      return;
     }
-  };
 
-  const fetchMessages = async () => {
-    if (!product || !currentUser) return;
-    try {
-      const response = await fetch(`http://localhost:8080/messages/product/${product.id}`);
-      if (!response.ok) return;
-
-      const data = await response.json();
-      const filtered = data.filter(
-        msg =>
-          (msg.sender.id === currentUser || msg.receiver.id === currentUser) &&
-          (msg.sender.id === product.user.id || msg.receiver.id === product.user.id)
-      );
-      setMessages(filtered);
-    } catch (err) {
-      console.error("Error fetching messages:", err);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!newMessage.trim()) return;
-
-    const messageData = {
-      sender: { id: currentUser, username },
-      receiver: { id: product.user.id, username: product.user.username },
-      product: { id: product.id },
-      content: newMessage,
-    };
-
-    try {
-      const response = await fetch("http://localhost:8080/messages/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(messageData),
-      });
-
-      if (response.ok) {
-        fetchMessages();
-        setNewMessage("");
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+    // Navigate to chats with seller and product information
+    navigate("/chats", { 
+      state: { 
+        receiverId: product.user.id,
+        productId: product.id,
+        productTitle: product.title,
+        sellerUsername: product.user.username
+      } 
+    });
   };
 
   // Image gallery functions
@@ -231,65 +212,80 @@ const ProductDetails = () => {
     return date.toLocaleDateString();
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return (
+    <div className="product-page-wrapper">
+      <div className="product-page-container">
+        <div className="product-page-loading">Loading product details...</div>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="product-page-wrapper">
+      <div className="product-page-container">
+        <div className="product-page-error">{error}</div>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="product-details-wrapper">
-      <div className="product-details-container">
-        <div className="back-button-container">
+    <div className="product-page-wrapper">
+      <div className="product-page-container">
+        {/* Back Button */}
+        <div className="product-page-back-button-container">
           <button 
-            className="back-button"
+            className="product-page-back-button"
             onClick={() => navigate(-1)}
           >
             <span>←</span>
             <span>Back to Results</span>
           </button>
         </div>
-        
-        <div className="product-details-layout">
+
+        {/* Main Product Layout */}
+        <div className="product-page-layout">
           {/* Left Column - Image Gallery */}
-          <div className="product-images-column">
-            <div className="main-image-container">
+          <div className="product-page-images-column">
+            <div className="product-page-main-image-container">
               {product.imageUrls?.length > 0 ? (
                 <>
-                  <div className="main-image-wrapper" onClick={openLightbox}>
+                  <div className="product-page-main-image-wrapper" onClick={openLightbox}>
                     <img 
                       src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
                       alt={product.title} 
-                      className="main-product-image"
+                      className="product-page-main-image"
                     />
                     {product.imageUrls.length > 1 && (
                       <>
-                        <button className="image-nav-btn prev-btn" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+                        <button className="product-page-image-nav-btn product-page-prev-btn" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
                           ❮
                         </button>
-                        <button className="image-nav-btn next-btn" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+                        <button className="product-page-image-nav-btn product-page-next-btn" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
                           ❯
                         </button>
-                        <div className="image-counter">
+                        <div className="product-page-image-counter">
                           {selectedImageIndex + 1} / {product.imageUrls.length}
                         </div>
                       </>
                     )}
-                    <div className="zoom-indicator">
+                    <div className="product-page-zoom-indicator">
                       <span>🔍</span>
                       <span>Click to zoom</span>
                     </div>
                   </div>
                   
                   {product.imageUrls.length > 1 && (
-                    <div className="thumbnail-gallery">
+                    <div className="product-page-thumbnail-gallery">
                       {product.imageUrls.map((img, index) => (
                         <div 
                           key={index}
-                          className={`thumbnail-wrapper ${index === selectedImageIndex ? 'active' : ''}`}
+                          className={`product-page-thumbnail-wrapper ${index === selectedImageIndex ? 'active' : ''}`}
                           onClick={() => selectImage(index)}
                         >
                           <img 
                             src={`http://localhost:8080${img}`} 
                             alt={`${product.title} ${index + 1}`} 
-                            className="thumbnail-image"
+                            className="product-page-thumbnail-image"
                           />
                         </div>
                       ))}
@@ -297,7 +293,7 @@ const ProductDetails = () => {
                   )}
                 </>
               ) : (
-                <div className="no-image-placeholder">
+                <div className="product-page-no-image-placeholder">
                   <span>📷</span>
                   <p>No images available</p>
                 </div>
@@ -306,84 +302,84 @@ const ProductDetails = () => {
           </div>
           
           {/* Right Column - Product Information */}
-          <div className="product-info-column">
-            <div className="product-header">
-              <h1 className="product-title">{product.title}</h1>
-              <div className="price-and-date">
-                <div className="product-price">€{product.price}</div>
-                <div className="product-date">Listed {formatDate(product.createdAt)}</div>
+          <div className="product-page-info-column">
+            <div className="product-page-header">
+              <h1 className="product-page-title">{product.title}</h1>
+              <div className="product-page-price-and-date">
+                <div className="product-page-price">€{product.price}</div>
+                <div className="product-page-date">Listed {formatDate(product.createdAt)}</div>
               </div>
             </div>
             
-            <div className="product-details-section">
+            <div className="product-page-details-section">
               <h3>Product Details</h3>
-              <div className="details-grid">
-                <div className="detail-row">
-                  <span className="detail-label">Category</span>
-                  <span className="detail-value">{product.category}</span>
+              <div className="product-page-details-grid">
+                <div className="product-page-detail-row">
+                  <span className="product-page-detail-label">Category</span>
+                  <span className="product-page-detail-value">{product.category}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Brand</span>
-                  <span className="detail-value">{product.brand || "Not specified"}</span>
+                <div className="product-page-detail-row">
+                  <span className="product-page-detail-label">Brand</span>
+                  <span className="product-page-detail-value">{product.brand || "Not specified"}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Condition</span>
-                  <span className="detail-value">{product.condition || "Not specified"}</span>
+                <div className="product-page-detail-row">
+                  <span className="product-page-detail-label">Condition</span>
+                  <span className="product-page-detail-value">{product.condition || "Not specified"}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Location</span>
-                  <span className="detail-value">{product.location || "Not specified"}</span>
+                <div className="product-page-detail-row">
+                  <span className="product-page-detail-label">Location</span>
+                  <span className="product-page-detail-value">{product.location || "Not specified"}</span>
                 </div>
               </div>
             </div>
             
-            <div className="product-description-section">
+            <div className="product-page-description-section">
               <h3>Description</h3>
-              <div className="description-content">
+              <div className="product-page-description-content">
                 {product.description || "No description provided."}
               </div>
             </div>
             
-            <div className="seller-section">
+            <div className="product-page-seller-section">
               <h3>Seller Information</h3>
-              <div className="seller-card">
-                <div className="seller-avatar">
+              <div className="product-page-seller-card">
+                <div className="product-page-seller-avatar">
                   <img 
                     src={getProfilePic(product.user)} 
                     alt={product.user.username}
-                    className="seller-image"
+                    className="product-page-seller-image"
                   />
                 </div>
-                <div className="seller-details">
-                  <Link to={`/user/${product.user.id}`} className="seller-name">
+                <div className="product-page-seller-details">
+                  <a href={`/user/${product.user.id}`} className="product-page-seller-name">
                     {product.user.username}
-                  </Link>
+                  </a>
                   {sellerRating > 0 && (
-                    <div className="seller-rating">
-                      <span className="rating-stars">★</span>
-                      <span className="rating-value">{sellerRating}</span>
-                      <span className="rating-text">({sellerRating >= 4.5 ? 'Excellent' : sellerRating >= 4 ? 'Very Good' : sellerRating >= 3 ? 'Good' : 'Fair'} seller)</span>
+                    <div className="product-page-seller-rating">
+                      <span className="product-page-rating-stars">★</span>
+                      <span className="product-page-rating-value">{sellerRating}</span>
+                      <span className="product-page-rating-text">({sellerRating >= 4.5 ? 'Excellent' : sellerRating >= 4 ? 'Very Good' : sellerRating >= 3 ? 'Good' : 'Fair'} seller)</span>
                     </div>
                   )}
-                  <div className="seller-stats">
+                  <div className="product-page-seller-stats">
                     <span>Active seller</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="action-section">
+            <div className="product-page-action-section">
               {!isOwner ? (
-                <div className="action-buttons">
+                <div className="product-page-action-buttons">
                   <button 
-                    className="btn-contact-seller primary-btn"
-                    onClick={() => { setChatOpen(!chatOpen); fetchMessages(); }}
+                    className="product-page-contact-seller-btn product-page-primary-btn"
+                    onClick={handleContactSeller}
                   >
                     <span>💬</span>
-                    <span>{chatOpen ? "Close Chat" : "Contact Seller"}</span>
+                    <span>Contact Seller</span>
                   </button>
                   <button 
-                    className={`btn-favorite ${isFavorited ? 'favorited' : ''}`}
+                    className={`product-page-favorite-btn ${isFavorited ? 'favorited' : ''}`}
                     onClick={toggleFavorite}
                   >
                     <span>{isFavorited ? "❤️" : "🤍"}</span>
@@ -391,7 +387,7 @@ const ProductDetails = () => {
                   </button>
                 </div>
               ) : (
-                <div className="owner-notice">
+                <div className="product-page-owner-notice">
                   <span>🛠️</span>
                   <span>This is your product listing</span>
                 </div>
@@ -403,102 +399,29 @@ const ProductDetails = () => {
 
       {/* Image Lightbox */}
       {lightboxOpen && (
-        <div className="lightbox-overlay" onClick={closeLightbox}>
-          <div className="lightbox-container" onClick={(e) => e.stopPropagation()}>
-            <button className="lightbox-close" onClick={closeLightbox}>
+        <div className="product-page-lightbox-overlay" onClick={closeLightbox}>
+          <div className="product-page-lightbox-container" onClick={(e) => e.stopPropagation()}>
+            <button className="product-page-lightbox-close" onClick={closeLightbox}>
               ✕
             </button>
             <img 
               src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
               alt={product.title} 
-              className="lightbox-image"
+              className="product-page-lightbox-image"
             />
             {product.imageUrls.length > 1 && (
               <>
-                <button className="lightbox-nav-btn prev-btn" onClick={prevImage}>
+                <button className="product-page-lightbox-nav-btn product-page-lightbox-prev-btn" onClick={prevImage}>
                   ❮
                 </button>
-                <button className="lightbox-nav-btn next-btn" onClick={nextImage}>
+                <button className="product-page-lightbox-nav-btn product-page-lightbox-next-btn" onClick={nextImage}>
                   ❯
                 </button>
-                <div className="lightbox-counter">
+                <div className="product-page-lightbox-counter">
                   {selectedImageIndex + 1} / {product.imageUrls.length}
                 </div>
               </>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Chat Interface */}
-      {chatOpen && (
-        <div className="chat-overlay">
-          <div className="chat-container">
-            <div className="chat-header">
-              <div className="chat-title">
-                <img 
-                  src={getProfilePic(product.user)} 
-                  alt={product.user.username}
-                  className="chat-avatar"
-                />
-                <div>
-                  <h4>Chat with {product.user.username}</h4>
-                  <span className="chat-product-title">About: {product.title}</span>
-                </div>
-              </div>
-              <button 
-                className="chat-close"
-                onClick={() => setChatOpen(false)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="chat-messages">
-              {messages.length > 0 ? (
-                messages.map((msg, i) => (
-                  <div 
-                    key={i} 
-                    className={`message ${msg.sender.id === currentUser ? 'sent' : 'received'}`}
-                  >
-                    <img
-                      src={getProfilePic(msg.sender)}
-                      alt={msg.sender.username}
-                      className="message-avatar"
-                    />
-                    <div className="message-content">
-                      <div className="message-text">{msg.content}</div>
-                      <div className="message-time">
-                        {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="no-messages">
-                  <div className="no-messages-icon">💬</div>
-                  <p>Start the conversation about this product!</p>
-                  <span>Be polite and ask relevant questions</span>
-                </div>
-              )}
-            </div>
-            <div className="chat-input-container">
-              <div className="chat-input">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your message..."
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                />
-                <button 
-                  onClick={sendMessage}
-                  className="send-button"
-                  disabled={!newMessage.trim()}
-                >
-                  <span>Send</span>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}

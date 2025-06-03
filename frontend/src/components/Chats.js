@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useUnreadMessages } from "../contexts/UnreadMessagesContext";
 import "./Chats.css";
 
 const Chats = () => {
+  const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -71,6 +72,15 @@ const Chats = () => {
     }
   }, [userId]);
 
+  // Handle navigation state for auto-opening conversations
+  useEffect(() => {
+    if (conversations.length > 0 && location.state) {
+      handleNavigationState();
+      // Clear the navigation state after handling it
+      window.history.replaceState({}, document.title);
+    }
+  }, [conversations, location.state]);
+
   const loadMessages = async (chat) => {
     setSelectedChat(chat);
     
@@ -111,6 +121,59 @@ const Chats = () => {
       console.error("Error loading messages:", err);
     } finally {
       setIsLoadingMessages(false);
+    }
+  };
+
+  // Function to handle auto-opening conversation from navigation state
+  const handleNavigationState = async () => {
+    const { receiverId, productId, productTitle, sellerUsername } = location.state || {};
+    
+    if (receiverId && productId && userId) {
+      console.log("Auto-opening conversation:", { receiverId, productId, productTitle, sellerUsername });
+      
+      // Try to find existing conversation
+      const existingConv = conversations.find(conv => {
+        const otherUserId = conv.sender.id === userId ? conv.receiver.id : conv.sender.id;
+        return otherUserId === receiverId && conv.product.id === productId;
+      });
+      
+      if (existingConv) {
+        // Load existing conversation
+        console.log("Found existing conversation, loading messages...");
+        loadMessages(existingConv);
+      } else {
+        // Create new conversation object for display
+        console.log("Creating new conversation...");
+        try {
+          // First, fetch the product details
+          const productRes = await fetch(`http://localhost:8080/products/${productId}`);
+          if (!productRes.ok) throw new Error("Failed to fetch product");
+          const product = await productRes.json();
+          
+          // Fetch receiver details
+          const userRes = await fetch(`http://localhost:8080/users/${receiverId}`);
+          if (!userRes.ok) throw new Error("Failed to fetch user");
+          const receiver = await userRes.json();
+          
+          // Create a temporary conversation object
+          const newConversation = {
+            id: `temp-${Date.now()}`,
+            sender: loggedInUser,
+            receiver: receiver,
+            product: product,
+            isNew: true
+          };
+          
+          // Add to conversations list and select it
+          setConversations(prev => [newConversation, ...prev]);
+          setSelectedChat(newConversation);
+          setChatMessages([]); // Start with empty messages
+          
+          console.log("New conversation created and selected");
+        } catch (error) {
+          console.error("Error creating new conversation:", error);
+        }
+      }
     }
   };
 
