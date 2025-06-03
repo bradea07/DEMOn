@@ -27,27 +27,49 @@
 .select-mode-btn, 
 .select-all-btn, 
 .delete-selected-btn {
-  padding: 8px 12px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 .select-mode-btn {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f8f9fa;
+  color: #666666;
+  border: 1px solid #dee2e6;
+}
+
+.select-mode-btn:hover {
+  background-color: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
 }
 
 .select-mode-btn.active {
-  background-color: #040e29;
+  background-color: #002828;
   color: white;
+  border-color: #002828;
+}
+
+.select-mode-btn.active:hover {
+  background-color: #011c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
 }
 
 .select-all-btn {
-  background-color: #007bff;
+  background-color: #002828;
   color: white;
+}
+
+.select-all-btn:hover {
+  background-color: #011c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
 }
 
 .delete-selected-btn {
@@ -55,10 +77,21 @@
   color: white;
 }
 
-.delete-selected-btn:disabled {
-  background-color: #e9868e;
-  cursor: not-allowed;
+.delete-selected-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
 }
+
+.delete-selected-btn:disabled {
+  background-color: #f8d7da;
+  color: #721c24;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Search and filter styles */
 
 /* Search and Filter styles */
 .search-and-filter {
@@ -124,10 +157,14 @@
   align-items: center;
   padding: 15px;
   gap: 15px;
+  min-height: 90px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .listing-checkbox {
   margin-right: 5px;
+  flex-shrink: 0;
 }
 
 .listing-checkbox input {
@@ -137,14 +174,15 @@
 }
 
 .listing-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 4px;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f0f0f0;
+  flex-shrink: 0;
 }
 
 .listing-image img {
@@ -156,46 +194,98 @@
 .listing-image .no-image {
   font-size: 0.8rem;
   color: #999;
+  text-align: center;
 }
 
 .listing-info {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  max-width: calc(100% - 300px); /* More space reserved for buttons */
+  overflow: visible !important; /* Prevent content clipping */
+  padding-right: 15px; /* Add space between content and buttons */
+}
+
+.listing-info strong {
+  font-size: 16px;
+  color: #040e29;
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-word;
 }
 
 .listing-price {
-  color: #7bac08;
+  color: #2e7d32;
   font-weight: 700;
-  margin-top: 5px;
-  font-size: 16px;
+  font-size: 18px;
   font-family: 'Josefin Sans', sans-serif;
 }
 
 .listing-actions {
-  display: flex;
-  gap: 10px;
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 10px;
+  min-width: 150px;
+  width: 150px; /* Fixed width to ensure space */
+  justify-content: flex-start;
+  overflow: visible !important;
+  position: relative;
+  z-index: 20; /* High z-index to ensure visibility */
 }
 
 .edit-btn, .delete-btn {
-  padding: 8px 12px;
+  padding: 8px 14px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
-  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+  font-family: 'Josefin Sans', sans-serif;
+  white-space: nowrap;
+  min-width: 65px;
+  height: 32px;
+  text-align: center;
+  flex-shrink: 0;
+  position: relative !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10;
+  overflow: visible;
 }
 
 .edit-btn {
-  background-color: #7bac08;
+  background-color: #002828;
   color: white;
+  border: 1px solid #002828;
+}
+
+.edit-btn:hover {
+  background-color: #011c1c;
+  border-color: #011c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 40, 40, 0.2);
 }
 
 .delete-btn {
-  background-color: #d9534f;
+  background-color: #dc3545;
   color: white;
+  border: 1px solid #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.2);
 }
 
 /* Pagination styles */
@@ -306,4 +396,163 @@
     flex: 1;
     text-align: center;
   }
+}
+
+/* Mobile responsive improvements for button visibility */
+@media (max-width: 480px) {
+  .listing-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .listing-info {
+    max-width: 100%;
+    order: 2;
+  }
+  
+  .listing-actions {
+    order: 3;
+    margin-left: 0;
+    margin-top: 10px;
+    justify-content: center;
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .listing-image {
+    order: 1;
+    align-self: center;
+  }
+  
+  .listing-checkbox {
+    order: 0;
+    align-self: flex-start;
+    margin-bottom: 10px;
+  }
+}
+
+/* Ensure buttons never overflow */
+.listing-item {
+  overflow: visible;
+}
+
+.listing-actions {
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+}
+
+/* ===========================================
+   SUPER-SPECIFIC ISOLATED BUTTON STYLES
+   These styles are highly specific to prevent
+   global CSS from overriding button styling
+   =========================================== */
+
+/* Namespace isolation for MyListings component buttons */
+.my-listings-container .listing-item .listing-content .listing-actions .edit-btn,
+.my-listings-container .listing-item .listing-content .listing-actions .delete-btn {
+  padding: 8px 14px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  transition: all 0.3s ease !important;
+  font-family: 'Josefin Sans', sans-serif !important;
+  white-space: nowrap !important;
+  min-width: 65px !important;
+  max-width: 70px !important;
+  height: 32px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+}
+
+/* Specific Edit button styling */
+.my-listings-container .listing-item .listing-content .listing-actions .edit-btn {
+  background-color: #002828 !important;
+  color: white !important;
+  border: 1px solid #002828 !important;
+}
+
+.my-listings-container .listing-item .listing-content .listing-actions .edit-btn:hover {
+  background-color: #011c1c !important;
+  border-color: #011c1c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 8px rgba(0, 40, 40, 0.2) !important;
+}
+
+/* Specific Delete button styling */
+.my-listings-container .listing-item .listing-content .listing-actions .delete-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border: 1px solid #dc3545 !important;
+}
+
+.my-listings-container .listing-item .listing-content .listing-actions .delete-btn:hover {
+  background-color: #c82333 !important;
+  border-color: #c82333 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.2) !important;
+}
+
+/* Force container to not clip buttons */
+.my-listings-container .listing-item {
+  overflow: visible !important;
+}
+
+.my-listings-container .listing-item .listing-content {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Reset any global button styles that might interfere */
+.my-listings-container button {
+  all: unset !important;
+  box-sizing: border-box !important;
+}
+
+/* Re-apply only the styles we want */
+.my-listings-container .edit-btn,
+.my-listings-container .delete-btn {
+  padding: 8px 14px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  transition: all 0.3s ease !important;
+  font-family: 'Josefin Sans', sans-serif !important;
+  white-space: nowrap !important;
+  min-width: 65px !important;
+  height: 32px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 100 !important;
+  overflow: visible !important;
 }

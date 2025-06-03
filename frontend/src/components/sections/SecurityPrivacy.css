@@ -44,20 +44,30 @@
   font-size: 0.9rem;
 }
 
-.change-password-btn {
-  padding: 8px 16px;
-  background-color: #002828;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
+/* Stronger specificity to override global styles */
+.security-privacy-container .change-password-btn,
+.section-content .security-privacy-container .change-password-btn {
+  padding: 8px 16px !important;
+  background-color: #002828 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+  width: 130px !important; /* Fixed width to match Delete Account button */
+  text-align: center !important;
+  margin-right: 0 !important; /* Override global margin */
+  margin-top: 0 !important; /* Override global margin */
+  font-size: 14px !important; /* Override global font-size */
+  letter-spacing: normal !important; /* Override global letter-spacing */
+  box-shadow: none !important; /* Override global box-shadow */
+  transform: none !important; /* Reset transforms */
 }
 
 .change-password-btn:hover {
-  background-color: #011c1c;
-  transform: scale(1.05);
+  background-color: #011c1c !important;
+  transform: scale(1.05) !important;
 }
 
 .danger-zone {
@@ -65,20 +75,29 @@
   background-color: rgba(255, 77, 77, 0.05);
 }
 
-.delete-account-btn {
-  padding: 8px 16px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
+.security-privacy-container .delete-account-btn,
+.section-content .security-privacy-container .delete-account-btn {
+  padding: 8px 16px !important;
+  background-color: #ff4d4d !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.3s !important;
+  width: 130px !important; /* Fixed width to match Change Password button */
+  text-align: center !important;
+  margin-right: 0 !important; /* Override global margin */
+  margin-top: 0 !important; /* Override global margin */
+  font-size: 14px !important; /* Override global font-size */
+  letter-spacing: normal !important; /* Override global letter-spacing */
+  box-shadow: none !important; /* Override global box-shadow */
+  transform: none !important; /* Reset transforms */
 }
 
 .delete-account-btn:hover {
-  background-color: #ff3333;
-  transform: scale(1.05);
+  background-color: #ff3333 !important;
+  transform: scale(1.05) !important;
 }
 
 /* Modal Styles */

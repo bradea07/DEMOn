@@ -251,13 +251,13 @@ const MyListings = ({ userId }) => {
                         onClick={() => navigate(`/edit-product/${product.id}`)}
                         className="edit-btn"
                       >
-                        ✏️ Edit
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDelete(product.id)}
                         className="delete-btn"
                       >
-                        🗑️ Delete
+                        Delete
                       </button>
                     </div>
                   )}

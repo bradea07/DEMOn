@@ -101,83 +101,54 @@ const Favorites = () => {
 
   return (
     <div>
-      <h3>Favorites</h3>
+      <h3>My Favorites</h3>
       {error && (
-        <div style={{ color: 'orange', marginBottom: '10px' }}>
+        <div style={{ color: '#ff6b35', marginBottom: '15px', padding: '10px', background: '#fff3f0', borderRadius: '6px', border: '1px solid #ffe0d6' }}>
           {error} (showing local data)
         </div>
       )}
       {favorites.length === 0 ? (
-        <p>No favorite products yet.</p>
+        <div className="empty-state">
+          <p>No favorite products yet.</p>
+        </div>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul>
           {favorites.map((item) => (
-            <li key={item.id} style={{ marginBottom: "20px", border: "1px solid #ddd", padding: "15px", borderRadius: "8px" }}>
+            <li key={item.id} className="item-card">
               <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
                 {item.productImageUrl && (
                   <img 
                     src={`http://localhost:8080${item.productImageUrl}`}
                     alt={item.productTitle}
-                    style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "4px" }}
+                    className="item-card img"
                   />
                 )}
-                <div style={{ flex: 1 }}>
-                  <strong>{item.productTitle}</strong>
+                <div className="item-details">
+                  <div className="item-title">{item.productTitle}</div>
                   {item.productPrice && (
-                    <div style={{ color: "#2e7d32", fontSize: "1.1rem", fontWeight: "bold", marginTop: "5px" }}>
+                    <div className="item-price">
                       ${item.productPrice}
                     </div>
                   )}
                 </div>
               </div>
-              <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+              <div className="item-actions">
                 <button
                   onClick={() => checkAndGoToProduct(item.productId)}
-                  style={{
-                    backgroundColor: "#4CAF50",
-                    color: "white",
-                    padding: "8px 16px",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
                 >
-                  ✅ View Product
+                  View Product
                 </button>
                 <button
                   onClick={() => removeFavorite(item.id, item.productId)}
-                  style={{
-                    backgroundColor: "#f44336",
-                    color: "white",
-                    padding: "8px 16px",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                  }}
+                  className="danger"
                 >
-                  💔 Remove
+                  Remove
                 </button>
               </div>
             </li>
           ))}
         </ul>
       )}
-      
-      <div style={{ marginTop: "20px", textAlign: "center" }}>
-        <button
-          onClick={fetchFavorites}
-          style={{
-            backgroundColor: "#f5f5f5",
-            color: "#666",
-            border: "1px solid #ddd",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          🔄 Refresh Favorites
-        </button>
-      </div>
     </div>
   );
 };

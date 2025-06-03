@@ -29,7 +29,7 @@
   100% { background-position: 0% 50%; }
 }
 
-/* Main container styling with professional background */
+/* Main container styling */
 .profile-container {
   display: flex;
   flex-direction: column;
@@ -40,15 +40,118 @@
   left: 0;
   width: 100%;
   min-height: 100vh;
-  background-image: url('../../public/background3.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   overflow-y: auto;
-  padding-top: 80px;
+  padding-top: 100px; /* Increased to accommodate navigation */
   padding-bottom: 60px;
   font-family: 'Roboto', sans-serif;
   animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Profile Navigation - positioned under navbar */
+.profile-navigation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 30px;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  width: auto;
+  max-width: none;
+  min-width: auto;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: #555555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.nav-button:hover {
+  background-color: #f0f7ff;
+  color: #002828;
+  transform: translateY(-1px);
+}
+
+.nav-button.active {
+  background-color: #002828;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 40, 40, 0.2);
+}
+
+/* Add icons to navigation buttons */
+.nav-button[data-section="AccountInfo"]::before {
+  content: "\f2bd";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 14px;
+  width: 16px;
+  color: #777777;
+}
+
+.nav-button[data-section="MyStore"]::before {
+  content: "\f54e";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 14px;
+  width: 16px;
+  color: #777777;
+}
+
+.nav-button[data-section="MyListings"]::before {
+  content: "\f03a";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 14px;
+  width: 16px;
+  color: #777777;
+}
+
+.nav-button[data-section="Favorites"]::before {
+  content: "\f004";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 14px;
+  width: 16px;
+  color: #777777;
+}
+
+.nav-button[data-section="SecurityPrivacy"]::before {
+  content: "\f3ed";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 14px;
+  width: 16px;
+  color: #777777;
+}
+
+/* Icon color changes on hover and active states */
+.nav-button:hover::before,
+.nav-button.active::before {
+  color: currentColor;
+}
+
+/* Remove the old separators */
+.nav-button:not(:last-child)::after {
+  display: none;
 }
 
 /* Refined profile box with subtle gradient border */
@@ -61,7 +164,7 @@
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
   animation: slideUp 0.7s ease-in-out;
-  overflow: hidden;
+  overflow: visible; /* CHANGED: Allow content to be visible */
   transition: all 0.3s ease;
 }
 
@@ -198,6 +301,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* OLD SECTION BUTTONS STYLING - NO LONGER USED
 .section-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -266,19 +370,228 @@
   border-color: #040e29;
   box-shadow: 0 5px 15px rgba(4, 14, 41, 0.2);
 }
+*/
 
 .section-content {
   background: #ffffff;
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   margin-bottom: 20px;
-  min-height: 300px;
+  min-height: 350px;
   animation: fadeIn 0.5s ease-in-out;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-  animation: fadeIn 0.5s ease;
   margin-top: 10px;
-  min-height: 300px;
+  border: 1px solid #f0f0f0;
+  overflow: visible; /* Ensure buttons are not clipped */
+}
+
+/* Unified section header styling */
+.section-content h3 {
+  color: #040e29;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+  font-family: 'Josefin Sans', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+/* Unified content styling for all sections */
+.section-content p {
+  color: #666666;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.section-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-content li {
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.section-content li:hover {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Unified button styling for all sections */
+.section-content button {
+  background: #002828;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.section-content button:hover {
+  background: #011c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
+}
+
+.section-content button:last-child {
+  margin-right: 0;
+}
+
+/* Secondary button style */
+.section-content button.secondary {
+  background: #f8f9fa;
+  color: #666666;
+  border: 1px solid #dee2e6;
+}
+
+.section-content button.secondary:hover {
+  background: #e9ecef;
+  color: #495057;
+  border-color: #adb5bd;
+}
+
+/* Danger button style */
+.section-content button.danger {
+  background: #dc3545;
+}
+
+.section-content button.danger:hover {
+  background: #c82333;
+}
+
+/* Form styling for all sections */
+.section-content input, 
+.section-content textarea, 
+.section-content select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.section-content input:focus,
+.section-content textarea:focus,
+.section-content select:focus {
+  outline: none;
+  border-color: #002828;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 40, 40, 0.1);
+}
+
+/* Label styling */
+.section-content label {
+  display: block;
+  margin-bottom: 8px;
+  color: #040e29;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Table styling for sections with tabular data */
+.section-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.section-content th,
+.section-content td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.section-content th {
+  background: #f8f9fa;
+  color: #040e29;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.section-content td {
+  color: #666666;
+  font-size: 14px;
+}
+
+/* Empty state styling */
+.section-content .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999999;
+  font-style: italic;
+}
+
+.section-content .empty-state::before {
+  content: "📭";
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+/* Card layout for items */
+.section-content .item-card {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.section-content .item-card:hover {
+  border-color: #002828;
+  box-shadow: 0 4px 12px rgba(0, 40, 40, 0.1);
+}
+
+.section-content .item-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.section-content .item-card .item-details {
+  flex: 1;
+}
+
+.section-content .item-card .item-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #040e29;
+  margin-bottom: 8px;
+}
+
+.section-content .item-card .item-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.section-content .item-card .item-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
 /* Account Info Section Styles */
@@ -767,25 +1080,43 @@ ul.profile-buttons-list button {
 }
 
 @media (max-width: 768px) {
-  .form-row {
+  .profile-navigation {
+    max-width: 95%;
+    min-width: auto;
+    width: 90%;
+    flex-wrap: wrap;
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .nav-button {
+    padding: 12px 16px;
+    font-size: 13px;
+    gap: 6px;
+  }
+  
+  .profile-container {
+    padding-top: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-navigation {
+    width: 95%;
     flex-direction: column;
-    gap: 0;
+    gap: 4px;
   }
   
-  .profile-img, 
-  .profile-placeholder {
-    width: 120px !important;
-    height: 120px !important;
+  .nav-button {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 14px;
   }
   
-  .edit-actions {
-    flex-direction: column;
-  }
-  
-  .cancel-button,
-  .save-button,
-  .edit-button {
-    width: 100% !important;
+  .profile-box {
+    width: 90%;
+    padding: 2rem;
   }
 }
 

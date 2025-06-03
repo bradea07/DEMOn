@@ -5,7 +5,6 @@ import "../Styles/MyProfile.css";
 // 👉 Section components
 import AccountInfo from "./sections/AccountInfo";
 import MyListings from "./sections/MyListings";
-import Notifications from "./sections/Notifications";
 import Favorites from "./sections/Favorites";
 import SecurityPrivacy from "./sections/SecurityPrivacy";
 import MyStore from "./sections/MyStore"; // Import the MyStore component
@@ -158,7 +157,7 @@ const MyProfile = () => {
               <div className="profile-actions">
                 {!editing ? (
                   <button className="edit-button" onClick={() => setEditing(true)}>
-                    ✏️ Edit Profile
+                    Edit Profile
                   </button>
                 ) : (
                   <div className="edit-actions">
@@ -166,7 +165,7 @@ const MyProfile = () => {
                       Cancel
                     </button>
                     <button className="save-button" onClick={handleSave}>
-                      💾 Save Changes
+                      Save Changes
                     </button>
                   </div>
                 )}
@@ -178,8 +177,6 @@ const MyProfile = () => {
           return <MyStore userId={userId} />;
         case "MyListings":
           return <MyListings userId={userId} />;        
-      case "Notifications":
-        return <Notifications />;
       case "Favorites":
         return <Favorites />;
       case "SecurityPrivacy":
@@ -191,54 +188,47 @@ const MyProfile = () => {
 
   return (
     <div className="profile-container">
+      {/* Navigation buttons now outside and above the profile box */}
+      <div className="profile-navigation">
+        <button 
+          className={`nav-button ${activeSection === "AccountInfo" ? "active" : ""}`} 
+          onClick={() => setActiveSection("AccountInfo")}
+          data-section="AccountInfo"
+        >
+          Account Info
+        </button>
+        <button 
+          className={`nav-button ${activeSection === "MyStore" ? "active" : ""}`} 
+          onClick={() => setActiveSection("MyStore")}
+          data-section="MyStore"
+        >
+          My Store
+        </button>
+        <button 
+          className={`nav-button ${activeSection === "MyListings" ? "active" : ""}`} 
+          onClick={() => setActiveSection("MyListings")}
+          data-section="MyListings"
+        >
+          My Listings
+        </button>
+        <button 
+          className={`nav-button ${activeSection === "Favorites" ? "active" : ""}`} 
+          onClick={() => setActiveSection("Favorites")}
+          data-section="Favorites"
+        >
+          Favorites
+        </button>
+        <button 
+          className={`nav-button ${activeSection === "SecurityPrivacy" ? "active" : ""}`} 
+          onClick={() => setActiveSection("SecurityPrivacy")}
+          data-section="SecurityPrivacy"
+        >
+          Security & Privacy
+        </button>
+      </div>
+
       <div className="profile-box">
         <h2>My Profile</h2>
-
-        <div className="section-buttons">
-          <button 
-            className={`${activeSection === "AccountInfo" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("AccountInfo")}
-            data-section="AccountInfo"
-          >
-            👤 Account Info
-          </button>
-          <button 
-            className={`${activeSection === "MyStore" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("MyStore")}
-            data-section="MyStore"
-          >
-            🏪 My Store
-          </button>
-          <button 
-            className={`${activeSection === "MyListings" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("MyListings")}
-            data-section="MyListings"
-          >
-            🛍 My Listings
-          </button>
-          <button 
-            className={`${activeSection === "Notifications" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("Notifications")}
-            data-section="Notifications"
-          >
-            🔔 Notifications
-          </button>
-          <button 
-            className={`${activeSection === "Favorites" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("Favorites")}
-            data-section="Favorites"
-          >
-            💚 Favorites
-          </button>
-          <button 
-            className={`${activeSection === "SecurityPrivacy" ? "active" : ""} staggered-item`} 
-            onClick={() => setActiveSection("SecurityPrivacy")}
-            data-section="SecurityPrivacy"
-          >
-            🛡️ Security & Privacy
-          </button>
-        </div>
-
         <div className="section-content">{renderSection()}</div>
       </div>
     </div>
