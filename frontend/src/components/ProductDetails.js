@@ -110,22 +110,18 @@ const ProductDetails = () => {
           console.log("Product removed from favorites successfully");
         } else {
           throw new Error("Failed to remove from favorites");
-        }
-      } else {
+        }      } else {
         // Add to favorites
         const favoriteData = {
           userId: currentUser,
-          productId: product.id,
-          productTitle: product.title,
-          productPrice: product.price,
-          productImageUrl: product.imageUrls?.[0] || null
+          productId: product.id
         };
 
         const response = await fetch('http://localhost:8080/api/favorites/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(favoriteData)
-        });        if (response.ok) {
+        });if (response.ok) {
           setIsFavorited(true);
           // Update localStorage as fallback
           const storedFavorites = JSON.parse(localStorage.getItem(userFavoritesKey)) || [];
@@ -189,7 +185,6 @@ const ProductDetails = () => {
   const selectImage = (index) => {
     setSelectedImageIndex(index);
   };
-
   const openLightbox = () => {
     setLightboxOpen(true);
   };
@@ -197,6 +192,24 @@ const ProductDetails = () => {
   const closeLightbox = () => {
     setLightboxOpen(false);
   };
+
+  // Handle keyboard navigation in lightbox
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (lightboxOpen) {
+        if (e.key === 'Escape') {
+          closeLightbox();
+        } else if (e.key === 'ArrowLeft') {
+          prevImage();
+        } else if (e.key === 'ArrowRight') {
+          nextImage();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, selectedImageIndex, product?.imageUrls?.length]);
 
   // Get formatted date
   const formatDate = (dateString) => {
@@ -254,13 +267,12 @@ const ProductDetails = () => {
                       src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
                       alt={product.title} 
                       className="product-page-main-image"
-                    />
-                    {product.imageUrls.length > 1 && (
+                    />                    {product.imageUrls.length > 1 && (
                       <>
-                        <button className="product-page-image-nav-btn product-page-prev-btn" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
+                        <button className="product-page-image-nav-btn prev-btn" onClick={(e) => { e.stopPropagation(); prevImage(); }}>
                           ❮
                         </button>
-                        <button className="product-page-image-nav-btn product-page-next-btn" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
+                        <button className="product-page-image-nav-btn next-btn" onClick={(e) => { e.stopPropagation(); nextImage(); }}>
                           ❯
                         </button>
                         <div className="product-page-image-counter">
@@ -408,18 +420,14 @@ const ProductDetails = () => {
               src={`http://localhost:8080${product.imageUrls[selectedImageIndex]}`} 
               alt={product.title} 
               className="product-page-lightbox-image"
-            />
-            {product.imageUrls.length > 1 && (
+            />            {product.imageUrls.length > 1 && (
               <>
-                <button className="product-page-lightbox-nav-btn product-page-lightbox-prev-btn" onClick={prevImage}>
+                <button className="product-page-lightbox-nav-btn prev-btn" onClick={prevImage}>
                   ❮
                 </button>
-                <button className="product-page-lightbox-nav-btn product-page-lightbox-next-btn" onClick={nextImage}>
+                <button className="product-page-lightbox-nav-btn next-btn" onClick={nextImage}>
                   ❯
                 </button>
-                <div className="product-page-lightbox-counter">
-                  {selectedImageIndex + 1} / {product.imageUrls.length}
-                </div>
               </>
             )}
           </div>
