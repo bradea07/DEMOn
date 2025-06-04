@@ -40,116 +40,91 @@ const MapComponent = () => {
   };
 
   // Function to fetch recycling points using Overpass API
-  const fetchRecyclingPoints = async (position) => {
-    if (!position) return;
-    
-    // Clear any existing recycling points first
-    setRecyclingPoints([]);
-    setAllRecyclingPoints([]);
-    setNearestPoint(null);
-    
-    setIsLoadingRecyclingPoints(true);
-    console.log("Fetching recycling points for position:", position);
-    
-    try {
-      // Define the bounding box around the user's location (approx. 2km radius)
-      const radius = 0.02; // roughly 2km in degrees
-      const bbox = `${position.lat - radius},${position.lng - radius},${position.lat + radius},${position.lng + radius}`;
-      
-      // Build the Overpass API query
-      const query = `
-        [out:json];
-        node["amenity"="recycling"](${bbox});
-        out body;
-      `;
-      
-      // URL encode the query
-      const encodedQuery = encodeURIComponent(query);
-      const url = `https://overpass-api.de/api/interpreter?data=${encodedQuery}`;
-      
-      console.log("Sending request to Overpass API:", url);
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      // Transform the data for our map
-      const points = data.elements.map((element, index) => {
-        // Extract recycling materials information
-        let materials = [];
-        
-        // Check for specific recycling tags
-        if (element.tags.recycling_type) {
-          materials.push(element.tags.recycling_type);
-        }
-        
-        // Check for individual material types
-        if (element.tags.recycling_glass === "yes") materials.push("Glass");
-        if (element.tags.recycling_paper === "yes") materials.push("Paper");
-        if (element.tags.recycling_plastic === "yes") materials.push("Plastic");
-        if (element.tags.recycling_metal === "yes") materials.push("Metal");
-        if (element.tags.recycling_electronics === "yes") materials.push("Electronics");
-        if (element.tags.recycling_batteries === "yes") materials.push("Batteries");
-        if (element.tags.recycling_clothes === "yes") materials.push("Clothes");
-        
-        // If no specific materials were found, use a default
-        if (materials.length === 0) {
-          materials.push("General recycling");
-        }
-        
-        return {
-          id: element.id || `recycling-${index}`,
-          name: element.tags.name || 'Recycling Point',
-          position: { 
-            lat: element.lat, 
-            lng: element.lon 
-          },
-          description: element.tags.operator || 'Recycling facility',
-          isRecyclingPoint: true,
-          acceptedMaterials: materials.join(", ")
-        };
-      });
-      
-      setAllRecyclingPoints(points); // Store all points
-      
-      // Calculate distances for each point and store exact values
-      if (position) {
-        // Calculate distances for each point and store exact values
-        const pointsWithDistance = points.map(point => {
-          // Use precise spherical distance calculation
-          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-            new window.google.maps.LatLng(position.lat, position.lng),
-            new window.google.maps.LatLng(point.position.lat, point.position.lng)
-          );
-          
-          // Add both raw and formatted distance values
-          return {
-            ...point,
-            distanceMeters: distance,
-            distanceFromUser: (distance / 1000).toFixed(2) // Convert to km with 2 decimal places for display
-          };
-        });
-        
-        console.log("Found points with distances:", pointsWithDistance.map(p => ({id: p.id, dist: p.distanceMeters})));
-        
-        // Sort by distance (closest first)
-        pointsWithDistance.sort((a, b) => a.distanceMeters - b.distanceMeters);
-        
-        // Show all points by default
-        setRecyclingPoints(pointsWithDistance);
-        console.log(`Found ${pointsWithDistance.length} recycling points near the location`);
-      } else {
-        setRecyclingPoints(points);
-        console.log(`Found ${points.length} recycling points near the location`);
-      }
-      
-      // Set visibility to show all points
-      setVisiblePointsLimit(null);
-      
-    } catch (error) {
-      console.error('Error fetching recycling points:', error);
-    } finally {
-      setIsLoadingRecyclingPoints(false);
-    }
+ const fetchRecyclingPoints = async () => {
+  // Coordonate fixe pentru Mountain View, California (SUA)
+  const testPosition = {
+    lat: 37.4220,
+    lng: -122.0841
   };
+
+  setRecyclingPoints([]);
+  setAllRecyclingPoints([]);
+  setNearestPoint(null);
+  setIsLoadingRecyclingPoints(true);
+
+  console.log("🔍 Fetching recycling points for Mountain View, CA:", testPosition);
+
+  try {
+    const radius = 0.02; // ~2km
+    const bbox = `${testPosition.lat - radius},${testPosition.lng - radius},${testPosition.lat + radius},${testPosition.lng + radius}`;
+
+    const query = `
+      [out:json];
+      node["amenity"="recycling"](${bbox});
+      out body;
+    `;
+
+    const encodedQuery = encodeURIComponent(query);
+    const url = `https://overpass-api.de/api/interpreter?data=${encodedQuery}`;
+    console.log("🌐 Sending request to Overpass API:", url);
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const points = data.elements.map((element, index) => {
+      let materials = [];
+
+      if (element.tags.recycling_type) {
+        materials.push(element.tags.recycling_type);
+      }
+      if (element.tags.recycling_glass === "yes") materials.push("Glass");
+      if (element.tags.recycling_paper === "yes") materials.push("Paper");
+      if (element.tags.recycling_plastic === "yes") materials.push("Plastic");
+      if (element.tags.recycling_metal === "yes") materials.push("Metal");
+      if (element.tags.recycling_electronics === "yes") materials.push("Electronics");
+      if (element.tags.recycling_batteries === "yes") materials.push("Batteries");
+      if (element.tags.recycling_clothes === "yes") materials.push("Clothes");
+
+      if (materials.length === 0) materials.push("General recycling");
+
+      return {
+        id: element.id || `recycling-${index}`,
+        name: element.tags.name || 'Recycling Point',
+        position: {
+          lat: element.lat,
+          lng: element.lon
+        },
+        description: element.tags.operator || 'Recycling facility',
+        isRecyclingPoint: true,
+        acceptedMaterials: materials.join(", ")
+      };
+    });
+
+    const pointsWithDistance = points.map(point => {
+      const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+        new window.google.maps.LatLng(testPosition.lat, testPosition.lng),
+        new window.google.maps.LatLng(point.position.lat, point.position.lng)
+      );
+      return {
+        ...point,
+        distanceMeters: distance,
+        distanceFromUser: (distance / 1000).toFixed(2)
+      };
+    });
+
+    pointsWithDistance.sort((a, b) => a.distanceMeters - b.distanceMeters);
+
+    setAllRecyclingPoints(pointsWithDistance);
+    setRecyclingPoints(pointsWithDistance);
+    setVisiblePointsLimit(null);
+    console.log(`✅ Found ${pointsWithDistance.length} recycling points near Mountain View`);
+  } catch (error) {
+    console.error("❌ Error fetching recycling points:", error);
+  } finally {
+    setIsLoadingRecyclingPoints(false);
+  }
+};
+
 
   // Load user's current location but don't fetch recycling points automatically
   useEffect(() => {
