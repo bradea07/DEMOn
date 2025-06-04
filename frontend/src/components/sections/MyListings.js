@@ -5,8 +5,6 @@ import "../../Styles/MyListings.css";
 
 const MyListings = ({ userId }) => {
   const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [selectMode, setSelectMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -20,104 +18,6 @@ const MyListings = ({ userId }) => {
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Failed to fetch products", err));
   }, [userId]);
-
-  const handleToggleStatus = (id, currentStatus) => {
-    const action = currentStatus ? "disable" : "enable";
-    if (window.confirm(`Are you sure you want to ${action} this product?`)) {
-      fetch(`http://localhost:8080/api/products/${id}/toggle-status`, {
-        method: 'PUT',
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          // Update the product in the local state
-          setProducts(products.map(product => 
-            product.id === id ? { ...product, active: data.active } : product
-          ));
-        })
-        .catch((err) => {
-          console.error("Failed to toggle product status", err);
-          alert(`Error toggling product status: ${err.message}`);
-        });
-    }
-  };
-
-  const toggleProductSelection = (id) => {
-    if (selectedProducts.includes(id)) {
-      setSelectedProducts(selectedProducts.filter(productId => productId !== id));
-    } else {
-      setSelectedProducts([...selectedProducts, id]);
-    }
-  };
-
-  const toggleSelectMode = () => {
-    setSelectMode(!selectMode);
-    // Clear selections when exiting select mode
-    if (selectMode) {
-      setSelectedProducts([]);
-    }
-  };
-
-  const selectAll = () => {
-    if (selectedProducts.length === products.length) {
-      // If all are selected, deselect all
-      setSelectedProducts([]);
-    } else {
-      // Otherwise select all
-      setSelectedProducts(products.map(product => product.id));
-    }
-  };
-
-  const toggleSelectedStatus = (newStatus) => {
-    if (selectedProducts.length === 0) return;
-    
-    const action = newStatus ? "enable" : "disable";
-    if (window.confirm(`Are you sure you want to ${action} ${selectedProducts.length} selected listing(s)?`)) {
-      // Create an array of promises for each toggle operation
-      const togglePromises = selectedProducts.map(id => 
-        fetch(`http://localhost:8080/api/products/${id}/toggle-status`, {
-          method: 'PUT',
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-          }
-          return response.json();
-        })
-        .then(data => ({ id, active: data.active }))
-      );
-      
-      // Execute all toggle operations
-      Promise.all(togglePromises)
-        .then((results) => {
-          // Update the products with new status
-          setProducts(products.map(product => {
-            const result = results.find(r => r.id === product.id);
-            return result ? { ...product, active: result.active } : product;
-          }));
-          // Clear selections
-          setSelectedProducts([]);
-          // Exit selection mode
-          setSelectMode(false);
-        })
-        .catch(err => {
-          console.error("Failed to toggle some products", err);
-          alert(`Error toggling products: ${err.message}`);
-          // Refresh the list to get the current state
-          fetch(`http://localhost:8080/api/products/user/${userId}`)
-            .then((res) => {
-              if (!res.ok) throw new Error(`Server returned ${res.status}`);
-              return res.json();
-            })
-            .then((data) => setProducts(data))
-            .catch((err) => console.error("Failed to refresh products", err));
-        });
-    }
-  };
 
   // Search filtering
   const filteredProducts = products.filter(product => 
@@ -146,43 +46,6 @@ const MyListings = ({ userId }) => {
     <div className="my-listings-container">
       <div className="listings-header">
         <h3>{products.length > 0 ? "Your Listings" : "No listings yet."}</h3>
-        {products.length > 0 && (
-          <div className="listings-actions">
-            <button 
-              className={`select-mode-btn ${selectMode ? 'active' : ''}`} 
-              onClick={toggleSelectMode}
-            >
-              {selectMode ? "Cancel Selection" : "Select Items"}
-            </button>
-            
-            {selectMode && (
-              <>
-                <button 
-                  className="select-all-btn" 
-                  onClick={selectAll}
-                >
-                  {selectedProducts.length === products.length ? "Deselect All" : "Select All"}
-                </button>
-                
-                <button 
-                  className="enable-selected-btn" 
-                  onClick={() => toggleSelectedStatus(true)}
-                  disabled={selectedProducts.length === 0}
-                >
-                  Enable Selected ({selectedProducts.length})
-                </button>
-                
-                <button 
-                  className="disable-selected-btn" 
-                  onClick={() => toggleSelectedStatus(false)}
-                  disabled={selectedProducts.length === 0}
-                >
-                  Disable Selected ({selectedProducts.length})
-                </button>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       {products.length > 0 && (
@@ -221,19 +84,9 @@ const MyListings = ({ userId }) => {
             {currentItems.map((product) => (
               <li 
                 key={product.id} 
-                className={`listing-item ${selectMode && selectedProducts.includes(product.id) ? 'selected' : ''} ${!product.active ? 'disabled-item' : ''}`}
+                className="listing-item"
               >
                 <div className="listing-content">
-                  {selectMode && (
-                    <div className="listing-checkbox">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedProducts.includes(product.id)}
-                        onChange={() => toggleProductSelection(product.id)}
-                      />
-                    </div>
-                  )}
-                  
                   <div className="listing-image">
                     {product.imageUrls && product.imageUrls.length > 0 ? (
                       <img
@@ -246,27 +99,18 @@ const MyListings = ({ userId }) => {
                   </div>
                   
                   <div className="listing-info">
-                    <strong className={!product.active ? 'disabled-product' : ''}>{product.title}</strong>
+                    <strong>{product.title}</strong>
                     <span className="listing-price">${product.price}</span>
-                    {!product.active && <span className="status-badge disabled">Disabled</span>}
                   </div>
                   
-                  {!selectMode && (
-                    <div className="listing-actions">
-                      <button
-                        onClick={() => navigate(`/edit-product/${product.id}`)}
-                        className="edit-btn"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleToggleStatus(product.id, product.active)}
-                        className={product.active ? "disable-btn" : "enable-btn"}
-                      >
-                        {product.active ? "Disable" : "Enable"}
-                      </button>
-                    </div>
-                  )}
+                  <div className="listing-actions">
+                    <button
+                      onClick={() => navigate(`/edit-product/${product.id}`)}
+                      className="edit-btn"
+                    >
+                      Edit
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}

@@ -26,9 +26,7 @@ public class Product {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
     
-    // Add field to track if product is active/enabled (not deleted)
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -84,7 +82,4 @@ public class Product {
 
     public List<String> getImageUrls() { return imageUrls; }  // ✅ Store multiple images
     public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
-    
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
 }

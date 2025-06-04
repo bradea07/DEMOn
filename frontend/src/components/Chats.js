@@ -12,6 +12,7 @@ const Chats = () => {
   const [unreadMessages, setUnreadMessages] = useState({});
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [hasHandledNavigation, setHasHandledNavigation] = useState(false);
   const messagesEndRef = useRef(null); // Referință pentru scrollul automat
   
   const { markChatAsRead, checkUnreadMessages } = useUnreadMessages();
@@ -74,12 +75,20 @@ const Chats = () => {
 
   // Handle navigation state for auto-opening conversations
   useEffect(() => {
-    if (conversations.length > 0 && location.state) {
+    if (conversations.length > 0 && location.state && !hasHandledNavigation) {
       handleNavigationState();
+      setHasHandledNavigation(true);
       // Clear the navigation state after handling it
       window.history.replaceState({}, document.title);
     }
-  }, [conversations, location.state]);
+  }, [conversations, location.state, hasHandledNavigation]);
+
+  // Reset navigation handling flag when location state changes
+  useEffect(() => {
+    if (location.state) {
+      setHasHandledNavigation(false);
+    }
+  }, [location.state]);
 
   const loadMessages = async (chat) => {
     setSelectedChat(chat);
@@ -146,14 +155,26 @@ const Chats = () => {
         console.log("Creating new conversation...");
         try {
           // First, fetch the product details
-          const productRes = await fetch(`http://localhost:8080/products/${productId}`);
+          const productRes = await fetch(`http://localhost:8080/api/products/${productId}`);
           if (!productRes.ok) throw new Error("Failed to fetch product");
           const product = await productRes.json();
           
           // Fetch receiver details
-          const userRes = await fetch(`http://localhost:8080/users/${receiverId}`);
+          const userRes = await fetch(`http://localhost:8080/api/profile/${receiverId}`);
           if (!userRes.ok) throw new Error("Failed to fetch user");
           const receiver = await userRes.json();
+          
+          console.log("🔍 DEBUG: Raw receiver from API:", receiver);
+          console.log("🔍 DEBUG: receiverId parameter:", receiverId);
+          console.log("🔍 DEBUG: receiver.id exists?", !!receiver.id, "value:", receiver.id);
+          
+          // 🛠️ FIX: Ensure receiver has the id field (API response might not include it)
+          if (!receiver.id) {
+            receiver.id = receiverId;
+            console.log("🔧 Added missing id to receiver:", receiver);
+          } else {
+            console.log("✅ Receiver already has id:", receiver.id);
+          }
           
           // Create a temporary conversation object
           const newConversation = {
@@ -182,10 +203,47 @@ const Chats = () => {
 
     setIsSending(true);
 
-    const otherUser =
-      selectedChat.sender.id === userId
-        ? selectedChat.receiver
+    // 🛠️ IMPROVED: Better logic to determine the receiver
+    let otherUser;
+    
+    console.log("🔍 DEBUG selectedChat structure:", {
+      isNew: selectedChat.isNew,
+      sender: selectedChat.sender,
+      receiver: selectedChat.receiver,
+      product: selectedChat.product,
+      fullChat: JSON.stringify(selectedChat, null, 2)
+    });
+    
+    if (selectedChat.isNew) {
+      // For new conversations created from "Contact Seller"
+      otherUser = selectedChat.receiver;
+      console.log("📝 Using receiver from NEW conversation:", otherUser);
+    } else {
+      // For existing conversations, determine who is the other user
+      otherUser = selectedChat.sender.id === userId 
+        ? selectedChat.receiver 
         : selectedChat.sender;
+      console.log("📝 Using determined receiver from EXISTING conversation:", otherUser);
+    }
+
+    // 🧠 ADDITIONAL SAFETY: Validate that otherUser exists and has an ID
+    if (!otherUser || !otherUser.id) {
+      console.error("❌ Cannot determine receiver:", {
+        selectedChat,
+        otherUser,
+        userId,
+        otherUserDetails: {
+          exists: !!otherUser,
+          hasId: !!otherUser?.id,
+          idValue: otherUser?.id,
+          idType: typeof otherUser?.id,
+          keys: otherUser ? Object.keys(otherUser) : 'N/A',
+          fullObject: JSON.stringify(otherUser, null, 2)
+        }
+      });
+      setIsSending(false);
+      return;
+    }
 
     const msg = {
       sender: { id: userId },
@@ -193,6 +251,31 @@ const Chats = () => {
       product: { id: selectedChat.product.id },
       content: newMessage,
     };
+
+    // 🧪 DEBUG: Log the payload to verify all IDs are present
+    console.log("📤 Sending message payload:", msg);
+    console.log("🔍 Payload validation:", {
+      userId: userId,
+      senderId: msg.sender.id,
+      receiverId: msg.receiver.id,
+      productId: msg.product.id,
+      content: msg.content,
+      hasContent: !!msg.content.trim(),
+      selectedChatType: selectedChat.isNew ? 'NEW' : 'EXISTING',
+      otherUser: otherUser
+    });
+
+    // Validate required fields before sending
+    if (!msg.sender.id || !msg.receiver.id || !msg.product.id || !msg.content.trim()) {
+      console.error("❌ Missing required fields:", {
+        senderId: msg.sender.id,
+        receiverId: msg.receiver.id,
+        productId: msg.product.id,
+        hasContent: !!msg.content.trim()
+      });
+      setIsSending(false);
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:8080/messages/send", {
@@ -202,6 +285,7 @@ const Chats = () => {
       });
 
       if (response.ok) {
+        console.log("✅ Message sent successfully");
         // Încorporăm mesajul nou direct în chatMessages pentru a evita reîncărcarea
         const sentMessage = {
           ...msg,
@@ -236,6 +320,19 @@ const Chats = () => {
           }
         };
         getConversations();
+      } else {
+        // 🔍 DEBUG: Log the exact error response
+        console.error("❌ Failed to send message:", {
+          status: response.status,
+          statusText: response.statusText
+        });
+        
+        try {
+          const errorText = await response.text();
+          console.error("❌ Backend error response:", errorText);
+        } catch (e) {
+          console.error("❌ Could not read error response");
+        }
       }
     } catch (err) {
       console.error("Error sending message:", err);

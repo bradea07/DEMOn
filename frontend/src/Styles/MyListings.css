@@ -61,47 +61,15 @@
   box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
 }
 
-.select-all-btn,
-.enable-selected-btn,
-.disable-selected-btn {
+.select-all-btn {
   background-color: #002828;
   color: white;
 }
 
-.select-all-btn:hover,
-.enable-selected-btn:hover {
+.select-all-btn:hover {
   background-color: #011c1c;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 40, 40, 0.2);
-}
-
-.enable-selected-btn {
-  background-color: #28a745;
-}
-
-.enable-selected-btn:hover {
-  background-color: #218838;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-}
-
-.disable-selected-btn {
-  background-color: #ffc107;
-  color: #212529;
-}
-
-.disable-selected-btn:hover {
-  background-color: #e0a800;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
-}
-
-.enable-selected-btn:disabled,
-.disable-selected-btn:disabled {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 /* Search and filter styles */
@@ -251,9 +219,7 @@
 }
 
 .edit-btn, 
-.delete-btn, 
-.enable-btn, 
-.disable-btn {
+.delete-btn {
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
@@ -289,32 +255,6 @@
   border-color: #011c1c;
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(0, 40, 40, 0.2);
-}
-
-.enable-btn {
-  background-color: #28a745;
-  color: white;
-  border: 1px solid #28a745;
-}
-
-.enable-btn:hover {
-  background-color: #218838;
-  border-color: #218838;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.2);
-}
-
-.disable-btn {
-  background-color: #ffc107;
-  color: #212529;
-  border: 1px solid #ffc107;
-}
-
-.disable-btn:hover {
-  background-color: #e0a800;
-  border-color: #e0a800;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(255, 193, 7, 0.2);
 }
 
 .delete-btn {
@@ -397,37 +337,6 @@
   padding: 20px;
   color: #6c757d;
   font-style: italic;
-}
-
-/* Disabled product styles */
-.disabled-item {
-  opacity: 0.7;
-  background-color: #f8f9fa;
-}
-
-.disabled-item .listing-image img {
-  filter: grayscale(50%);
-}
-
-.disabled-product {
-  color: #6c757d;
-  text-decoration: line-through;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-left: 8px;
-}
-
-.status-badge.disabled {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
 }
 
 /* Responsive adjustments */
