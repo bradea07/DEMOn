@@ -8,7 +8,8 @@
   justify-content: center;
   width: 100vw;
   height: 100vh;
-  background-image: url("../public/background3.png");
+   background-color: #002828;
+
   background-size: cover;
   background-position: center;
   font-family: 'Josefin Sans', sans-serif;
@@ -29,9 +30,9 @@
 }
 
 .login-box {
-  width: 350px !important;
-  height: 474px;
-  background: white; /* 🔁 înlocuiește transparența cu alb complet */
+  width: 400px;
+  min-height: 600px;
+  background: white;
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -42,24 +43,17 @@
   justify-content: center;
   position: relative;
   z-index: 1;
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-  
-
+  box-sizing: border-box;
 }
 
-
 .illustration-side {
-  width: 350px !important;
-  height: 474px !important;
+  width: 400px; 
+  min-height: 600px;
   background-color: #5e5bfc;
-  background-image: url("../public/ilustration.jpg");/* Replace with your custom vector */
+  background-image: url("../public/ilustration.jpg");
   background-size: cover;
   background-position: center;
+  padding: 2rem;
   border-radius: 20px;
   color: white;
   text-align: center;
@@ -67,7 +61,9 @@
   justify-content: center;
   align-items: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
+
 
 
 .login-box h2 {
@@ -118,16 +114,19 @@
 
 .login-btn {
   width: 100%;
-  padding: 12px;
+  padding: 8px;
   border: none;
-  border-radius: 10px;
-  background: #002828;
+  border-radius: 8px;
+  background-color: #002828;
   color: white;
-  font-weight: bold;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  height: 34px;
+  line-height: 1;
 }
+
 
 .login-btn:hover {
   background: #011c1c;

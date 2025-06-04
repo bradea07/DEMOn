@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -9,6 +11,9 @@ const Login = ({ setIsLoggedIn }) => {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromSignup = location.state?.fromSignup;
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -104,7 +109,8 @@ const Login = ({ setIsLoggedIn }) => {
     <div className="login-container">
     <h1 className="ecoswap-title">EcoSwap</h1>
 
-      <div className="login-box">
+      <div className={`login-box ${fromSignup ? "animate-entry" : ""}`}>
+
 
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
@@ -153,9 +159,15 @@ const Login = ({ setIsLoggedIn }) => {
         {message && <p>{message}</p>}
 
         <p>Don't have an account?</p>
-        <button className="login-btn" onClick={() => navigate("/signup")}>
-          Sign Up
-        </button>
+        <button
+ 
+  className="login-btn"
+  onClick={() => navigate("/signup", { state: { fromLogin: true } })}
+>
+  Sign Up
+</button>
+
+
       </div>
 
       {/* ✅ Right-side illustration with inline background style */}

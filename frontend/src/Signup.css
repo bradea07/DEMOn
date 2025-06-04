@@ -1,7 +1,9 @@
-/* Add this to ensure the font is loaded */
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
 
-/* The main container for the signup page */
+html {
+  overflow-y: scroll; /* Fix pentru sărituri de layout între pagini */
+}
+
 .signup-container {
   position: relative;
   display: flex;
@@ -10,14 +12,11 @@
   justify-content: center;
   width: 100vw;
   height: 100vh;
-  background-image: url("../public/background3.png");
-  background-size: cover;
-  background-position: center;
+  background-color: #002828;
   font-family: 'Josefin Sans', sans-serif;
   overflow: hidden;
 }
 
-/* EcoSwap Title Styling */
 .ecoswap-title {
   font-family: 'Josefin Sans', sans-serif !important;
   font-size: 3rem !important;
@@ -32,20 +31,19 @@
   margin: 0 !important;
 }
 
-/* Styling for the signup box */
 .signup-box {
-  width: 350px !important;
-  height: 474px;
+  width: 400px;
+  min-height: 600px;
   background: white;
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.2);
   margin-right: 40px;
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .signup-box h2 {
@@ -91,29 +89,29 @@
   height: 30px;
 }
 
-/* ReCAPTCHA container */
+/* CAPTCHA box fixată înăuntru */
 .recaptcha-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: scale(0.85);
+  width: 100%;
+  transform: scale(0.90);
   transform-origin: center;
-  height: 6 5px;
-  margin: 5px 0;
-  padding: 0;
+  height: 65px;
+  margin-top: 5px;
 }
 
-/* Button Styling */
+/* Butonul de signup */
 .button-container {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  margin-top: 2px;
+  margin-top: 5px;
 }
 
 .signup-btn {
   width: 100%;
-  padding: 6px;
+  padding: 8px;
   border: none;
   border-radius: 8px;
   background-color: #002828;
@@ -122,9 +120,8 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  height: 28px;
+  height: 34px;
   line-height: 1;
-  margin: 0;
 }
 
 .signup-btn:hover {
@@ -132,19 +129,25 @@
   transform: scale(1.02);
 }
 
-/* Illustration Side */
+/* Ilustrația */
 .illustration-side {
-  width: 350px !important;
-  height: 474px !important;
+  width: 400px;
+  min-height: 600px;
   background-color: #5e5bfc;
-  border-radius: 20px;
   background-image: url("../public/ilustration.jpg");
   background-size: cover;
   background-position: center;
+  border-radius: 20px;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
 }
 
-/* Message and Link Styling */
+/* Linkuri și mesaje */
 .message {
   text-align: center;
   padding: 2px 0;
@@ -163,35 +166,44 @@
   margin: 0;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Responsivitate */
 @media (max-width: 768px) {
   .signup-container {
-    padding: 1rem;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .signup-box,
+  .illustration-side {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 0 20px 0;
+  }
+
+  .illustration-side {
+    height: 250px;
   }
 
   .ecoswap-title {
     font-size: 2rem !important;
     top: 1% !important;
   }
+}
 
-  .signup-box {
-    width: 90% !important;
-    max-width: 320px;
-    margin: 0 0 1rem 0;
-    padding: 1.5rem;
-  }
 
-  .illustration-side {
-    display: none;
+
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-entry {
+  animation: slideIn 0.4s ease-out;
 }
