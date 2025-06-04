@@ -31,4 +31,14 @@ public interface UserRecommendationHistoryRepository extends JpaRepository<UserR
      * Find products that have been recommended to a user more than a certain number of times
      */
     List<UserRecommendationHistory> findByUserAndRecommendationCountGreaterThanEqual(User user, int count);
+    
+    /**
+     * Delete all recommendation history entries for a specific product
+     */
+    void deleteByProduct(Product product);
+    
+    /**
+     * Delete all recommendation history entries for a specific product by ID
+     */
+    void deleteByProductId(Long productId);
 }

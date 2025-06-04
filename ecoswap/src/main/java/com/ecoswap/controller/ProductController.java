@@ -183,21 +183,29 @@ public ResponseEntity<?> addProduct(
     
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id) {
+        System.out.println("🔴 DELETE request received for product ID: " + id);
         try {
             // First, check if the product exists
             Optional<Product> productOpt = productService.getProductById(id);
+            System.out.println("🔍 Product found: " + productOpt.isPresent());
+            
             if (productOpt.isEmpty()) {
+                System.out.println("❌ Product not found in database");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "Product with ID " + id + " does not exist."));
             }
             
+            System.out.println("✅ Attempting to delete product: " + productOpt.get().getTitle());
             productService.deleteProductById(id);
+            System.out.println("✅ Product deleted successfully");
             // Return a proper JSON response
             return ResponseEntity.ok(Map.of("message", "Product deleted successfully."));
         } catch (RuntimeException e) {
+            System.out.println("❌ RuntimeException: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            System.out.println("❌ Exception: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to delete product: " + e.getMessage()));
         }

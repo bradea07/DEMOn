@@ -39,4 +39,9 @@ void markAllAsReadForUser(@Param("user") User user);
     @Transactional
     @Query("DELETE FROM Notification n WHERE n.createdAt < :cutoffDate")
     void deleteOldNotifications(@Param("cutoffDate") java.time.LocalDateTime cutoffDate);
+    
+    // Delete notifications related to a specific product
+    @Modifying
+    @Transactional
+    void deleteByProductId(Long productId);
 }

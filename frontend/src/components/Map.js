@@ -55,7 +55,7 @@ const MapComponent = () => {
   console.log("🔍 Fetching recycling points for Mountain View, CA:", testPosition);
 
   try {
-    const radius = 0.02; // ~2km
+    const radius = 0.05; // ~2km
     const bbox = `${testPosition.lat - radius},${testPosition.lng - radius},${testPosition.lat + radius},${testPosition.lng + radius}`;
 
     const query = `

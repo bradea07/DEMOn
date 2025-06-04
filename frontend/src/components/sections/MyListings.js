@@ -8,6 +8,7 @@ const MyListings = ({ userId }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, productId: null, productTitle: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +41,41 @@ const MyListings = ({ userId }) => {
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  // Handle delete product
+  const handleDeleteProduct = async (productId) => {
+    try {
+      console.log(`Attempting to delete product with ID: ${productId}`);
+      const response = await axios.delete(`http://localhost:8080/api/products/${productId}`);
+      console.log('Delete response:', response);
+      
+      if (response.status === 200) {
+        // Remove the product from the local state
+        setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
+        // Close the modal
+        setDeleteConfirmModal({ show: false, productId: null, productTitle: "" });
+        // Reset to first page if current page becomes empty
+        const remainingProducts = products.filter(product => product.id !== productId);
+        const newTotalPages = Math.ceil(remainingProducts.length / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(1);
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product. Please try again.");
+    }
+  };
+
+  // Show delete confirmation modal
+  const showDeleteConfirmation = (productId, productTitle) => {
+    setDeleteConfirmModal({ show: true, productId, productTitle });
+  };
+
+  // Cancel delete operation
+  const cancelDelete = () => {
+    setDeleteConfirmModal({ show: false, productId: null, productTitle: "" });
   };
 
   return (
@@ -110,6 +146,12 @@ const MyListings = ({ userId }) => {
                     >
                       Edit
                     </button>
+                    <button
+                      onClick={() => showDeleteConfirmation(product.id, product.title)}
+                      className="delete-btn"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </li>
@@ -160,6 +202,34 @@ const MyListings = ({ userId }) => {
             ? `No listings found matching "${searchQuery}". Please try a different search.` 
             : "No listings available."}
         </p>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmModal.show && (
+        <div className="modal-overlay">
+          <div className="modal-content delete-modal">
+            <h3>Delete Product</h3>
+            <p>Are you sure you want to delete <strong>"{deleteConfirmModal.productTitle}"</strong>?</p>
+            <p className="warning-text">This action cannot be undone.</p>
+            
+            <div className="modal-buttons">
+              <button 
+                type="button" 
+                onClick={cancelDelete}
+                className="cancel-btn"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                onClick={() => handleDeleteProduct(deleteConfirmModal.productId)}
+                className="confirm-delete-btn"
+              >
+                Delete Product
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
