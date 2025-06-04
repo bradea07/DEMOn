@@ -316,27 +316,23 @@ const ProductDetails = () => {
           {/* Right Column - Product Information */}
           <div className="product-page-info-column">
             <div className="product-page-header">
-              <h1 className="product-page-title">{product.title}</h1>
-              <div className="product-page-price-and-date">
-                <div className="product-page-price">€{product.price}</div>
-                <div className="product-page-date">Listed {formatDate(product.createdAt)}</div>
+              <h1 className="product-page-title">{product.title}</h1>              <div className="product-page-price-and-date">
+                <div className="product-page-price">${product.price}</div>
               </div>
             </div>
             
             <div className="product-page-details-section">
               <h3>Product Details</h3>
-              <div className="product-page-details-grid">
-                <div className="product-page-detail-row">
+              <div className="product-page-details-grid">                <div className="product-page-detail-row">
                   <span className="product-page-detail-label">Category</span>
                   <span className="product-page-detail-value">{product.category}</span>
                 </div>
                 <div className="product-page-detail-row">
                   <span className="product-page-detail-label">Brand</span>
                   <span className="product-page-detail-value">{product.brand || "Not specified"}</span>
-                </div>
-                <div className="product-page-detail-row">
+                </div>                <div className="product-page-detail-row">
                   <span className="product-page-detail-label">Condition</span>
-                  <span className="product-page-detail-value">{product.condition || "Not specified"}</span>
+                  <span className="product-page-detail-value">{product.productCondition || "Not specified"}</span>
                 </div>
                 <div className="product-page-detail-row">
                   <span className="product-page-detail-label">Location</span>
