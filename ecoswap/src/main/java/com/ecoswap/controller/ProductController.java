@@ -200,10 +200,13 @@ public ResponseEntity<?> addProduct(
             System.out.println("✅ Product deleted successfully");
             // Return a proper JSON response
             return ResponseEntity.ok(Map.of("message", "Product deleted successfully."));
-        } catch (RuntimeException e) {
-            System.out.println("❌ RuntimeException: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", e.getMessage()));
+        } 
+                catch (RuntimeException e) {
+    System.out.println("❌ RuntimeException: " + e.getMessage());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+           .body(Map.of("error", e.getMessage()));
+
+
         } catch (Exception e) {
             System.out.println("❌ Exception: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

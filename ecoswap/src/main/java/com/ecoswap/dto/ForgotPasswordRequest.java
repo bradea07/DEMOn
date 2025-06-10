@@ -5,4 +5,11 @@ public class ForgotPasswordRequest {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+public ForgotPasswordRequest(String email) {
+    this.email = email;
+}
+
+
+
 }

@@ -19,4 +19,11 @@ public class ResetPasswordRequest {
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
+
+public ResetPasswordRequest(String token, String newPassword) {
+    this.token = token;
+    this.newPassword = newPassword;
+}
+
+
 }
