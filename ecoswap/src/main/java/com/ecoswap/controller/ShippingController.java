@@ -79,8 +79,17 @@ public class ShippingController {
     @PostMapping("/transactions")
     public ResponseEntity<?> createShippingTransaction(@RequestBody ShippingTransactionDTO transactionDTO) {
         try {
+            // Log the incoming transaction for debugging
+            System.out.println("Creating shipping transaction: " + transactionDTO);
+            
             ShippingTransactionDTO created = shippingService.createShippingTransaction(transactionDTO);
-            return ResponseEntity.ok(created);
+            
+            // Return the created transaction with additional message about email
+            return ResponseEntity.ok(Map.of(
+                "transaction", created,
+                "message", "Shipping transaction created. Confirmation email sent to " + 
+                           (transactionDTO.getFromEmail() != null ? transactionDTO.getFromEmail() : "no email provided")
+            ));
         } catch (Exception e) {
             e.printStackTrace(); // Log the exception
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -364,6 +364,13 @@ const Chats = () => {
           }
         };
         getConversations();
+        
+        // After successfully sending a message, clear the navigation state
+        // to avoid recreating the conversation if the user refreshes
+        if (selectedChat.isNew && location.state) {
+          console.log("✅ Clearing navigation state after successful message");
+          window.history.replaceState({}, document.title);
+        }
       } else {
         // 🔍 DEBUG: Log the exact error response
         console.error("❌ Failed to send message:", {

@@ -41,6 +41,7 @@ const Delivery = () => {
   const [confirmationText, setConfirmationText] = useState('');
   const [confirmationValid, setConfirmationValid] = useState(false);
   const [deliveryConfirmed, setDeliveryConfirmed] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   
   const handleFromAddressChange = (e) => {
     setFromAddress({
@@ -292,6 +293,11 @@ const handleFinalConfirmation = async () => {
       );
       
       console.log('Shipping transaction saved:', transactionResponse.data);
+      
+      // Check if the email was sent successfully
+      if (transactionResponse.data && transactionResponse.data.message) {
+        console.log('Email notification:', transactionResponse.data.message);
+      }
     } catch (transactionError) {
       console.error('Error saving shipping transaction:', transactionError);
       // Continue with the process even if shipping transaction save fails
@@ -301,7 +307,7 @@ const handleFinalConfirmation = async () => {
     if (ratingResponse.status === 200) {
       // Show success message
       setDeliveryConfirmed(true);
-      alert('Delivery confirmed! The courier has been notified and will arrive according to the selected service.');
+      setShowSuccessModal(true);
     } else {
       throw new Error('Failed to update shipment information');
     }
@@ -314,8 +320,36 @@ const handleFinalConfirmation = async () => {
   }
 };
   
+  // Close success modal
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    // Reset everything after successful confirmation
+    setConfirmationStep(false);
+    setSelectedRate(null);
+    setRates([]);
+    setShipment(null);
+    
+    // Reload the page after a short delay to allow the modal to close with animation
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
+  };
+
   return (
-    <div className="delivery-container">      <h2>Delivery Calculator</h2>
+    <div className="delivery-container">
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Delivery Confirmed</h2>
+            <p>Delivery confirmed! The courier has been notified and will arrive according to the selected service.</p>
+            <p>A confirmation email has been sent to you with tracking details.</p>
+            <button className="ok-button" onClick={closeSuccessModal}>OK</button>
+          </div>
+        </div>
+      )}
+      
+      <h2>Delivery Calculator</h2>
       
       <button 
         type="button" 
