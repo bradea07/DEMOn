@@ -116,23 +116,47 @@ const Chats = () => {
         });
       }
       
-      // Get messages
-      const res = await fetch(`http://localhost:8080/messages/product/${chat.product.id}`);
-      const data = await res.json();
-      
-      const filtered = data.filter(
-        (msg) =>
-          (msg.sender.id === userId || msg.receiver.id === userId) &&
-          (msg.sender.id === chat.sender.id || msg.receiver.id === chat.sender.id)
-      );
-      // Sortare cronologică a mesajelor - cele mai vechi primele
-      const sortedMessages = filtered.sort((a, b) => 
-        new Date(a.timestamp) - new Date(b.timestamp)
-      );
-      setChatMessages(sortedMessages);
-      
+      // Special handling for new conversations
+      if (chat.isNew) {
+        console.log("This is a new conversation - setting empty messages array");
+        setChatMessages([]);
+      } else {
+        try {
+          // Get messages
+          const res = await fetch(`http://localhost:8080/messages/product/${chat.product.id}`);
+          
+          if (!res.ok) {
+            // Handle non-successful response
+            if (res.status === 400) {
+              console.log("No messages found for this product yet - setting empty array");
+              setChatMessages([]);
+            } else {
+              throw new Error(`Server returned ${res.status}: ${res.statusText}`);
+            }
+          } else {
+            const data = await res.json();
+            
+            const filtered = data.filter(
+              (msg) =>
+                (msg.sender.id === userId || msg.receiver.id === userId) &&
+                (msg.sender.id === chat.sender.id || msg.receiver.id === chat.sender.id)
+            );
+            
+            // Sortare cronologică a mesajelor - cele mai vechi primele
+            const sortedMessages = filtered.sort((a, b) => 
+              new Date(a.timestamp) - new Date(b.timestamp)
+            );
+            setChatMessages(sortedMessages);
+          }
+        } catch (err) {
+          console.error("Error loading messages:", err);
+          // Set empty messages array on error to avoid UI breaking
+          setChatMessages([]);
+        }
+      }
     } catch (err) {
-      console.error("Error loading messages:", err);
+      console.error("Error in loadMessages function:", err);
+      setChatMessages([]);
     } finally {
       setIsLoadingMessages(false);
     }
