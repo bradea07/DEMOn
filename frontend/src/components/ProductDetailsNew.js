@@ -140,7 +140,6 @@ const ProductDetails = () => {
       alert("Failed to update favorites");
     }
   };
-
   // Handle contact seller - navigate to chats
   const handleContactSeller = () => {
     if (!currentUser) {
@@ -152,11 +151,22 @@ const ProductDetails = () => {
       return;
     }
 
+    // Make sure we have numeric IDs for consistency
+    const receiverId = parseInt(product.user.id);
+    const productId = parseInt(product.id);
+
+    // Check that we have valid IDs before navigating
+    if (isNaN(receiverId) || isNaN(productId)) {
+      console.error("Invalid IDs for chat:", { receiverId, productId, product });
+      alert("Error: Could not contact seller. Please try again.");
+      return;
+    }
+
     // Navigate to chats with seller and product information
     navigate("/chats", { 
       state: { 
-        receiverId: product.user.id,
-        productId: product.id,
+        receiverId: receiverId,
+        productId: productId,
         productTitle: product.title,
         sellerUsername: product.user.username
       } 

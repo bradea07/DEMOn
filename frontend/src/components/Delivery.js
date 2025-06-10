@@ -229,8 +229,8 @@ const handleFinalConfirmation = async () => {
     // For this example, we'll assume the rating ID is 1 (you would need to get this from your app's state)
     const ratingId = 1; // Replace with actual rating ID from your app state
     
-    // Call the actual API endpoint
-    const response = await axios.post(
+    // Call the rating API endpoint to update shipment info
+    const ratingResponse = await axios.post(
       `http://localhost:8080/api/ratings/update-shipment/${ratingId}`,
       ratingData,
       {
@@ -240,7 +240,65 @@ const handleFinalConfirmation = async () => {
       }
     );
     
-    if (response.status === 200) {
+    // Additionally, save the complete shipping transaction
+    const shippingTransaction = {
+      shipmentId: shipment.object_id,
+      rateId: selectedRate.object_id,
+      provider: selectedRate.provider,
+      service: selectedRate.servicelevel.name,
+      amount: selectedRate.amount,
+      currency: selectedRate.currency,
+      estimatedDays: selectedRate.estimated_days,
+      createdAt: new Date().toISOString(),
+      
+      // Sender details from form
+      fromName: fromAddress.name,
+      fromStreet: fromAddress.street1,
+      fromCity: fromAddress.city,
+      fromState: fromAddress.state,
+      fromZip: fromAddress.zip,
+      fromCountry: fromAddress.country,
+      fromPhone: fromAddress.phone,
+      fromEmail: fromAddress.email,
+      
+      // Recipient details from form
+      toName: toAddress.name,
+      toStreet: toAddress.street1,
+      toCity: toAddress.city,
+      toState: toAddress.state,
+      toZip: toAddress.zip,
+      toCountry: toAddress.country,
+      toPhone: toAddress.phone,
+      toEmail: toAddress.email,
+      
+      // Parcel details
+      parcelLength: parcel.length,
+      parcelWidth: parcel.width,
+      parcelHeight: parcel.height,
+      parcelWeight: parcel.weight
+    };
+    
+    // Save the shipping transaction
+    try {
+      const transactionResponse = await axios.post(
+        'http://localhost:8080/api/shipping/transactions',
+        shippingTransaction,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
+      
+      console.log('Shipping transaction saved:', transactionResponse.data);
+    } catch (transactionError) {
+      console.error('Error saving shipping transaction:', transactionError);
+      // Continue with the process even if shipping transaction save fails
+      // This way we maintain backward compatibility
+    }
+    
+    if (ratingResponse.status === 200) {
       // Show success message
       setDeliveryConfirmed(true);
       alert('Delivery confirmed! The courier has been notified and will arrive according to the selected service.');

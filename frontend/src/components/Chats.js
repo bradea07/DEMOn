@@ -75,17 +75,22 @@ const Chats = () => {
 
   // Handle navigation state for auto-opening conversations
   useEffect(() => {
-    if (conversations.length > 0 && location.state && !hasHandledNavigation) {
+    // Only attempt to handle navigation if we have state and either:
+    // 1. We have conversations already loaded, or
+    // 2. We're creating a new conversation (which doesn't need existing conversations)
+    if (location.state && !hasHandledNavigation && 
+        (conversations.length > 0 || (location.state.receiverId && location.state.productId))) {
+      console.log("Handling navigation state:", location.state);
       handleNavigationState();
       setHasHandledNavigation(true);
-      // Clear the navigation state after handling it
-      window.history.replaceState({}, document.title);
+      // Don't clear the state yet - we might need it if the first attempt fails
     }
   }, [conversations, location.state, hasHandledNavigation]);
 
   // Reset navigation handling flag when location state changes
   useEffect(() => {
-    if (location.state) {
+    if (location.state && JSON.stringify(location.state) !== '{}') {
+      console.log("New location state detected, resetting handler flag");
       setHasHandledNavigation(false);
     }
   }, [location.state]);
@@ -143,7 +148,7 @@ const Chats = () => {
       // Try to find existing conversation
       const existingConv = conversations.find(conv => {
         const otherUserId = conv.sender.id === userId ? conv.receiver.id : conv.sender.id;
-        return otherUserId === receiverId && conv.product.id === productId;
+        return otherUserId === parseInt(receiverId) && conv.product.id === parseInt(productId);
       });
       
       if (existingConv) {
@@ -158,32 +163,51 @@ const Chats = () => {
           const productRes = await fetch(`http://localhost:8080/api/products/${productId}`);
           if (!productRes.ok) throw new Error("Failed to fetch product");
           const product = await productRes.json();
+          console.log("🔍 DEBUG: Product fetched:", product);
           
-          // Fetch receiver details
-          const userRes = await fetch(`http://localhost:8080/api/profile/${receiverId}`);
-          if (!userRes.ok) throw new Error("Failed to fetch user");
-          const receiver = await userRes.json();
-          
-          console.log("🔍 DEBUG: Raw receiver from API:", receiver);
-          console.log("🔍 DEBUG: receiverId parameter:", receiverId);
-          console.log("🔍 DEBUG: receiver.id exists?", !!receiver.id, "value:", receiver.id);
-          
-          // 🛠️ FIX: Ensure receiver has the id field (API response might not include it)
-          if (!receiver.id) {
-            receiver.id = receiverId;
-            console.log("🔧 Added missing id to receiver:", receiver);
-          } else {
-            console.log("✅ Receiver already has id:", receiver.id);
+          // Ensure product has an ID
+          if (!product.id) {
+            product.id = parseInt(productId);
           }
+          
+          // Create a minimal receiver object if we can't fetch it
+          let receiver = { id: parseInt(receiverId), username: sellerUsername || "Seller" };
+          
+          // Try to fetch full receiver details, but don't fail if we can't
+          try {
+            const userRes = await fetch(`http://localhost:8080/api/profile/${receiverId}`);
+            if (userRes.ok) {
+              const fetchedUser = await userRes.json();
+              console.log("🔍 DEBUG: Receiver fetched:", fetchedUser);
+              
+              // Merge fetched data with our minimal object, ensuring ID is present
+              receiver = { 
+                ...fetchedUser,
+                id: parseInt(receiverId), // Always use the ID from navigation
+                username: fetchedUser.username || sellerUsername || "Seller"
+              };
+            } else {
+              console.warn("⚠️ Couldn't fetch receiver details, using minimal object");
+            }
+          } catch (userError) {
+            console.warn("⚠️ Error fetching receiver:", userError);
+          }
+          
+          console.log("🔧 Final receiver object:", receiver);
           
           // Create a temporary conversation object
           const newConversation = {
             id: `temp-${Date.now()}`,
-            sender: loggedInUser,
+            sender: {
+              ...loggedInUser,
+              id: parseInt(userId)
+            },
             receiver: receiver,
             product: product,
             isNew: true
           };
+          
+          console.log("🔧 Created new conversation object:", newConversation);
           
           // Add to conversations list and select it
           setConversations(prev => [newConversation, ...prev]);
@@ -193,8 +217,11 @@ const Chats = () => {
           console.log("New conversation created and selected");
         } catch (error) {
           console.error("Error creating new conversation:", error);
+          alert("Failed to create new conversation. Please try again.");
         }
       }
+    } else {
+      console.error("❌ Missing required parameters:", { receiverId, productId, userId });
     }
   };
 
@@ -210,8 +237,7 @@ const Chats = () => {
       isNew: selectedChat.isNew,
       sender: selectedChat.sender,
       receiver: selectedChat.receiver,
-      product: selectedChat.product,
-      fullChat: JSON.stringify(selectedChat, null, 2)
+      product: selectedChat.product
     });
     
     if (selectedChat.isNew) {
@@ -220,35 +246,53 @@ const Chats = () => {
       console.log("📝 Using receiver from NEW conversation:", otherUser);
     } else {
       // For existing conversations, determine who is the other user
-      otherUser = selectedChat.sender.id === userId 
+      otherUser = selectedChat.sender.id === parseInt(userId) 
         ? selectedChat.receiver 
         : selectedChat.sender;
       console.log("📝 Using determined receiver from EXISTING conversation:", otherUser);
     }
 
     // 🧠 ADDITIONAL SAFETY: Validate that otherUser exists and has an ID
-    if (!otherUser || !otherUser.id) {
-      console.error("❌ Cannot determine receiver:", {
-        selectedChat,
-        otherUser,
-        userId,
-        otherUserDetails: {
-          exists: !!otherUser,
-          hasId: !!otherUser?.id,
-          idValue: otherUser?.id,
-          idType: typeof otherUser?.id,
-          keys: otherUser ? Object.keys(otherUser) : 'N/A',
-          fullObject: JSON.stringify(otherUser, null, 2)
+    if (!otherUser) {
+      console.error("❌ Cannot determine receiver - missing receiver object");
+      alert("Error: Couldn't determine message recipient. Please refresh and try again.");
+      setIsSending(false);
+      return;
+    }
+    
+    // Ensure the receiver ID is valid
+    if (!otherUser.id) {
+      console.error("❌ Receiver is missing ID:", otherUser);
+      alert("Error: Couldn't determine recipient ID. Please refresh and try again.");
+      setIsSending(false);
+      return;
+    }
+
+    // Make sure all IDs are numbers for consistency with backend
+    const senderIdNum = parseInt(userId);
+    const receiverIdNum = parseInt(otherUser.id);
+    const productIdNum = parseInt(selectedChat.product.id);
+    
+    if (isNaN(senderIdNum) || isNaN(receiverIdNum) || isNaN(productIdNum)) {
+      console.error("❌ Invalid ID format:", { 
+        senderIdNum, 
+        receiverIdNum, 
+        productIdNum,
+        originalIds: {
+          senderId: userId,
+          receiverId: otherUser.id,
+          productId: selectedChat.product.id
         }
       });
+      alert("Error: Invalid ID format. Please refresh and try again.");
       setIsSending(false);
       return;
     }
 
     const msg = {
-      sender: { id: userId },
-      receiver: { id: otherUser.id },
-      product: { id: selectedChat.product.id },
+      sender: { id: senderIdNum },
+      receiver: { id: receiverIdNum },
+      product: { id: productIdNum },
       content: newMessage,
     };
 
