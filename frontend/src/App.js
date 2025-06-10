@@ -39,15 +39,30 @@ function App() {
   };
 
   useEffect(() => {
-    // Function to check authentication status
+    // Check if this is the first load of the application
+    const firstLoadKey = "app_has_been_loaded";
+    const isFirstLoad = !sessionStorage.getItem(firstLoadKey);
+    
+    if (isFirstLoad) {
+      console.log("First application load - clearing authentication");
+      // Clear authentication data only on first load
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("user");
+      setIsLoggedIn(false);
+      // Mark that the app has been loaded once in this session
+      sessionStorage.setItem(firstLoadKey, "true");
+    } else {
+      // On refresh, respect the current authentication state
+      const authenticated = isAuthenticated();
+      setIsLoggedIn(authenticated);
+    }
+    
+    // Function to check authentication status for future calls
     const checkAuth = () => {
       const authenticated = isAuthenticated();
       console.log("Authentication check:", authenticated ? "Authenticated" : "Not authenticated");
       setIsLoggedIn(authenticated);
     };
-    
-    // Check authentication initially
-    checkAuth();
     
     // Listen for storage events (when localStorage changes)
     window.addEventListener("storage", checkAuth);
