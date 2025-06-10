@@ -66,7 +66,7 @@ public class MessageControllerTest {
         when(productRepository.findById(3L)).thenReturn(Optional.of(product));
 
         ResponseEntity<?> response = messageController.sendMessage(msg);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Message sent successfully.", response.getBody());
     }
 
@@ -80,21 +80,21 @@ public class MessageControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = messageController.sendMessage(msg);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
     public void testGetMessagesByProduct_NoMessages() {
         when(messageRepository.findByProductId(5L)).thenReturn(List.of());
         ResponseEntity<List<Message>> response = messageController.getMessagesByProduct(5L);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
     public void testGetMessagesByProduct_Success() {
         when(messageRepository.findByProductId(5L)).thenReturn(List.of(new Message()));
         ResponseEntity<List<Message>> response = messageController.getMessagesByProduct(5L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class MessageControllerTest {
         when(messageRepository.findByReceiver_IdAndIsReadFalse(2L)).thenReturn(List.of(new Message(), new Message()));
 
         ResponseEntity<Integer> response = messageController.countUnreadMessages(2L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(2, response.getBody());
     }
 
@@ -111,7 +111,7 @@ public class MessageControllerTest {
     public void testCountUnreadMessages_InvalidUser() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
         ResponseEntity<Integer> response = messageController.countUnreadMessages(2L);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class MessageControllerTest {
         when(productRepository.findById(3L)).thenReturn(Optional.of(product));
 
         ResponseEntity<?> response = messageController.markMessagesAsRead(1L, 2L, 3L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals("Messages marked as read", response.getBody());
     }
 
@@ -129,7 +129,7 @@ public class MessageControllerTest {
     public void testMarkMessagesAsRead_InvalidParams() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
         ResponseEntity<?> response = messageController.markMessagesAsRead(1L, 2L, 3L);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class MessageControllerTest {
             .thenReturn(List.of(new Message()));
 
         ResponseEntity<Integer> response = messageController.countUnreadMessagesForConversation(1L, 2L, 3L);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(1, response.getBody());
     }
 
@@ -150,7 +150,7 @@ public class MessageControllerTest {
     public void testCountUnreadMessagesForConversation_Invalid() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
         ResponseEntity<Integer> response = messageController.countUnreadMessagesForConversation(1L, 2L, 3L);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
 @Test
@@ -171,7 +171,7 @@ public void testGetConversationsForUser_Success() {
         .thenReturn(List.of(m1, m2));
 
     ResponseEntity<?> response = messageController.getConversationsForUser(1L);
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
 
     List<?> body = (List<?>) response.getBody();
     assertEquals(1, body.size()); // doar o conversație
@@ -190,7 +190,7 @@ public void testSendMessage_ProductInvalid() {
     when(productRepository.findById(3L)).thenReturn(Optional.empty());
 
     ResponseEntity<?> response = messageController.sendMessage(msg);
-    assertEquals(400, response.getStatusCodeValue());
+    assertEquals(400, response.getStatusCode().value());
 }
 
 
@@ -203,7 +203,7 @@ public void testCountUnreadMessagesForConversation_Exception() {
         .thenThrow(new RuntimeException("fail"));
 
     ResponseEntity<Integer> response = messageController.countUnreadMessagesForConversation(1L, 2L, 3L);
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertEquals(0, response.getBody());
 }
 
@@ -214,7 +214,7 @@ public void testCountUnreadMessages_Exception() {
     when(messageRepository.findByReceiver_IdAndIsReadFalse(2L)).thenThrow(new RuntimeException("fail"));
 
     ResponseEntity<Integer> response = messageController.countUnreadMessages(2L);
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertEquals(0, response.getBody());
 }
 
@@ -227,7 +227,7 @@ public void testMarkMessagesAsRead_Exception() {
     doThrow(new RuntimeException("fail")).when(messageRepository).markMessagesAsRead(anyLong(), anyLong(), anyLong());
 
     ResponseEntity<?> response = messageController.markMessagesAsRead(1L, 2L, 3L);
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
 }
 
 @Test
@@ -237,7 +237,7 @@ public void testMarkMessagesAsRead_ProductInvalid() {
     when(productRepository.findById(3L)).thenReturn(Optional.empty());
 
     ResponseEntity<?> response = messageController.markMessagesAsRead(1L, 2L, 3L);
-    assertEquals(400, response.getStatusCodeValue());
+    assertEquals(400, response.getStatusCode().value());
 }
 
 @Test
@@ -253,7 +253,7 @@ public void testSendMessage_InternalError() {
     doThrow(new RuntimeException("fail")).when(messageRepository).save(any());
 
     ResponseEntity<?> response = messageController.sendMessage(msg);
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertTrue(response.getBody().toString().contains("Error sending message"));
 }
 

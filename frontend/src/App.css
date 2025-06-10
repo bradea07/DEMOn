@@ -1,74 +1,18 @@
-.login-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed; /* Prevents scrolling */
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: white; /* Clean white background */
-  overflow: hidden;
-}
-
-
-
-
-
-
-
-/* Clean white login box */
-.login-box {
-  position: absolute;
-  top: 40px; /* Moves it down a little for spacing */
-  left: 40px; /* Moves it right for spacing */
-  background: white; /* Clean white background */
-  padding: 2rem;
-  border-radius: 8px; /* Less rounded for a rectangular look */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  width: 450px; /* Wider for a more rectangular look */
-  height: auto; /* Adjusts based on content */
-  text-align: left; /* Align text to the left */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
-}
-.input-group input {
-  width: 90%;
-  margin: 5px auto; /* Adds spacing */
-}
-
-
-.input-group input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
+/* General input styles for app components (excluding login, signup, and add-product) */
+.app-input-group input,
+.form-input,
+input:not(.login-box input):not(.signup-box input):not(.add-product-input):not(.add-product-textarea) {
+  border: 1px solid #ddd; /* Original softer gray */
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
   outline: none;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-  backdrop-filter: blur(5px);
+  transition: border-color 0.2s ease;
 }
 
-.input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-
-.login-btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: bold;
-  background: #002828; /* EcoSwap navbar color */
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-
-.login-btn:hover {
-  background: #011c1c; /* Darker green on hover */
-  transform: scale(1.05); /* Slight zoom effect */
+.app-input-group input:focus,
+.form-input:focus {
+  border-color: #002828;
+  box-shadow: 0 0 0 2px rgba(0, 40, 40, 0.1);
 }
 

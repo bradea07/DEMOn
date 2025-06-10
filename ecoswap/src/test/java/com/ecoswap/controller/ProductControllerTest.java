@@ -56,7 +56,7 @@ public class ProductControllerTest {
                 "Brand", "New", "123456", 1L, List.of(image)
         );
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertTrue(((Map) response.getBody()).get("message").toString().contains("successfully"));
     }
 
@@ -69,7 +69,7 @@ public class ProductControllerTest {
                 "Brand", "New", "123456", 2L, new ArrayList<>()
         );
 
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ProductControllerTest {
                 "Brand", "New", "123456", 1L, new ArrayList<>()
         );
 
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ProductControllerTest {
     public void testSearchProducts_ByKeyword_Success() {
         when(productService.searchProductsByTitle("bike")).thenReturn(List.of(new Product()));
         ResponseEntity<List<Product>> response = productController.searchProducts("bike");
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(1, response.getBody().size());
     }
 
@@ -103,21 +103,21 @@ public class ProductControllerTest {
     public void testGetProductById_NotFound() {
         when(productService.getProductById(99L)).thenReturn(Optional.empty());
         ResponseEntity<?> response = productController.getProductById(99L);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
     public void testDeleteProduct_NotFound() {
         when(productService.getProductById(123L)).thenReturn(Optional.empty());
         ResponseEntity<?> response = productController.deleteProduct(123L);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
     public void testGetProductsByUser_Exception() {
         when(productService.getProductsByUserId(1L)).thenThrow(new RuntimeException("DB error"));
         ResponseEntity<?> response = productController.getProductsByUser(1L);
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(500, response.getStatusCode().value());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class ProductControllerTest {
         when(productService.searchProductsWithFilters(null, null, null, null, null, null, null))
             .thenReturn(List.of(new Product()));
         ResponseEntity<List<Product>> response = productController.searchProductsWithFilters(null, null, null, null, null, null, null);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(1, response.getBody().size());
     }
 
@@ -143,7 +143,7 @@ public void testUpdateProduct_Success() throws IOException {
         "Brand", "New", "123456", List.of(image)
     );
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertTrue(((Map) response.getBody()).get("message").toString().contains("updated"));
 }
 
@@ -157,7 +157,7 @@ public void testUpdateProduct_ProductNotFound() {
         "Brand", "Used", "000", null
     );
 
-    assertEquals(404, response.getStatusCodeValue());
+    assertEquals(404, response.getStatusCode().value());
 }
 
 @Test
@@ -169,7 +169,7 @@ public void testDeleteProduct_Success() {
 
     ResponseEntity<?> response = productController.deleteProduct(5L);
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertTrue(((Map<?, ?>) response.getBody()).get("message").toString().contains("deleted"));
 }
 
@@ -185,7 +185,7 @@ public void testDeleteProduct_Exception() {
 
     ResponseEntity<?> response = productController.deleteProduct(10L);
 
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertTrue(((Map<?, ?>) response.getBody()).get("error").toString().contains("delete"));
 }
 
@@ -200,7 +200,7 @@ public void testGetProductById_Success() {
 
     ResponseEntity<?> response = productController.getProductById(1L);
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertEquals(product, response.getBody());
 }
 
@@ -214,7 +214,7 @@ public void testGetProductsByUserId_Success() {
 
     ResponseEntity<?> response = productController.getProductsByUser(1L);
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertEquals(userProducts, response.getBody());
 }
 
@@ -226,7 +226,7 @@ public void testSearchProducts_Empty() {
 
     ResponseEntity<List<Product>> response = productController.searchProducts("nonexistent");
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertTrue(response.getBody().isEmpty());
 }
 
@@ -241,7 +241,7 @@ public void testSearchWithFilters_AllSet() {
         "tv", "Electronics", "New", "NY", "Samsung", 100.0, 500.0
     );
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertEquals(1, response.getBody().size());
 }
 
@@ -257,7 +257,7 @@ public void testUpdateProduct_WithoutImages() {
             "Brand", "New", "123456", null
     );
 
-    assertEquals(200, response.getStatusCodeValue());
+    assertEquals(200, response.getStatusCode().value());
     assertTrue(((Map<?, ?>) response.getBody()).get("message").toString().contains("updated"));
 }
 
@@ -271,7 +271,7 @@ public void testDeleteProduct_GeneralException() {
 
     ResponseEntity<?> response = productController.deleteProduct(99L);
 
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertTrue(((Map<?, ?>) response.getBody()).get("error").toString().contains("general fail"));
 }
 
@@ -291,7 +291,7 @@ public void testAddProduct_ImageSaveFails() throws IOException {
             "Brand", "New", "123456", 1L, List.of(image)
     );
 
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertTrue(response.getBody().toString().contains("Failed to save image"));
 }
 
@@ -314,7 +314,7 @@ public void testUpdateProduct_ImageSaveFails() throws IOException {
             "Brand", "New", "123456", List.of(image)
     );
 
-    assertEquals(500, response.getStatusCodeValue());
+    assertEquals(500, response.getStatusCode().value());
     assertTrue(response.getBody().toString().contains("Failed to save image"));
 }
 

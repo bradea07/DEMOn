@@ -59,7 +59,7 @@ void setUp() {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
 
         ResponseEntity<Map<String, String>> response = authController.registerUser(request);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
@@ -76,7 +76,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(new User()));
 
         var response = authController.registerUser(request);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
         assertTrue(response.getBody().get("error").contains("Email"));
     }
 
@@ -87,7 +87,7 @@ void setUp() {
         when(captchaValidator.isCaptchaValid("invalid")).thenReturn(false);
 
         var response = authController.registerUser(request);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     // LOGIN TESTS
@@ -108,7 +108,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
 
         var response = authController.loginUser(loginRequest);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertTrue(response.getBody().containsKey("token"));
     }
 
@@ -124,7 +124,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
 
         var response = authController.loginUser(loginRequest);
-        assertEquals(401, response.getStatusCodeValue());
+        assertEquals(401, response.getStatusCode().value());
     }
 
     @Test
@@ -135,7 +135,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
         var response = authController.loginUser(loginRequest);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     // FORGOT PASSWORD
@@ -150,7 +150,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
 
         var response = authController.forgotPassword(new com.ecoswap.dto.ForgotPasswordRequest("ionut@mail.com"));
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
@@ -158,7 +158,7 @@ void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
         var response = authController.forgotPassword(new com.ecoswap.dto.ForgotPasswordRequest("no@mail.com"));
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     // RESET PASSWORD
@@ -173,14 +173,14 @@ void setUp() {
 
         var response = authController.resetPassword(
             new com.ecoswap.dto.ResetPasswordRequest("reset-token-1", "newpass"));
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
     void testResetPassword_InvalidToken() {
         var response = authController.resetPassword(
             new com.ecoswap.dto.ResetPasswordRequest("invalid-token", "newpass"));
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
     }
 
     // CHANGE PASSWORD
@@ -195,7 +195,7 @@ void setUp() {
 
         var request = new com.ecoswap.dto.ChangePasswordRequest("old", "new");
         var response = authController.changePassword(request, "Bearer fake-jwt-token-1");
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     // DELETE ACCOUNT
@@ -208,12 +208,12 @@ void setUp() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         var response = authController.deleteAccount("Bearer fake-jwt-token-1");
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
     void testDeleteAccount_InvalidToken() {
         var response = authController.deleteAccount("Bearer wrong-token");
-        assertEquals(401, response.getStatusCodeValue());
+        assertEquals(401, response.getStatusCode().value());
     }
 }

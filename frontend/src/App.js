@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./App.css";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import SearchPage from "./components/SearchPage";
@@ -69,7 +70,8 @@ function App() {
     
     // Set up an interval to periodically check authentication status
     // This helps ensure consistent state across the application
-    const interval = setInterval(checkAuth, 1000);
+    // Reduced frequency to prevent excessive re-renders
+    const interval = setInterval(checkAuth, 30000); // Check every 30 seconds instead of 1 second
     
     // Clean up listeners on component unmount
     return () => {

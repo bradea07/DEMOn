@@ -81,19 +81,34 @@ const Chats = () => {
     if (location.state && !hasHandledNavigation && 
         (conversations.length > 0 || (location.state.receiverId && location.state.productId))) {
       console.log("Handling navigation state:", location.state);
-      handleNavigationState();
-      setHasHandledNavigation(true);
-      // Don't clear the state yet - we might need it if the first attempt fails
+      
+      // Additional check to prevent handling the same state multiple times
+      const stateKey = `${location.state.receiverId}-${location.state.productId}`;
+      const lastHandled = sessionStorage.getItem('lastHandledNavigation');
+      
+      if (stateKey !== lastHandled) {
+        handleNavigationState();
+        setHasHandledNavigation(true);
+        sessionStorage.setItem('lastHandledNavigation', stateKey);
+      }
     }
   }, [conversations, location.state, hasHandledNavigation]);
 
   // Reset navigation handling flag when location state changes
   useEffect(() => {
-    if (location.state && JSON.stringify(location.state) !== '{}') {
-      console.log("New location state detected, resetting handler flag");
-      setHasHandledNavigation(false);
+    // Only reset the flag if we actually have new navigation parameters
+    if (location.state && location.state.receiverId && location.state.productId && hasHandledNavigation) {
+      const currentStateKey = `${location.state.receiverId}-${location.state.productId}`;
+      const lastHandledKey = sessionStorage.getItem('lastHandledNavigation');
+      
+      // Only reset if this is actually a different navigation
+      if (currentStateKey !== lastHandledKey) {
+        console.log("New location state detected, resetting handler flag");
+        setHasHandledNavigation(false);
+        sessionStorage.setItem('lastHandledNavigation', currentStateKey);
+      }
     }
-  }, [location.state]);
+  }, [location.state, hasHandledNavigation]);
 
   const loadMessages = async (chat) => {
     setSelectedChat(chat);
@@ -118,8 +133,9 @@ const Chats = () => {
       
       // Special handling for new conversations
       if (chat.isNew) {
-        console.log("This is a new conversation - setting empty messages array");
-        setChatMessages([]);
+        console.log("This is a new conversation - keeping current messages, not resetting");
+        // Don't reset messages for new conversations to preserve any messages that were just sent
+        return;
       } else {
         try {
           // Get messages
@@ -168,6 +184,15 @@ const Chats = () => {
     
     if (receiverId && productId && userId) {
       console.log("Auto-opening conversation:", { receiverId, productId, productTitle, sellerUsername });
+      
+      // Check if we already have this conversation selected to avoid duplicates
+      if (selectedChat && 
+          selectedChat.product?.id === parseInt(productId) &&
+          ((selectedChat.receiver?.id === parseInt(receiverId)) || 
+           (selectedChat.sender?.id === parseInt(receiverId)))) {
+        console.log("Conversation already selected, skipping...");
+        return;
+      }
       
       // Try to find existing conversation
       const existingConv = conversations.find(conv => {
@@ -233,12 +258,30 @@ const Chats = () => {
           
           console.log("🔧 Created new conversation object:", newConversation);
           
-          // Add to conversations list and select it
-          setConversations(prev => [newConversation, ...prev]);
-          setSelectedChat(newConversation);
-          setChatMessages([]); // Start with empty messages
+          // Check if we already have this conversation to avoid duplicates
+          const isDuplicate = conversations.some(conv => 
+            conv.product.id === product.id && 
+            ((conv.receiver?.id === receiver.id) || (conv.sender?.id === receiver.id))
+          );
           
-          console.log("New conversation created and selected");
+          if (!isDuplicate) {
+            // Add to conversations list and select it
+            setConversations(prev => [newConversation, ...prev]);
+            setSelectedChat(newConversation);
+            setChatMessages([]); // Start with empty messages only for truly new conversations
+            console.log("New conversation created and selected");
+          } else {
+            console.log("Conversation already exists, not creating duplicate");
+            // Find and select the existing conversation
+            const existing = conversations.find(conv => 
+              conv.product.id === product.id && 
+              ((conv.receiver?.id === receiver.id) || (conv.sender?.id === receiver.id))
+            );
+            if (existing) {
+              setSelectedChat(existing);
+              loadMessages(existing);
+            }
+          }
         } catch (error) {
           console.error("Error creating new conversation:", error);
           alert("Failed to create new conversation. Please try again.");
@@ -354,6 +397,16 @@ const Chats = () => {
 
       if (response.ok) {
         console.log("✅ Message sent successfully");
+        
+        // If this was a new conversation, mark it as no longer new
+        if (selectedChat.isNew) {
+          setSelectedChat(prev => ({
+            ...prev,
+            isNew: false,
+            id: `${userId}-${otherUser.id}-${selectedChat.product.id}` // Give it a proper ID
+          }));
+        }
+        
         // Încorporăm mesajul nou direct în chatMessages pentru a evita reîncărcarea
         const sentMessage = {
           ...msg,
@@ -373,28 +426,38 @@ const Chats = () => {
         // Resetăm câmpul de mesaj
         setNewMessage("");
         
-        // Actualizăm și lista de conversații pentru a reflecta noua ordine
-        const getConversations = async () => {
+        // Clear navigation state immediately after first message to prevent recreation
+        if (location.state) {
+          console.log("✅ Clearing navigation state after successful message");
+          window.history.replaceState({}, document.title);
+        }
+        
+        // Actualizăm și lista de conversații pentru a reflecta noua ordine (după un delay)
+        setTimeout(async () => {
           try {
             const res = await fetch(`http://localhost:8080/messages/conversations/${userId}`);
             if (res.ok) {
               const data = await res.json();
               if (Array.isArray(data)) {
                 setConversations(data);
+                
+                // Find the real conversation that was just created and update selectedChat
+                const realConversation = data.find(conv => {
+                  const otherUserId = conv.sender.id === userId ? conv.receiver.id : conv.sender.id;
+                  return otherUserId === parseInt(otherUser.id) && conv.product.id === parseInt(selectedChat.product.id);
+                });
+                
+                if (realConversation) {
+                  console.log("🔄 Updating to real conversation:", realConversation);
+                  setSelectedChat(realConversation);
+                }
               }
             }
           } catch (err) {
             console.error("Error updating conversations after send:", err);
           }
-        };
-        getConversations();
+        }, 1000); // Delay to ensure backend has processed the message
         
-        // After successfully sending a message, clear the navigation state
-        // to avoid recreating the conversation if the user refreshes
-        if (selectedChat.isNew && location.state) {
-          console.log("✅ Clearing navigation state after successful message");
-          window.history.replaceState({}, document.title);
-        }
       } else {
         // 🔍 DEBUG: Log the exact error response
         console.error("❌ Failed to send message:", {
@@ -432,18 +495,24 @@ const Chats = () => {
   
   // Adăugăm efectul pentru actualizarea automată a mesajelor din conversația curentă
   useEffect(() => {
-    if (selectedChat) {
-      // Prima încărcare a mesajelor
+    if (selectedChat && !selectedChat.isNew) {
+      // Prima încărcare a mesajelor doar pentru conversații existente
       loadMessages(selectedChat);
       
-      // Actualizare automată la fiecare 5 secunde
+      // Actualizare automată la fiecare 5 secunde doar pentru conversații existente
       const messageInterval = setInterval(() => {
-        loadMessages(selectedChat);
+        if (!selectedChat.isNew) { // Double check to avoid loading during conversation creation
+          loadMessages(selectedChat);
+        }
       }, 5000);
       
       return () => clearInterval(messageInterval);
+    } else if (selectedChat && selectedChat.isNew) {
+      // For new conversations, just ensure we have an empty message array
+      // Don't call loadMessages as it will reset to empty anyway
+      console.log("Selected new conversation - keeping existing messages");
     }
-  }, [selectedChat?.product?.id, selectedChat?.sender?.id, selectedChat?.receiver?.id]);
+  }, [selectedChat?.product?.id, selectedChat?.sender?.id, selectedChat?.receiver?.id, selectedChat?.isNew]);
 
   // Funcție pentru a face scroll automat la cel mai nou mesaj
   const scrollToBottom = () => {

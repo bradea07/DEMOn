@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Import Spring Boot defaults -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <!-- Set root logger level to error to reduce noise -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- Suppress warning messages from specific packages -->
+    <logger name="org.springframework.boot.autoconfigure" level="ERROR"/>
+    <logger name="org.springframework.context.annotation" level="ERROR"/>
+    <logger name="org.springframework.web.servlet.mvc.method.annotation" level="ERROR"/>
+    <logger name="org.springframework.boot.context.properties" level="ERROR"/>
+    
+    <!-- Suppress specific warnings related to boot version -->
+    <logger name="org.springframework.boot.info" level="ERROR"/>
+</configuration>
