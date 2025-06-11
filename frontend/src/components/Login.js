@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-
+//Login component allows users to log in with username or email and password
 const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",

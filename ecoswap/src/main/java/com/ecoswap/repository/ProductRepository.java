@@ -11,7 +11,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 🔍 Căutare după titlu (search bar)
     List<Product> findByTitleContainingIgnoreCase(String keyword);
 
-    // 👤 Produse postate de un anumit user
+    // Products by user
     List<Product> findByUserId(Long userId);
     
     // For recommendations
@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // For recommendations
     List<Product> findByBrandIgnoreCaseOrderByIdDesc(String brand);
     
-    // 🔍 Advanced search with filters
+    // Advanced search with filters
     @Query("SELECT p FROM Product p WHERE " +
            "(:query IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%'))) AND " +
            "(:category IS NULL OR :category = '' OR p.category = :category) AND " +
@@ -39,9 +39,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("maxPrice") Double maxPrice
     );
     
-    // Find products ordered by creation date (newest first)
+
     List<Product> findByOrderByCreatedAtDesc();
     
-    // Find products created after a specific date
+    
     List<Product> findByCreatedAtAfterOrderByCreatedAtDesc(Date date);
 }

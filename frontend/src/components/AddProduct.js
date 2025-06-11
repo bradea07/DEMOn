@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../AddProduct.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faUpload } from '@fortawesome/free-solid-svg-icons';
+// React component for adding new product listings 
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({

@@ -73,7 +73,7 @@ public class NotificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0L);
         }
     }
-      // Get unread notification count for a user (alternative endpoint - returns integer)
+      // Get unread notification count for a user
     @GetMapping("/unread/{userId}")
     public ResponseEntity<Integer> getUnreadNotificationCountInteger(@PathVariable Long userId) {
         try {
@@ -165,7 +165,7 @@ public class NotificationController {
             @RequestParam(required = false) Long raterUserId,
             @RequestParam int ratingScore) {
         try {
-            // For anonymous ratings, use null for raterUserId (will be handled by service)
+            // For anonymous ratings, use null for raterUserId 
             notificationService.createRatingReceivedNotification(recipientUserId, raterUserId, ratingScore);
             return ResponseEntity.ok(Map.of("message", "Test rating notification created successfully"));
         } catch (Exception e) {

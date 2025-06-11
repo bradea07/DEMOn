@@ -1,5 +1,7 @@
 package com.ecoswap.dto;
 
+//DTO for reset password request containing token and new password
+
 public class ResetPasswordRequest {
     private String token;
     private String newPassword;

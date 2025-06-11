@@ -80,6 +80,6 @@ public class UserRecommendationHistory {
 
     public void incrementCount() {
         this.recommendationCount++;
-        this.recommendedAt = new Date(); // Update timestamp
+        this.recommendedAt = new Date(); 
     }
 }

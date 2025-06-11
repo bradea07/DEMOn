@@ -68,9 +68,7 @@ function App() {
     // Listen for storage events (when localStorage changes)
     window.addEventListener("storage", checkAuth);
     
-    // Set up an interval to periodically check authentication status
-    // This helps ensure consistent state across the application
-    // Reduced frequency to prevent excessive re-renders
+    
     const interval = setInterval(checkAuth, 30000); // Check every 30 seconds instead of 1 second
     
     // Clean up listeners on component unmount

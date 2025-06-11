@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+// Entity representing a rating given by a user to a seller
 @Entity
 @Table(name = "ratings")
 @Getter

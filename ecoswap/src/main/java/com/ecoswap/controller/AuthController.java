@@ -41,7 +41,7 @@ public class AuthController {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    // ✅ SIGNUP
+    //  SIGNUP
     @PostMapping("/signup")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody SignupRequest signupRequest) {
         if (!captchaValidator.isCaptchaValid(signupRequest.getCaptcha())) {
@@ -79,7 +79,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
-    // ✅ LOGIN
+    //  LOGIN
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User loginRequest) {
         System.out.println("Received login request for: " + loginRequest.getEmail());
@@ -121,7 +121,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // ✅ FORGOT PASSWORD (email link)
+    //  FORGOT PASSWORD (email link)
     @PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
@@ -144,7 +144,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "If an account with that email exists, you will receive reset instructions."));
     }
 
-    // ✅ RESET PASSWORD
+    //  RESET PASSWORD
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest request) {
         String token = request.getToken();
@@ -171,7 +171,7 @@ public class AuthController {
         }
     }
     
-    // ✅ CHANGE PASSWORD
+    //  CHANGE PASSWORD
     @PostMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request,
                                                              @RequestHeader("Authorization") String authHeader) {
@@ -214,7 +214,7 @@ public class AuthController {
         }
     }
     
-    // ✅ DELETE ACCOUNT
+    //  DELETE ACCOUNT
     @DeleteMapping("/delete-account")
     public ResponseEntity<Map<String, String>> deleteAccount(@RequestHeader("Authorization") String authHeader) {
         // Extract token from Authorization header

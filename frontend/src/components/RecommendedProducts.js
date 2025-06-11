@@ -4,18 +4,18 @@ import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 import "../RecommendedProducts.css";
 
-// Cache pentru recomandări ca să evităm reîncărcarea între navigări
+// Cache for recommendations
 const recommendationsCache = {
   data: {},
   timestamp: {},
-  CACHE_DURATION: 1000 * 60 * 1, // Reduced to 1 minute for more frequent updates
-  forceRefresh: true // Flag to force refresh - start with true to force initial fetch
+  CACHE_DURATION: 1000 * 60 * 1, 
+  forceRefresh: true 
 };
 
 const RecommendedProducts = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0); // Add a refresh key for forcing updates
+  const [refreshKey, setRefreshKey] = useState(0); 
   const { currentUser } = useContext(AuthContext);  useEffect(() => {
     const fetchRecommendations = async () => {
       if (!currentUser || !currentUser.id) {
@@ -45,13 +45,12 @@ const RecommendedProducts = () => {
                      (now - recommendationsCache.timestamp[userId] < recommendationsCache.CACHE_DURATION)
       });
       
-      // Verifică dacă avem recomandări în cache și dacă sunt încă valide
+      //Verify if we have cached recommendations for this user and they are still valid
       if (
-        !recommendationsCache.forceRefresh && // Don't use cache if force refresh is true
-        recommendationsCache.data[userId] && 
+        !recommendationsCache.forceRefresh && 
         recommendationsCache.timestamp[userId] && 
         now - recommendationsCache.timestamp[userId] < recommendationsCache.CACHE_DURATION &&
-        recommendationsCache.data[userId].length === 8 // Asigură-te că avem exact 8 recomandări
+        recommendationsCache.data[userId].length === 8 
       ) {
         // Folosește recomandările din cache
         console.log(`Using cached recommendations for user ID: ${userId}`);
@@ -60,7 +59,6 @@ const RecommendedProducts = () => {
         return;
       }
       
-      // Reset force refresh flag
       recommendationsCache.forceRefresh = false;      try {
         setLoading(true);
         // Ensure userId is properly formatted - convert to number if it's a string
@@ -72,9 +70,7 @@ const RecommendedProducts = () => {
           if (response.data && Array.isArray(response.data)) {
           console.log(`Received ${response.data.length} recommendations`);
           
-          // Verifică dacă avem exact 8 recomandări
           if (response.data.length === 8) {
-            // Salvează recomandările în cache
             recommendationsCache.data[userId] = response.data;
             recommendationsCache.timestamp[userId] = now;
             
@@ -171,7 +167,6 @@ const RecommendedProducts = () => {
   );
 };
 
-// Exportăm această funcție pentru a putea fi apelată din alte componente
 export const invalidateRecommendationsCache = (userId) => {
   if (userId) {
     delete recommendationsCache.data[userId];
@@ -185,7 +180,6 @@ export const invalidateRecommendationsCache = (userId) => {
     console.log('Invalidated all recommendations cache');
   }
   
-  // Return true to indicate successful invalidation
   return true;
 };
 

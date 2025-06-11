@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+// Entity representing a user's search history
 @Entity
 @Table(name = "search_history")
 @Getter

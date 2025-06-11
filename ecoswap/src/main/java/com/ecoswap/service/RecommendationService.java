@@ -28,7 +28,7 @@ public class RecommendationService {
     @Autowired
     private UserRecommendationHistoryRepository recommendationHistoryRepository;
       // Un factor pentru diversificarea recomandărilor (redus pentru mai multă consistență)
-    private static final double DIVERSIFICATION_FACTOR = 0.15; // 15% șansa de a include produse noi/diverse
+    //private static final double DIVERSIFICATION_FACTOR = 0.15; // 15% șansa de a include produse noi/diverse
     
     // Numărul maxim de recomandări pentru același produs
     private static final int MAX_RECOMMENDATION_REPETITIONS = 5;

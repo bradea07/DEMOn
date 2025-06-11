@@ -5,7 +5,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-
+//Google Captcha API integration for validating reCAPTCHA tokens
 @Component
 public class CaptchaValidator {
 
@@ -20,14 +20,14 @@ public class CaptchaValidator {
         params.put("response", token);
 
         try {
-            System.out.println("Verifying CAPTCHA with token: " + token); // ✅ debug
+            System.out.println("Verifying CAPTCHA with token: " + token); // debug
             Map response = restTemplate.postForObject(
                     VERIFY_URL + "?secret={secret}&response={response}",
                     null,
                     Map.class,
                     params
             );
-            System.out.println("Google CAPTCHA response: " + response); // ✅ show the response
+            System.out.println("Google CAPTCHA response: " + response); 
 
             return (Boolean) response.get("success");
         } catch (Exception e) {

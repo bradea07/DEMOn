@@ -1,5 +1,8 @@
 package com.ecoswap.dto;
 
+
+
+// DTO for forgot password request containing user email
 public class ForgotPasswordRequest {
     private String email;
 

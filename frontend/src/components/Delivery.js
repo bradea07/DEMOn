@@ -157,7 +157,7 @@ const createShipment = async (e) => {
 
     console.log("Request data:", requestData);
 
-    // Trimitere către Shippo API
+    // sending request to Shippo API
     const response = await axios.post(
       'https://api.goshippo.com/shipments/',
       requestData,
@@ -172,7 +172,6 @@ const createShipment = async (e) => {
     console.log("Shipment created:", response.data);
     setShipment(response.data);
 
-    // Obținere tarife pentru transport
     if (response.data.object_id) {
       console.log("Fetching rates for shipment:", response.data.object_id);
       const ratesResponse = await axios.get(
@@ -226,11 +225,11 @@ const handleFinalConfirmation = async () => {
     // Log the data we're about to save
     console.log('Saving shipment data to rating:', ratingData);
     
-    // Get the rating ID from localStorage or context
-    // For this example, we'll assume the rating ID is 1 (you would need to get this from your app's state)
-    const ratingId = 1; // Replace with actual rating ID from your app state
+   
     
-    // Call the rating API endpoint to update shipment info
+    const ratingId = 1; 
+    
+    
     const ratingResponse = await axios.post(
       `http://localhost:8080/api/ratings/update-shipment/${ratingId}`,
       ratingData,
@@ -241,7 +240,7 @@ const handleFinalConfirmation = async () => {
       }
     );
     
-    // Additionally, save the complete shipping transaction
+    // save the complete shipping transaction
     const shippingTransaction = {
       shipmentId: shipment.object_id,
       rateId: selectedRate.object_id,

@@ -25,7 +25,7 @@ public class ShippingController {
     public ShippingController(ShippingService shippingService) {
         this.shippingService = shippingService;
     }
-    
+    // Create a new shipment through Shippo API
     @PostMapping("/shipments")
     public ResponseEntity<?> createShipment(@RequestBody Map<String, Object> shipmentRequest) {
         try {
@@ -48,7 +48,7 @@ public class ShippingController {
                 .body(Map.of("error", e.getMessage()));
         }
     }
-    
+    // Get shipping rates for a specific shipment
     @GetMapping("/rates/{shipmentId}")
     public ResponseEntity<?> getShipmentRates(@PathVariable String shipmentId) {
         try {
@@ -75,7 +75,7 @@ public class ShippingController {
                 .body(Map.of("error", e.getMessage()));
         }
     }
-    
+    // Create and save shipping transaction with email confirmation
     @PostMapping("/transactions")
     public ResponseEntity<?> createShippingTransaction(@RequestBody ShippingTransactionDTO transactionDTO) {
         try {
@@ -96,13 +96,13 @@ public class ShippingController {
                 .body(Map.of("error", e.getMessage()));
         }
     }
-    
+     // Get all shipping transactions
     @GetMapping("/transactions")
     public ResponseEntity<List<ShippingTransactionDTO>> getAllShippingTransactions() {
         List<ShippingTransactionDTO> transactions = shippingService.getAllShippingTransactions();
         return ResponseEntity.ok(transactions);
     }
-    
+    // Get shipping transaction by ID
     @GetMapping("/transactions/{id}")
     public ResponseEntity<?> getShippingTransactionById(@PathVariable Long id) {
         try {
@@ -113,7 +113,7 @@ public class ShippingController {
                 .body(Map.of("error", e.getMessage()));
         }
     }
-    
+     // Get shipping transaction by Shippo shipment ID
     @GetMapping("/transactions/shipment/{shipmentId}")
     public ResponseEntity<?> getShippingTransactionByShipmentId(@PathVariable String shipmentId) {
         try {

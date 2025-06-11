@@ -23,13 +23,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ✅ 1. Get user profile by ID
+    //  Get user profile by ID
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserProfile(id));
     }
 
-    // ✅ 2. Update user profile
+    //   Update user profile
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUserProfile(@PathVariable Long id,
                                                     @RequestBody UserDTO dto) {
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok("Profile updated successfully.");
     }
 
-    // ✅ 3. Upload profile picture (returns image URL)
+    //  3. Upload profile picture (returns image URL)
     @PostMapping("/upload")
     public ResponseEntity<String> uploadProfilePic(@RequestParam("file") MultipartFile file) throws IOException {
         String uploadDirPath = System.getProperty("user.dir") + "/uploads/";

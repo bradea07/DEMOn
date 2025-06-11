@@ -11,22 +11,21 @@ const MapComponent = () => {
   const [isLoadingRecyclingPoints, setIsLoadingRecyclingPoints] = useState(false);
   const [directions, setDirections] = useState(null);
   const [showDirections, setShowDirections] = useState(false);
-  const [visiblePointsLimit, setVisiblePointsLimit] = useState(null); // null means show all points
-  const [locationStatus, setLocationStatus] = useState('pending'); // 'pending', 'success', 'error'
-  const [watchId, setWatchId] = useState(null); // For continuous location tracking
-  const [distanceFilter, setDistanceFilter] = useState(5000); // Default to 5km
-  const [directionsStatus, setDirectionsStatus] = useState('idle'); // 'idle', 'loading', 'error'
-  const [allRecyclingPoints, setAllRecyclingPoints] = useState([]); // Store all points for filtering
-  const [locationInput, setLocationInput] = useState(''); // For custom location input
-  const [searchedLocation, setSearchedLocation] = useState(null); // For storing geocoded location
-  const [autocompleteService, setAutocompleteService] = useState(null); // For Google Places Autocomplete
-  const [autocompleteResults, setAutocompleteResults] = useState([]); // For storing autocomplete suggestions
-  const [showAutocomplete, setShowAutocomplete] = useState(false); // For showing/hiding autocomplete dropdown
-  const [nearestPoint, setNearestPoint] = useState(null); // For storing the nearest recycling point
-  const [markerAnimation, setMarkerAnimation] = useState(null); // For marker animation
-  const [locationUpdated, setLocationUpdated] = useState(false); // For showing location updated notification
-  const mapRef = React.useRef(null); // Reference to the Google Map instance
-  
+  const [visiblePointsLimit, setVisiblePointsLimit] = useState(null); 
+  const [locationStatus, setLocationStatus] = useState('pending'); 
+  const [watchId, setWatchId] = useState(null); 
+  const [distanceFilter, setDistanceFilter] = useState(5000); 
+  const [directionsStatus, setDirectionsStatus] = useState('idle'); 
+  const [allRecyclingPoints, setAllRecyclingPoints] = useState([]); 
+  const [locationInput, setLocationInput] = useState(''); 
+  const [searchedLocation, setSearchedLocation] = useState(null); 
+  const [autocompleteService, setAutocompleteService] = useState(null); 
+  const [autocompleteResults, setAutocompleteResults] = useState([]); 
+  const [showAutocomplete, setShowAutocomplete] = useState(false); 
+  const [nearestPoint, setNearestPoint] = useState(null); 
+  const [markerAnimation, setMarkerAnimation] = useState(null); 
+  const [locationUpdated, setLocationUpdated] = useState(false); 
+  const mapRef = React.useRef(null); 
   // Map container style
   const mapContainerStyle = {
     width: '100%',
@@ -153,9 +152,9 @@ const MapComponent = () => {
       
       // Set geolocation options to get the most accurate position possible
       const geoOptions = {
-        enableHighAccuracy: true, // Use GPS when available for high accuracy
-        timeout: 15000,          // Wait up to 15 seconds for a response
-        maximumAge: 0            // Don't use cached position, always get fresh location
+        enableHighAccuracy: true, 
+        timeout: 15000,          
+        maximumAge: 0            
       };
       
       // Success handler for geolocation
@@ -171,28 +170,23 @@ const MapComponent = () => {
         setCurrentPosition(userPosition);
         setLocationStatus('success');
         
-        // Set initial animation for the marker
-        // ✅ FIX for the error: Cannot read properties of undefined (reading 'DROP')
-// Place this inside the geoSuccess function where you set the animation
-if (window.google && window.google.maps && window.google.maps.Animation) {
-  setMarkerAnimation(window.google.maps.Animation.DROP);
-  setTimeout(() => setMarkerAnimation(null), 2000);
-} else {
-  console.warn("google.maps.Animation.DROP is not available yet");
-  setMarkerAnimation(null); // fallback or avoid setting it
-}
+        
+    if (window.google && window.google.maps && window.google.maps.Animation) {
+      setMarkerAnimation(window.google.maps.Animation.DROP);
+      setTimeout(() => setMarkerAnimation(null), 2000);
+  } else {
+     console.warn("google.maps.Animation.DROP is not available yet");
+    setMarkerAnimation(null); 
+  }
 
         
-        // NOTE: We don't automatically fetch recycling points anymore
-        // User must manually search for a location or use "Find My Location" button
+        
       };
       
-      // Error handler for geolocation
       const geoError = (error) => {
         console.error("Geolocation error:", error);
         setLocationStatus('error');
         
-        // Show specific error messages based on the error code
         switch(error.code) {
           case error.PERMISSION_DENIED:
             alert("Please allow location access to find recycling points near you. The app needs your location to work properly.");
@@ -208,7 +202,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
         }
       };
       
-      // Request the user's real-time position with our improved options and handlers
       navigator.geolocation.getCurrentPosition(
         geoSuccess, 
         geoError,
@@ -224,7 +217,6 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
   // Watch for location changes
   useEffect(() => {
     if (navigator.geolocation && locationStatus === 'success') {
-      // Update current position every 10 seconds
       const id = navigator.geolocation.watchPosition(
         (position) => {
           const userPosition = {
@@ -234,23 +226,22 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
           
           setCurrentPosition(userPosition);
           
-          // Optionally, fetch recycling points again if needed
-          //fetchRecyclingPoints(userPosition);
+          
         },
         (error) => {
           console.error("Error watching position:", error);
         },
         {
           enableHighAccuracy: true,
-          maximumAge: 10000, // Accept cached position if less than 10 seconds old
+          maximumAge: 10000, 
           timeout: 10000
         }
       );
       
-      // Save the watch ID so we can clear it later
+      
       setWatchId(id);
       
-      // Clear the watch on component unmount
+      
       return () => {
         navigator.geolocation.clearWatch(id);
       };
@@ -376,8 +367,7 @@ if (window.google && window.google.maps && window.google.maps.Animation) {
     setDistanceFilter(distance);
     setVisiblePointsLimit(distance);
     
-    // Update the recycling points state with the filtered and sorted points
-    // Also update the distanceFromUser property for display in the UI
+    
     const pointsWithFormattedDistance = filteredPoints.map(point => ({
       ...point,
       distanceFromUser: (point.distanceMeters / 1000).toFixed(2) // Convert to km with 2 decimal places

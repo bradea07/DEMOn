@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    // ✅ NEW FIELDS
+   
     private String phone;
     private String city;
     private String profilePic;

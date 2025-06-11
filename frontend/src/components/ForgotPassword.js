@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+//ForgotPassword component allows users to request a password reset link
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");

@@ -49,5 +49,5 @@ export const getDistance = (point1, point2) => {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   const distance = R * c;
   
-  return distance; // in kilometers
+  return distance; 
 };

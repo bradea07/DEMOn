@@ -18,12 +18,14 @@ public class FavoriteController {
     public FavoriteController(FavoriteService favoriteService) {
         this.favoriteService = favoriteService;
     }
-
+ // Get all favorites for a specific user
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<FavoriteDTO>> getUserFavorites(@PathVariable Long userId) {
         List<FavoriteDTO> favorites = favoriteService.getUserFavorites(userId);
         return ResponseEntity.ok(favorites);
     }
+    
+        // Add a product to user's favorites
 
     @PostMapping("/add")
     public ResponseEntity<?> addToFavorites(@RequestBody Map<String, Long> request) {
@@ -37,7 +39,7 @@ public class FavoriteController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+        // Remove a product from user's favorites
     @DeleteMapping("/remove")
     public ResponseEntity<?> removeFromFavorites(@RequestBody Map<String, Long> request) {
         try {
@@ -50,7 +52,7 @@ public class FavoriteController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+        // Check if a product is favorited by a user
     @GetMapping("/check/{userId}/{productId}")
     public ResponseEntity<Map<String, Boolean>> checkFavorite(@PathVariable Long userId, @PathVariable Long productId) {
         boolean isFavorited = favoriteService.isFavorited(userId, productId);

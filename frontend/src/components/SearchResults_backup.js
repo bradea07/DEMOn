@@ -368,9 +368,7 @@ const SearchResults = () => {
         </div>
       )}
     </div>
-  </div>
-);
-
+  );
 };
 
 export default SearchResults;

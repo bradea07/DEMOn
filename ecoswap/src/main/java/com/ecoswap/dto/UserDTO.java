@@ -3,6 +3,7 @@ package com.ecoswap.dto;
 import com.ecoswap.model.User;
 import lombok.*;
 
+// DTO for user data transfer without sensitive information
 @Getter
 @Setter
 @NoArgsConstructor

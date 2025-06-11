@@ -29,7 +29,7 @@ public class FavoriteDTO {
         this.productPrice = favorite.getProduct().getPrice();
         this.createdAt = favorite.getCreatedAt();
         
-        // Get first image URL if available
+        // Get main (first) image URL 
         if (favorite.getProduct().getImageUrls() != null && !favorite.getProduct().getImageUrls().isEmpty()) {
             this.productImageUrl = favorite.getProduct().getImageUrls().get(0);
         }

@@ -32,7 +32,7 @@ public class Product {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // ✅ Store multiple image URLs
+    //  Store multiple image URLs
     @ElementCollection
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
@@ -46,7 +46,7 @@ public class Product {
         }
     }
 
-    // ✅ Getters and Setters
+    //  Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -74,12 +74,12 @@ public class Product {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public Date getCreatedAt() { return createdAt; }  // ✅ Get product creation timestamp
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }  // ✅ Set product creation timestamp
+    public Date getCreatedAt() { return createdAt; }  
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }  
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
-    public List<String> getImageUrls() { return imageUrls; }  // ✅ Store multiple images
+    public List<String> getImageUrls() { return imageUrls; }  
     public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
 }

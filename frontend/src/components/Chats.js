@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUnreadMessages } from "../contexts/UnreadMessagesContext";
 import "./Chats.css";
-
+//REACT COMPONENT FOR CHAT FUNCTIONALITY
 const Chats = () => {
   const location = useLocation();
   const [conversations, setConversations] = useState([]);
@@ -13,7 +13,7 @@ const Chats = () => {
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [hasHandledNavigation, setHasHandledNavigation] = useState(false);
-  const messagesEndRef = useRef(null); // Referință pentru scrollul automat
+  const messagesEndRef = useRef(null);
   
   const { markChatAsRead, checkUnreadMessages } = useUnreadMessages();
 
@@ -67,7 +67,7 @@ const Chats = () => {
       getConversations();
       
       // Update unread messages periodically
-      const interval = setInterval(getConversations, 10000); // Every 10 seconds pentru o experiență mai reactivă
+      const interval = setInterval(getConversations, 10000); 
       
       return () => clearInterval(interval);
     }
@@ -96,12 +96,12 @@ const Chats = () => {
 
   // Reset navigation handling flag when location state changes
   useEffect(() => {
-    // Only reset the flag if we actually have new navigation parameters
+   
     if (location.state && location.state.receiverId && location.state.productId && hasHandledNavigation) {
       const currentStateKey = `${location.state.receiverId}-${location.state.productId}`;
       const lastHandledKey = sessionStorage.getItem('lastHandledNavigation');
       
-      // Only reset if this is actually a different navigation
+      
       if (currentStateKey !== lastHandledKey) {
         console.log("New location state detected, resetting handler flag");
         setHasHandledNavigation(false);
@@ -134,7 +134,7 @@ const Chats = () => {
       // Special handling for new conversations
       if (chat.isNew) {
         console.log("This is a new conversation - keeping current messages, not resetting");
-        // Don't reset messages for new conversations to preserve any messages that were just sent
+        
         return;
       } else {
         try {
@@ -142,7 +142,7 @@ const Chats = () => {
           const res = await fetch(`http://localhost:8080/messages/product/${chat.product.id}`);
           
           if (!res.ok) {
-            // Handle non-successful response
+            
             if (res.status === 400) {
               console.log("No messages found for this product yet - setting empty array");
               setChatMessages([]);
@@ -158,7 +158,7 @@ const Chats = () => {
                 (msg.sender.id === chat.sender.id || msg.receiver.id === chat.sender.id)
             );
             
-            // Sortare cronologică a mesajelor - cele mai vechi primele
+            // Sort messages by timestamp
             const sortedMessages = filtered.sort((a, b) => 
               new Date(a.timestamp) - new Date(b.timestamp)
             );
@@ -166,7 +166,7 @@ const Chats = () => {
           }
         } catch (err) {
           console.error("Error loading messages:", err);
-          // Set empty messages array on error to avoid UI breaking
+          
           setChatMessages([]);
         }
       }
@@ -297,7 +297,7 @@ const Chats = () => {
 
     setIsSending(true);
 
-    // 🛠️ IMPROVED: Better logic to determine the receiver
+    
     let otherUser;
     
     console.log("🔍 DEBUG selectedChat structure:", {
@@ -319,7 +319,7 @@ const Chats = () => {
       console.log("📝 Using determined receiver from EXISTING conversation:", otherUser);
     }
 
-    // 🧠 ADDITIONAL SAFETY: Validate that otherUser exists and has an ID
+   
     if (!otherUser) {
       console.error("❌ Cannot determine receiver - missing receiver object");
       alert("Error: Couldn't determine message recipient. Please refresh and try again.");
@@ -363,7 +363,7 @@ const Chats = () => {
       content: newMessage,
     };
 
-    // 🧪 DEBUG: Log the payload to verify all IDs are present
+ 
     console.log("📤 Sending message payload:", msg);
     console.log("🔍 Payload validation:", {
       userId: userId,
@@ -376,7 +376,7 @@ const Chats = () => {
       otherUser: otherUser
     });
 
-    // Validate required fields before sending
+    
     if (!msg.sender.id || !msg.receiver.id || !msg.product.id || !msg.content.trim()) {
       console.error("❌ Missing required fields:", {
         senderId: msg.sender.id,
@@ -398,19 +398,19 @@ const Chats = () => {
       if (response.ok) {
         console.log("✅ Message sent successfully");
         
-        // If this was a new conversation, mark it as no longer new
+        
         if (selectedChat.isNew) {
           setSelectedChat(prev => ({
             ...prev,
             isNew: false,
-            id: `${userId}-${otherUser.id}-${selectedChat.product.id}` // Give it a proper ID
+            id: `${userId}-${otherUser.id}-${selectedChat.product.id}` 
           }));
         }
         
-        // Încorporăm mesajul nou direct în chatMessages pentru a evita reîncărcarea
+       
         const sentMessage = {
           ...msg,
-          id: Date.now(), // ID temporar
+          id: Date.now(), 
           timestamp: new Date().toISOString(),
           sender: {
             ...loggedInUser,
@@ -420,10 +420,10 @@ const Chats = () => {
           product: selectedChat.product
         };
         
-        // Adăugăm direct mesajul în lista locală pentru afișare instantă
+        
         setChatMessages(prevMessages => [...prevMessages, sentMessage]);
         
-        // Resetăm câmpul de mesaj
+       
         setNewMessage("");
         
         // Clear navigation state immediately after first message to prevent recreation
@@ -432,7 +432,7 @@ const Chats = () => {
           window.history.replaceState({}, document.title);
         }
         
-        // Actualizăm și lista de conversații pentru a reflecta noua ordine (după un delay)
+        
         setTimeout(async () => {
           try {
             const res = await fetch(`http://localhost:8080/messages/conversations/${userId}`);
@@ -459,7 +459,7 @@ const Chats = () => {
         }, 1000); // Delay to ensure backend has processed the message
         
       } else {
-        // 🔍 DEBUG: Log the exact error response
+        
         console.error("❌ Failed to send message:", {
           status: response.status,
           statusText: response.statusText
@@ -493,13 +493,10 @@ const Chats = () => {
     return user.profilePic;
   };
   
-  // Adăugăm efectul pentru actualizarea automată a mesajelor din conversația curentă
   useEffect(() => {
     if (selectedChat && !selectedChat.isNew) {
-      // Prima încărcare a mesajelor doar pentru conversații existente
       loadMessages(selectedChat);
       
-      // Actualizare automată la fiecare 5 secunde doar pentru conversații existente
       const messageInterval = setInterval(() => {
         if (!selectedChat.isNew) { // Double check to avoid loading during conversation creation
           loadMessages(selectedChat);
@@ -514,16 +511,16 @@ const Chats = () => {
     }
   }, [selectedChat?.product?.id, selectedChat?.sender?.id, selectedChat?.receiver?.id, selectedChat?.isNew]);
 
-  // Funcție pentru a face scroll automat la cel mai nou mesaj
+  
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   };
   
-  // Apelăm scroll automat când se modifică lista de mesaje
+ 
   useEffect(() => {
-    // Folosim un timeout scurt pentru a ne asigura că scrollul se face după renderizare
+   
     const timeoutId = setTimeout(() => {
       scrollToBottom();
     }, 100);

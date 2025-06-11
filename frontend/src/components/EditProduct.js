@@ -49,11 +49,11 @@ const EditProduct = () => {
           location: data.location,
           price: data.price,
           brand: data.brand,
-          product_condition: data.productCondition, // Mapping correct
+          product_condition: data.productCondition, 
           phone: data.phone || "",
         });
         
-        // Load existing images if available
+        
         if (data.images && data.images.length > 0) {
           setExistingImages(data.images.map(img => ({
             id: img.id,
@@ -154,12 +154,12 @@ const EditProduct = () => {
       }
 
       setMessage("✅ Product updated successfully!");
-      setTimeout(() => setMessage(""), 4000); // message disappears after 4 seconds
+      setTimeout(() => setMessage(""), 4000); 
     } catch (error) {
       setMessage(`❌ Failed to update product: ${error.message}`);
     } finally {
       setIsSubmitting(false);
-      // Scroll to top to show message
+     
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../Styles/MyProfile.css";
 
-// 👉 Section components
+
 import AccountInfo from "./sections/AccountInfo";
 import MyListings from "./sections/MyListings";
 import Favorites from "./sections/Favorites";

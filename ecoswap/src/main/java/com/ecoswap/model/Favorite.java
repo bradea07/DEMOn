@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+
+//Entity representing a user's favorite product
 @Entity
 @Table(name = "favorites")
 @Getter

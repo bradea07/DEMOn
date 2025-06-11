@@ -25,7 +25,7 @@ public class Message {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
     
-    @ManyToOne  // ✅ Added Product Relationship
+    @ManyToOne  // Added Product Relationship
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
     
@@ -33,15 +33,15 @@ public class Message {
     private LocalDateTime timestamp = LocalDateTime.now(); // Auto-assign timestamp
     private boolean isRead = false; // Flag to track if a message has been read
 
-    // ✅ Getter for Sender ID
+    //  Getter for Sender ID
     public Long getSenderId() {
         return sender != null ? sender.getId() : null;
     }
 
-    // ✅ Getter for Receiver ID
+    //  Getter for Receiver ID
     public Long getReceiverId() {
         return receiver != null ? receiver.getId() : null;
-    }    // ✅ Getter for Product ID
+    }    //  Getter for Product ID
     public Long getProductId() {
         return product != null ? product.getId() : null;
     }

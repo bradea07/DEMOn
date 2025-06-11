@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+//Rating user DTO
 @Getter
 @Setter
 @NoArgsConstructor

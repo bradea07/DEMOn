@@ -57,11 +57,11 @@ public ResponseEntity<?> addProduct(
                 .body(Map.of("error", "At least one product image is required."));
     }
 
-    // ✅ Use an absolute path for the uploads directory
+    //  Use an absolute path for the uploads directory
     String uploadDirPath = System.getProperty("user.dir") + "/uploads/";
     File uploadDir = new File(uploadDirPath);
 
-    // ✅ Ensure the upload directory exists
+    //  Ensure the upload directory exists
     if (!uploadDir.exists()) {
         boolean created = uploadDir.mkdirs();
         if (!created) {
@@ -70,7 +70,7 @@ public ResponseEntity<?> addProduct(
         }
     }
 
-    // ✅ Save multiple images correctly
+    //  Save multiple images correctly
     List<String> imagePaths = new ArrayList<>();
     if (images != null) {
         for (MultipartFile image : images) {
@@ -81,7 +81,7 @@ public ResponseEntity<?> addProduct(
                     File file = new File(filePath);
                     image.transferTo(file);
 
-                    // ✅ Store relative path in DB for easy access
+                    //  Store relative path in DB for easy access
                     imagePaths.add("/uploads/" + fileName);
                     System.out.println("📷 Image saved: " + filePath);
                 } catch (IOException e) {
@@ -92,7 +92,7 @@ public ResponseEntity<?> addProduct(
         }
     }
 
-    // ✅ Save product with multiple image URLs
+    //  Save product with multiple image URLs
     Product product = new Product();
     product.setTitle(title);
     product.setCategory(category);
@@ -103,7 +103,7 @@ public ResponseEntity<?> addProduct(
     product.setProductCondition(productCondition);
     product.setPhone(phone);
     product.setUser(user.get());
-    product.setImageUrls(imagePaths); // ✅ Save all images
+    product.setImageUrls(imagePaths); 
 
     productService.addProduct(product);
 
@@ -198,7 +198,7 @@ public ResponseEntity<?> addProduct(
             System.out.println("✅ Attempting to delete product: " + productOpt.get().getTitle());
             productService.deleteProductById(id);
             System.out.println("✅ Product deleted successfully");
-            // Return a proper JSON response
+            
             return ResponseEntity.ok(Map.of("message", "Product deleted successfully."));
         } 
                 catch (RuntimeException e) {
@@ -235,7 +235,7 @@ public ResponseEntity<?> updateProduct(
 
     Product product = optionalProduct.get();
 
-    // actualizează câmpurile
+    // update product fields
     product.setTitle(title);
     product.setCategory(category);
     product.setDescription(description);
@@ -245,7 +245,7 @@ public ResponseEntity<?> updateProduct(
     product.setProductCondition(productCondition);
     product.setPhone(phone);
 
-    // dacă trimiți noi imagini, le înlocuim
+    // update new images if provided
     if (images != null && !images.isEmpty()) {
         String uploadDirPath = System.getProperty("user.dir") + "/uploads/";
         File uploadDir = new File(uploadDirPath);

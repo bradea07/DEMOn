@@ -28,19 +28,19 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
     e.preventDefault();
     if (input.trim() === "") return;
     
-    // Add user message
+    
     setMessages([...messages, { text: input, isBot: false }]);
     
-    // Process the question and generate response
+   
     const response = generateResponse(input.toLowerCase());
     
-    // Show typing indicator
+    
     setMessages(prevMessages => [...prevMessages, { text: "...", isBot: true, isTyping: true }]);
     
     // Simulate a delay for a more natural effect
     setTimeout(() => {
       setMessages(prevMessages => {
-        // Remove typing indicator and add actual response
+        
         const filteredMessages = prevMessages.filter(msg => !msg.isTyping);
         return [...filteredMessages, { text: response, isBot: true }];
       });
@@ -108,7 +108,7 @@ const Chatbot = ({ isOpen, toggleChatbot }) => {
   );
 };
 
-// Funcție pentru generarea răspunsurilor
+// Function to generate chatbot responses based on user input
 const generateResponse = (input) => {
   // Simple rules for chatbot responses
   if (input.includes("hello") || input.includes("hi") || input.includes("hey") || input.includes("greetings")) {

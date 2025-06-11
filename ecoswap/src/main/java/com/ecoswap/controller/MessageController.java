@@ -161,7 +161,7 @@ public ResponseEntity<?> markMessagesAsRead(
             return ResponseEntity.badRequest().body("Invalid users or product");
         }
         
-        // Folosim direct metoda din repository pentru a marca mesajele ca citite
+        // We use directly the repository method to mark messages as read
         messageRepository.markMessagesAsRead(userId, otherUserId, productId);
         
         return ResponseEntity.ok("Messages marked as read");
