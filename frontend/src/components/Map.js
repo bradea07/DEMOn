@@ -34,32 +34,41 @@ const MapComponent = () => {
   
   // Default center (will be overridden by user location if available)
   const center = {
-    lat: 45.760696, 
-    lng: 21.226788 // Default coordinates for Timisoara
+    lat: 40.7128, 
+    lng: -74.0060 // Default coordinates for New York City, USA
   };
 
   // Function to fetch recycling points using Overpass API
- const fetchRecyclingPoints = async () => {
-  // Coordonate fixe pentru Mountain View, California (SUA)
-  const testPosition = {
-    lat: 37.4220,
-    lng: -122.0841
-  };
+  const fetchRecyclingPoints = async (providedPosition = null) => {
+  // Use the provided position, or fall back to searched location or current position
+  const position = providedPosition || searchedLocation || currentPosition;
+  
+  if (!position) {
+    alert('Please share your location or search for a location first.');
+    return;
+  }
 
   setRecyclingPoints([]);
   setAllRecyclingPoints([]);
   setNearestPoint(null);
   setIsLoadingRecyclingPoints(true);
 
-  console.log("🔍 Fetching recycling points for Mountain View, CA:", testPosition);
+  console.log("🔍 Fetching recycling points for location:", position);
 
   try {
-    const radius = 0.05; // ~2km
-    const bbox = `${testPosition.lat - radius},${testPosition.lng - radius},${testPosition.lat + radius},${testPosition.lng + radius}`;
+    const radius = 0.02; // ~2km (reduced for more precise search)
+    const bbox = `${position.lat - radius},${position.lng - radius},${position.lat + radius},${position.lng + radius}`;
+
+    console.log("🌐 Searching for recycling points in bounding box:", bbox);
+    console.log("🗺️ Position coordinates:", `Lat: ${position.lat}, Lng: ${position.lng}`);
 
     const query = `
-      [out:json];
-      node["amenity"="recycling"](${bbox});
+      [out:json][timeout:25];
+      (
+        node["amenity"="recycling"](${bbox});
+        node["amenity"="waste_disposal"](${bbox});
+        node["amenity"="recycling_centre"](${bbox});
+      );
       out body;
     `;
 
@@ -70,7 +79,17 @@ const MapComponent = () => {
     const response = await fetch(url);
     const data = await response.json();
 
+    console.log("📡 Overpass API response:", data);
+    console.log("📍 Number of elements found:", data.elements?.length || 0);
+
     const points = data.elements.map((element, index) => {
+      console.log(`🔍 Processing element ${index + 1}:`, {
+        id: element.id,
+        lat: element.lat,
+        lng: element.lon,
+        tags: element.tags
+      });
+
       let materials = [];
 
       if (element.tags.recycling_type) {
@@ -101,9 +120,14 @@ const MapComponent = () => {
 
     const pointsWithDistance = points.map(point => {
       const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-        new window.google.maps.LatLng(testPosition.lat, testPosition.lng),
+        new window.google.maps.LatLng(position.lat, position.lng),
         new window.google.maps.LatLng(point.position.lat, point.position.lng)
       );
+      
+      console.log(`📏 Point ${point.name}: Distance = ${(distance / 1000).toFixed(2)}km from search location`);
+      console.log(`📍 Point coordinates: ${point.position.lat}, ${point.position.lng}`);
+      console.log(`📍 Search coordinates: ${position.lat}, ${position.lng}`);
+      
       return {
         ...point,
         distanceMeters: distance,
@@ -111,12 +135,25 @@ const MapComponent = () => {
       };
     });
 
-    pointsWithDistance.sort((a, b) => a.distanceMeters - b.distanceMeters);
+    // Filter out points that are unreasonably far (more than 50km) - this might indicate coordinate issues
+    const validPoints = pointsWithDistance.filter(point => {
+      const isValid = point.distanceMeters <= 50000; // 50km max
+      if (!isValid) {
+        console.warn(`⚠️ Filtering out point ${point.name} - too far: ${point.distanceFromUser}km`);
+      }
+      return isValid;
+    });
 
-    setAllRecyclingPoints(pointsWithDistance);
-    setRecyclingPoints(pointsWithDistance);
+    validPoints.sort((a, b) => a.distanceMeters - b.distanceMeters);
+
+    setAllRecyclingPoints(validPoints);
+    setRecyclingPoints(validPoints);
     setVisiblePointsLimit(null);
-    console.log(`✅ Found ${pointsWithDistance.length} recycling points near Mountain View`);
+    console.log(`✅ Found ${validPoints.length} recycling points near the location`);
+    
+    if (validPoints.length === 0) {
+      alert('No recycling points found in this area. Try searching for a different location or a larger city.');
+    }
   } catch (error) {
     console.error("❌ Error fetching recycling points:", error);
   } finally {
@@ -125,41 +162,22 @@ const MapComponent = () => {
 };
 
 
-  // Load user's current location but don't fetch recycling points automatically
-  useEffect(() => {
-    // Add event listener to detect Google Maps API loading errors
-    const handleGMapsError = () => {
-      console.error("Google Maps API failed to load");
-      alert("There was an issue loading Google Maps. Please check your internet connection and try again.");
-      setMapLoaded(false);
-    };
-    
-    window.addEventListener('error', (e) => {
-      if (e.message && (
-        e.message.includes('Google Maps JavaScript API') ||
-        e.message.includes('google is not defined')
-      )) {
-        handleGMapsError();
-      }
-    });
-
+  // Load user's current location only when requested - removed automatic location detection
+  const requestUserLocation = () => {
     setLocationStatus('pending');
     setRecyclingPoints([]); // Clear any existing recycling points
     
     if (navigator.geolocation) {
-      // Show loading message for location
-      console.log("Requesting real-time location permission...");
+      console.log("Requesting user location permission...");
       
-      // Set geolocation options to get the most accurate position possible
       const geoOptions = {
         enableHighAccuracy: true, 
         timeout: 15000,          
         maximumAge: 0            
       };
       
-      // Success handler for geolocation
       const geoSuccess = (position) => {
-        console.log("Real-time location received:", position);
+        console.log("User location received:", position);
         
         const userPosition = {
           lat: position.coords.latitude,
@@ -168,19 +186,24 @@ const MapComponent = () => {
         
         console.log("Using your real location coordinates:", userPosition);
         setCurrentPosition(userPosition);
+        setSearchedLocation(null); // Clear searched location when using real location
         setLocationStatus('success');
         
+        if (window.google && window.google.maps && window.google.maps.Animation) {
+          setMarkerAnimation(window.google.maps.Animation.DROP);
+          setTimeout(() => setMarkerAnimation(null), 2000);
+        } else {
+          setMarkerAnimation(null); 
+        }
         
-    if (window.google && window.google.maps && window.google.maps.Animation) {
-      setMarkerAnimation(window.google.maps.Animation.DROP);
-      setTimeout(() => setMarkerAnimation(null), 2000);
-  } else {
-     console.warn("google.maps.Animation.DROP is not available yet");
-    setMarkerAnimation(null); 
-  }
-
+        // Center the map on user's position
+        if (mapRef.current) {
+          mapRef.current.panTo(userPosition);
+          mapRef.current.setZoom(14);
+        }
         
-        
+        // Fetch recycling points near the user's location
+        fetchRecyclingPoints(userPosition);
       };
       
       const geoError = (error) => {
@@ -189,13 +212,13 @@ const MapComponent = () => {
         
         switch(error.code) {
           case error.PERMISSION_DENIED:
-            alert("Please allow location access to find recycling points near you. The app needs your location to work properly.");
+            alert("Please allow location access to find recycling points near you.");
             break;
           case error.POSITION_UNAVAILABLE:
             alert("Your current position is unavailable. Make sure your device's location services are enabled.");
             break;
           case error.TIMEOUT:
-            alert("Getting your location timed out. Please try again or check your device settings.");
+            alert("Getting your location timed out. Please try again.");
             break;
           default:
             alert("Unknown error occurred while getting your location. Please try again.");
@@ -210,9 +233,9 @@ const MapComponent = () => {
     } else {
       console.error("Geolocation is not supported by this browser");
       setLocationStatus('error');
-      alert("Your browser doesn't support geolocation. Please use a modern browser to get real-time recycling points.");
+      alert("Your browser doesn't support geolocation.");
     }
-  }, []);
+  };
 
   // Watch for location changes
   useEffect(() => {
@@ -529,7 +552,13 @@ const MapComponent = () => {
   
   // Search for recycling points near the entered location
   const handleLocationSearch = () => {
-    // If we have a selected place from autocomplete
+    // First check if we have any input at all
+    if (!locationInput || locationInput.trim() === '') {
+      alert('Please enter a location to search');
+      return;
+    }
+    
+    // If we have a selected place from autocomplete, use it
     if (searchedLocation) {
       setCurrentPosition(null); // Clear current position when using searched location
       fetchRecyclingPoints(searchedLocation);
@@ -542,8 +571,8 @@ const MapComponent = () => {
       return;
     }
     
-    // If we don't have a selected place but have text input, try to geocode it
-    if (locationInput && window.google) {
+    // If we have text input but no selected place, try to geocode it
+    if (window.google) {
       const geocoder = new window.google.maps.Geocoder();
       
       geocoder.geocode({ address: locationInput }, (results, status) => {
@@ -575,7 +604,7 @@ const MapComponent = () => {
         }
       });
     } else {
-      alert('Please enter a location to search');
+      alert('Google Maps is not loaded yet. Please try again in a moment.');
     }
   };
   
@@ -643,8 +672,7 @@ const MapComponent = () => {
         }, 300);
       }
       
-      // Get directions to the closest point
-      handleGetDirections(position, closestPoint.position);
+      // Don't automatically calculate directions - let user decide
     }
   };
 
@@ -698,13 +726,18 @@ const MapComponent = () => {
         </p>
       )}
       
+      {/* Debug info */}
+      {console.log("🔍 Current recycling points state:", recyclingPoints)}
+      {console.log("🗺️ Current map loaded state:", mapLoaded)}
+      {console.log("📍 Current position:", currentPosition || searchedLocation)}
+      
       <div className="location-buttons">
         {recyclingPoints.length > 0 && (
           <button className="find-closest-button" onClick={findClosestRecyclingPoint}>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
             </svg>
-            Find Nearest Recycling Point & Get Directions
+            Find Nearest Recycling Point
           </button>
         )}
         
@@ -763,53 +796,101 @@ const MapComponent = () => {
           zoom={14}
           onLoad={(map) => mapRef.current = map}
         >
-          {/* Recycling Points markers */}
-          <MarkerClusterer>
-            {(clusterer) =>
-              recyclingPoints.map((point) => {
-                // Calculate distance from user's location to recycling point
-                let distance = null;
-                if (currentPosition || searchedLocation) {
-                  const userPos = searchedLocation || currentPosition;
-                  distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-                    new window.google.maps.LatLng(userPos.lat, userPos.lng),
-                    new window.google.maps.LatLng(point.position.lat, point.position.lng)
+          {/* User's current position marker */}
+          {(currentPosition || searchedLocation) && (
+            <Marker
+              position={searchedLocation || currentPosition}
+              icon={{
+                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                scaledSize: new window.google.maps.Size(40, 40)
+              }}
+              animation={markerAnimation}
+              title={searchedLocation ? "Searched Location" : "Your Location"}
+            />
+          )}
+
+          {/* Recycling Points markers - Alternative rendering without clusterer for debugging */}
+          {recyclingPoints.length > 0 && recyclingPoints.map((point) => {
+            console.log("🎯 Rendering individual marker for point:", point.name, "at coordinates:", point.position);
+            
+            // Use the distance already calculated and stored in the point object from fetchRecyclingPoints
+            // Don't recalculate here to avoid coordinate mix-ups
+            console.log("📏 Using pre-calculated distance for point:", point.name, "=", point.distanceFromUser, "km");
+            
+            return (
+              <Marker
+                key={point.id}
+                position={point.position}
+                onClick={() => handleMarkerClick(point)}
+                icon={{
+                  url: nearestPoint && point.id === nearestPoint.id 
+                    ? 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png' // Highlight nearest point
+                    : 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                  scaledSize: new window.google.maps.Size(
+                    nearestPoint && point.id === nearestPoint.id ? 45 : 35, 
+                    nearestPoint && point.id === nearestPoint.id ? 45 : 35
+                  )
+                }}
+                animation={nearestPoint && point.id === nearestPoint.id 
+                  ? window.google.maps.Animation.BOUNCE 
+                  : null}
+                title={`${point.name} (${point.distanceFromUser || 'N/A'} km)`}
+              />
+            );
+          })}
+
+          {/* Recycling Points markers with clusterer - Comment out for now */}
+          {/*
+          {recyclingPoints.length > 0 && (
+            <MarkerClusterer>
+              {(clusterer) =>
+                recyclingPoints.map((point) => {
+                  console.log("🎯 Rendering marker for point:", point.name, "at coordinates:", point.position);
+                  
+                  // Calculate distance from user's location to recycling point
+                  let distance = null;
+                  if (currentPosition || searchedLocation) {
+                    const userPos = searchedLocation || currentPosition;
+                    distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+                      new window.google.maps.LatLng(userPos.lat, userPos.lng),
+                      new window.google.maps.LatLng(point.position.lat, point.position.lng)
+                    );
+                  }
+                  
+                  // Add distance to point object
+                  point.distanceFromUser = distance ? (distance / 1000).toFixed(2) : null;
+                  
+                  return (
+                    <Marker
+                      key={point.id}
+                      position={point.position}
+                      onClick={() => handleMarkerClick(point)}
+                      icon={{
+                        url: nearestPoint && point.id === nearestPoint.id 
+                          ? 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png' // Highlight nearest point
+                          : 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                        scaledSize: new window.google.maps.Size(
+                          nearestPoint && point.id === nearestPoint.id ? 45 : 35, 
+                          nearestPoint && point.id === nearestPoint.id ? 45 : 35
+                        )
+                      }}
+                      animation={nearestPoint && point.id === nearestPoint.id 
+                        ? window.google.maps.Animation.BOUNCE 
+                        : null}
+                      clusterer={clusterer}
+                      title={`${point.name} (${point.distanceFromUser || 'N/A'} km)`}
+                    />
                   );
-                }
-                
-                // Add distance to point object
-                point.distanceFromUser = distance ? (distance / 1000).toFixed(2) : null;
-                
-                return (
-                  <Marker
-                    key={point.id}
-                    position={point.position}
-                    onClick={() => handleMarkerClick(point)}
-                    icon={{
-                      url: nearestPoint && point.id === nearestPoint.id 
-                        ? 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png' // Highlight nearest point
-                        : 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                      scaledSize: new window.google.maps.Size(
-                        nearestPoint && point.id === nearestPoint.id ? 45 : 35, 
-                        nearestPoint && point.id === nearestPoint.id ? 45 : 35
-                      )
-                    }}
-                    animation={nearestPoint && point.id === nearestPoint.id 
-                      ? window.google.maps.Animation.BOUNCE 
-                      : null}
-                    clusterer={clusterer}
-                    label={distance ? {
-                      text: `${(distance / 1000).toFixed(1)}km`,
-                      color: '#1b5e20',
-                      fontSize: '10px',
-                      fontWeight: 'bold',
-                      className: 'marker-label'
-                    } : null}
-                  />
-                );
-              })
-            }
-          </MarkerClusterer>
+                })
+              }
+            </MarkerClusterer>
+          )}
+          */}
+          
+          {/* Debug info: Show marker count */}
+          {recyclingPoints.length === 0 && mapLoaded && (
+            console.log("🚨 No recycling points to render on map")
+          )}
           
           {/* Info window for selected location */}
           {selectedPlace && (
@@ -829,18 +910,15 @@ const MapComponent = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-geo" viewBox="0 0 16 16" style={{marginRight: '5px'}}>
                           <path fillRule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"/>
                         </svg>
-                        Distance: {selectedPlace.distanceFromUser || (() => {
-                          const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-                            new window.google.maps.LatLng((searchedLocation || currentPosition).lat, (searchedLocation || currentPosition).lng),
-                            new window.google.maps.LatLng(selectedPlace.position.lat, selectedPlace.position.lng)
-                          );
-                          return (distance / 1000).toFixed(2);
-                        })()} km
+                        Distance: {selectedPlace.distanceFromUser || 'N/A'} km
                       </div>
                     )}
                     <button 
                       className="direction-button" 
-                      onClick={() => handleGetDirections((searchedLocation || currentPosition), selectedPlace.position)}
+                      onClick={() => {
+                        handleGetDirections((searchedLocation || currentPosition), selectedPlace.position);
+                        setSelectedPlace(null); // Close the info window after getting directions
+                      }}
                       disabled={directionsStatus === 'loading' || (!currentPosition && !searchedLocation)}
                     >
                       {directionsStatus === 'loading' ? 'Calculating...' : 'Get Shortest Path'}
@@ -849,7 +927,10 @@ const MapComponent = () => {
                 ) : (
                   <button 
                     className="direction-button" 
-                    onClick={() => handleGetDirections((searchedLocation || currentPosition), selectedPlace.position)}
+                    onClick={() => {
+                      handleGetDirections((searchedLocation || currentPosition), selectedPlace.position);
+                      setSelectedPlace(null); // Close the info window after getting directions
+                    }}
                     disabled={directionsStatus === 'loading' || (!currentPosition && !searchedLocation)}
                   >
                     {directionsStatus === 'loading' ? 'Calculating...' : 'Get Directions'}

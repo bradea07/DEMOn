@@ -1,0 +1,20 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F8F9FA"/>
+  <rect x="1" y="1" width="398" height="298" fill="none" stroke="#E9ECEF" stroke-width="2" stroke-dasharray="8,8"/>
+  
+  <!-- Camera Icon -->
+  <g transform="translate(175, 120)">
+    <rect x="0" y="8" width="50" height="32" rx="4" fill="#DEE2E6"/>
+    <rect x="4" y="12" width="42" height="24" rx="2" fill="#F8F9FA"/>
+    <circle cx="25" cy="24" r="8" fill="#DEE2E6"/>
+    <circle cx="25" cy="24" r="5" fill="#ADB5BD"/>
+    <rect x="12" y="4" width="26" height="8" rx="4" fill="#DEE2E6"/>
+    <circle cx="42" cy="16" r="2" fill="#6C757D"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="16" font-weight="500" fill="#6C757D" text-anchor="middle">No Image Available</text>
+  <text x="200" y="200" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="12" fill="#ADB5BD" text-anchor="middle">Upload an image to see it here</text>
+</svg>

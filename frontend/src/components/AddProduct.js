@@ -216,7 +216,7 @@ const AddProduct = () => {
                 type="number"
                 id="price"
                 name="price"
-                placeholder="Price in RON"
+                placeholder="Price in USD"
                 value={formData.price}
                 onChange={handleChange}
                 className="add-product-input"
