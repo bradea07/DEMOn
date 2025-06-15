@@ -1,11 +1,3 @@
-# EcoSwap - Sustainable Marketplace & Recycling Platform
-
-A comprehensive web application that combines an eco-friendly marketplace with recycling services. This project integrates multiple technologies including React.js frontend, Spring Boot backend, Google Maps API, OpenStreetMap data, and Shippo API for shipping and delivery services.
-
-![EcoSwap Platform](https://example.com/screenshot.png)
-
-## 🚀 Features
-
 ### Recycling Points Finder
 - **Location-Based Search**: Find recycling points near your current location or any searched address
 - **Interactive Map**: Visual display of recycling points with custom markers
@@ -37,6 +29,7 @@ Before running this application, make sure you have:
   - Directions API
   - Geocoding API
 - **Shippo API Key** for shipping features (create a free account at [goshippo.com](https://goshippo.com))
+- **Email API Key** for sending emails (create an account with an email service provider like SendGrid or Mailgun)
 
 ## 🔧 Installation
 
@@ -72,6 +65,7 @@ Create a `.env` file in the frontend directory:
 ```
 REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 REACT_APP_SHIPPO_API_KEY=your_shippo_api_key
+REACT_APP_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 ```
 
 ### Backend Setup
@@ -93,6 +87,21 @@ mvn install
 3. **Setup MySQL database**
 
 Create a MySQL database named "ecoswap" and configure the connection in `application.properties`
+
+4. **Import the database**
+
+```bash
+# Option 1: Using MySQL command line
+mysql -u username -p ecoswap < database/Dump20250615.sql
+
+# Option 2: Using MySQL Workbench
+# 1. Open MySQL Workbench
+# 2. Connect to your MySQL server
+# 3. Go to Server > Data Import
+# 4. Choose "Import from Self-Contained File" and select the Dump20250615.sql file
+# 5. Select "ecoswap" as the Default Target Schema or create a new schema
+# 6. Click "Start Import"
+```
 
 ## ⚙️ Configuration
 
@@ -180,6 +189,76 @@ private final String SHIPPO_API_KEY = "YOUR_SHIPPO_API_KEY_HERE";
 - Test API keys (starting with "shippo_test_") are for development only
 - Live API keys (starting with "shippo_live_") should be used in production
 - Test mode creates test labels that cannot be used for actual shipping
+
+#### Email API
+
+The application uses an email service API for sending verification emails, password resets, and notifications.
+
+**How to obtain an Email API Key:**
+1. Create an account with an email service provider (SendGrid, Mailgun, etc.)
+2. Navigate to the API section in your account dashboard
+3. Generate a new API key with appropriate permissions
+4. Copy your API key
+
+**Where to add your Email API key:**
+
+In the backend:
+1. Open `src/main/resources/application.properties`
+2. Add your email service configuration:
+
+```properties
+# Email Configuration
+spring.mail.host=your_email_service_host
+spring.mail.port=587
+spring.mail.username=your_email_username
+spring.mail.password=your_email_api_key
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
+**Securing your Email API Key:**
+- Never commit your actual API key to version control
+- For production, use environment variables or a secure vault
+- Restrict the API key's permissions to only what's needed (sending emails)
+
+#### reCAPTCHA
+
+The application uses Google reCAPTCHA to protect forms from spam and abuse.
+
+**How to obtain reCAPTCHA keys:**
+1. Visit the [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
+2. Sign in with your Google account
+3. Click "+" to add a new site
+4. Choose reCAPTCHA v2 ("I'm not a robot" Checkbox)
+5. Add your domain(s) in the "Domains" field
+6. Accept the Terms of Service and click "Submit"
+7. Copy both your **Site Key** and **Secret Key**
+
+**Where to add your reCAPTCHA keys:**
+
+For frontend (Site Key):
+1. Open the `.env` file in the frontend directory
+2. Add your reCAPTCHA site key:
+
+```
+REACT_APP_RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
+```
+
+For backend (Secret Key):
+1. Open `src/main/resources/application.properties`
+2. Add your reCAPTCHA secret key:
+
+```properties
+# reCAPTCHA Configuration
+google.recaptcha.secret.key=your_recaptcha_secret_key_here
+google.recaptcha.verify.url=https://www.google.com/recaptcha/api/siteverify
+```
+
+**Testing reCAPTCHA:**
+- During development, you can use test keys provided by Google
+- For the site key: `6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI`
+- For the secret key: `6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe`
+- These test keys will always return "success"
 
 ### Database Configuration
 
@@ -343,34 +422,6 @@ The application uses a full-stack architecture:
 }
 ```
 
-#### Shipping Transaction
-```java
-{
-  id: Long,
-  transactionNumber: "string",
-  amount: "string",
-  currency: "string",
-  shipmentId: "string",
-  provider: "string",
-  service: "string",
-  estimatedDays: number,
-  // Sender details
-  fromName: "string",
-  fromStreet: "string",
-  fromCity: "string",
-  // ... other address fields
-  // Recipient details  
-  toName: "string",
-  toStreet: "string",
-  toCity: "string",
-  // ... other address fields
-  // Package details
-  parcelLength: "string",
-  parcelWidth: "string",
-  parcelHeight: "string",
-  parcelWeight: "string"
-}
-```
 
 ## 🔒 Security Notes
 
@@ -402,18 +453,5 @@ The application uses a full-stack architecture:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- OpenStreetMap contributors for the recycling point data
-- Google Maps for the mapping and directions functionality
-- Shippo for the shipping API and documentation
-- React.js and Spring Boot teams for the excellent frameworks
-- West University of Timișoara for academic guidance
-
-
-```
 
